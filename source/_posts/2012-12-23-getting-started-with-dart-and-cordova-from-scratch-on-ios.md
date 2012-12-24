@@ -2,8 +2,11 @@
 layout: post
 title: "Getting started with Dart and Cordova from scratch on iOS"
 description: ""
-category:
-tags: [Dart, Cordova, Example, Phonegap]
+categories: 
+- Dart
+- Cordova
+- Example
+- Phonegap
 ---
 
 Looking for some fun this weekend I decided to investigate the current status of using dart and cordova together.

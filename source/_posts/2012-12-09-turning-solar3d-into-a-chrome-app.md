@@ -2,8 +2,7 @@
 layout: post
 title: "Turning Solar3d into a Chrome App"
 description: "Turning Solar3d into a Chrome App"
-category: 
-tags: [Dart, Example, ChromeApp]
+categories: [Dart, Example, ChromeApp]
 ---
 
 

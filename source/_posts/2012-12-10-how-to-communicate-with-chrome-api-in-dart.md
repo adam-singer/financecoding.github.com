@@ -2,8 +2,7 @@
 layout: post
 title: "How to communicate with chrome.* API in Dart"
 description: "How to communicate with chrome.* API in Dart. Note bleeding edge topic, may not apply in the future."
-category: 
-tags: [Dart, Example, ChromeApp, chrome.*]
+categories: [Dart, Example, ChromeApp, chrome.*]
 ---
 
 I had the privilege to attend [Chrome Apps Accelerated MTV](https://plus.google.com/+GoogleChromeDevelopers/posts/d8q3ffNhjBE) hackathon. The goal set out for my self was to create a bluetooth scanner via [chrome.bluetooth](http://developer.chrome.com/apps/bluetooth.html) api. 

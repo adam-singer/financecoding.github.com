@@ -2,8 +2,7 @@
 layout: post
 title: "Ways to solve the N doors N passes question"
 description: ""
-category: 
-tags: [Dart, Math, Brainteaser]
+categories: [Dart, Math, Brainteaser]
 ---
 
 Question

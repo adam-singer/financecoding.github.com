@@ -2,8 +2,7 @@
 layout: post
 title: "dart components data style"
 description: ""
-category: 
-tags: []
+categories:
 ---
 <!--
 TODO: Create simple gist and explaination of data-style, example could be found here /Users/adam/dart/dart-web-components/example/mdv/style/style.html
