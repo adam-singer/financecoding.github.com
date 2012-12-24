@@ -1,0 +1,75 @@
+--- 
+title: "Dart: Throwing Darts from CouchDB"
+published: true
+layout: post
+meta: 
+  email_notification: "1326702564"
+  _edit_last: "19211206"
+  jabber_published: "1326702558"
+status: publish
+type: post
+tags: 
+- CouchDB
+- Dart
+- Google
+- Software
+---
+<!--?xml version="1.0" encoding="UTF-8" standalone="no"?--> <a href="http://couchdb.apache.org/">CouchDB</a> provides an excellent NOSQL database with simple <a href="http://wiki.apache.org/couchdb/HTTP_Document_API">REST API</a>. Continuing on with the odds and ends in <a href="http://www.dartlang.org/">Dart</a>, I'd like to show how one could interface with CouchDB in Dart. Following the <a href="http://wiki.apache.org/couchdb/Getting_started_with_Python">"Getting started with Python"</a> I was able to stub out a simple wrapper <a href="https://github.com/financeCoding/dart-couchdb-client">implementation</a> in no time. At some point a full wrapper should be done, I'll possible look into it in the coming months.
+<div style="font-family:Arial;"><a href="http://www.couchbase.com/">CouchBase</a> provides full <a href="http://www.couchbase.com/downloads/couchbase-single-server/community">standalone</a> community build, best option if you don't want to deal with building and deploying on your Mac. Pairing that up with <a href="http://www.apachefriends.org/en/xampp.html">XAMPP</a> and you'll be able to write the client side that communicates to the apache web server which then proxies to CouchDB. After installing XAMPP two files need to be edited to ease the local deployment.</div>
+[sourcecode]
+XAMPP/etc/http.conf - Add the ProxyPass configuration.
+XAMPP/etc/extra/httpd-userdir.conf - Add the user directory to point to the default dart folder location.
+[/sourcecode]
+<div style="font-family:Arial;"><img title="httpconf.png" src="http://financecoding.files.wordpress.com/2012/01/httpconf.png" alt="Httpconf" width="600" height="385" border="0" /></div>
+<div style="font-family:Arial;">Fire up CouchDB and Apache, then open chrome http://127.0.0.1/couchdb and you should see the following.</div>
+<div style="font-family:Arial;"><img title="localhost.png" src="http://financecoding.files.wordpress.com/2012/01/localhost.png" alt="Localhost" width="600" height="269" border="0" /></div>
+<div style="font-family:Arial;"></div>
+<div style="font-family:Arial;">From here we can use <a href="http://api.dartlang.org/html/XMLHttpRequest.html">XMLHttpRequest</a> provided in the <a href="http://api.dartlang.org/html.html">dart:html</a> library to make requests to the Apache web server which proxy to CouchDB. One issue I ran into was <a href="http://www.w3.org/TR/DOM-Level-3-Core/core.html#ID-17189187">DOMException</a> <a href="http://www.w3.org/TR/DOM-Level-3-Core/core.html#DOMException-INVALID_STATE_ERR">INVALID_STATE_ERR</a> when trying to set the headers. You must call <a href="http://api.dartlang.org/html/XMLHttpRequest.html">open()</a> before your able to call <a href="http://api.dartlang.org/html/XMLHttpRequest.html">setRequestHeader()</a>.</div>
+[sourcecode lang="java"]
+ // Basic http methods
+  getHttp(var uri) {
+    XMLHttpRequest c = connect();
+    c.open('GET', uri, false);
+    c.setRequestHeader('Accept', 'application/json');
+    c.send();
+    return c.responseText;
+  }
+
+  postHttp(var uri, var body) {
+    XMLHttpRequest c = connect();
+    c.open('POST', uri, false);
+    c.setRequestHeader('Content-type', 'application/json');
+    c.send(body);
+    return c.responseText;
+  }
+
+  putHttp(var uri, [var body]) {
+    XMLHttpRequest c = connect();
+    c.open('PUT', uri, false);
+    if (body is String &amp;&amp; body.length &gt; 0) {
+      c.setRequestHeader('Content-type', 'application/json');
+      c.send(body);
+    } else {
+      c.send();
+    }
+
+    return c.responseText;
+  }
+
+  deleteHttp(var uri) {
+    XMLHttpRequest c = connect();
+    c.open('DELETE', uri, false);
+    c.send();
+    return c.responseText;
+  }
+[/sourcecode]
+<div style="font-family:Arial;"><img title="domexception.png" src="http://financecoding.files.wordpress.com/2012/01/domexception.png" alt="Domexception" width="563" height="600" border="0" /></div>
+<div style="font-family:Arial;">From there stubbing out a simple interface for dart with default implementation was easy.</div>
+<div style="font-family:Arial;"><img title="couchdb.png" src="http://financecoding.files.wordpress.com/2012/01/couchdb.png" alt="Couchdb" width="345" height="252" border="0" /></div>
+<div style="font-family:Arial;">The CouchDBWrapperImpl does wrapping for calling to the CouchDB using the <a href="http://www.dartlang.org/docs/spec/index.html">default</a> keyword helps to hide the implementation from the interface in a factory type way.</div>
+<div style="font-family:Arial;"><img title="couchdbimpl.png" src="http://financecoding.files.wordpress.com/2012/01/couchdbimpl.png" alt="Couchdbimpl" width="303" height="374" border="0" /></div>
+<div style="font-family:Arial;">Opening up chrome to http://127.0.0.1/&lt;username&gt; provides access into the users dart directory.</div>
+<div style="font-family:Arial;"><img title="fileview.png" src="http://financecoding.files.wordpress.com/2012/01/fileview.png" alt="Fileview" width="600" height="368" border="0" /></div>
+<div style="font-family:Arial;">Clicking on CouchDBExample.html should run the sample code.</div>
+<div style="font-family:Arial;"><img title="demo.png" src="http://financecoding.files.wordpress.com/2012/01/demo.png" alt="Demo" width="600" height="337" border="0" /></div>
+<div style="font-family:Arial;">The interfacing with CouchDB was simple and quick, a more elegant solution would be a full client implementation that lets you modify objects more indirectly.  Sample code on <a href="https://github.com/financeCoding/dart-couchdb-client">github</a>.</div>

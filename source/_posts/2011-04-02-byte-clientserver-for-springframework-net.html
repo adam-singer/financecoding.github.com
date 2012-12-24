@@ -1,0 +1,83 @@
+--- 
+title: Byte Client/Server for SpringFramework.NET
+published: true
+layout: post
+meta: 
+  _edit_last: "19211206"
+  jabber_published: "1301809489"
+status: publish
+type: post
+tags: 
+- .NET
+- ActiveMQ
+- Apache
+- Apache.Nms
+- Software
+- Spring
+- Springframework.net
+---
+<a href="https://docs.google.com/leaf?id=0B29MR2FlgtejYmYzZTQ5NzktOTRlZi00M2I4LTk1N2EtOTg0ZWZmY2ZjZTI4&amp;hl=en">Investigating</a> using <a href="http://www.springframework.net">springframework.net</a> for a project, I decided to create a quick sample of how to pass byte arrays around in a client server model. Reviewing the <a href="http://www.springframework.net/doc-latest/reference/html/nms-quickstart.html">Spring.NmsQuickStart</a> helped me create a sample that just passes byte arrays from a client to the server. One starting point was to get <a href="http://activemq.apache.org/">ActiveMQ</a> running on the system, downloading the latest at the time <a href="http://activemq.apache.org/activemq-550-release.html">ActiveMQ 5.5.0 Release</a>. Unpack and launch the activemq service
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients1.png" alt="" />
+
+The administration console can be viewed from a web url <a href="http://localhost:8161/admin">http://localhost:8161/admin</a>
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients2.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+The project's layout has a server, client, and shared data component.
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+The objects that get passed between the client and server are located in ByteServer.Common. This is a very simply defined byte array object.
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients4.png" alt="" />
+
+A bat file located in the Data folder called generate-classes.bat is used to create the C# code from DataBlob.xsd.
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+The Converters folder holds some general utility classes that help with converting and resolving type objects from xml.
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+For the server component the sample is laid out as follows. Config data containing the configuration data for the spring framework. Handlers for handling and routing messages to the correct locations within the application. Services for defining the service interfaces. Gateways for sending service data out.
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients7.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+A good general start is to define and implement the service interfaces before moving onto anything else. The sample defines a single call that the client can make that returns a response.
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients8.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+Actual implementation of this interface is bind by the spring framework configuration data in ServiceStubs.xml
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients9.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<span style="color:#595959;font-size:9pt;">Screen clipping taken: 4/2/2011 10:06 PM
+</span>
+
+Handlers.xml is the configuration data that binds the service object to a handler object which then gets configured as a MesssageListenerAdapter in the Messaging.xml configuration.
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients10.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients11.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+The MessageListenerAdapter is then assigned a destination "APP.DATA.BLOB.REQUEST" to consume messages that are passed on that pipe.
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+The client application is very similar except we need a Gateway to get our messages from the client to the server and receive the return objects from the server. Config folder contains the spring framework configurations. Handlers contains the functions that handle returns from the server. Gateways contain the object that can communicate directly with the message broker for sending messages. Controller would be the objects that could be used in a MVC fashion in application development.
+
+<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients13.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+The trickiest thing I found about using spring framework for .net was getting the configuration data correct. Besides that the data transferred is great, very fast and persistence works great in AciveMQ. Here is <a href="https://docs.google.com/leaf?id=0B29MR2FlgtejYmYzZTQ5NzktOTRlZi00M2I4LTk1N2EtOTg0ZWZmY2ZjZTI4&amp;hl=en">ByteServer.zip</a> project, the springframework.net project need to be included or referenced.

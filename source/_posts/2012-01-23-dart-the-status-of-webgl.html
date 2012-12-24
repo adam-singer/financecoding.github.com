@@ -1,0 +1,21 @@
+--- 
+title: "Dart: Example of WebGL on Dart"
+published: true
+layout: post
+meta: 
+  email_notification: "1327391575"
+  _edit_last: "19211206"
+  _wpas_skip_fb: "1"
+  jabber_published: "1327391571"
+status: publish
+type: post
+tags: 
+- Dart
+- Google
+- Software
+- WebGL
+---
+My hacking attempts with <a href="http://en.wikipedia.org/wiki/WebGL">webgl</a> on <a href="http://api.dartlang.org/html/WebGLRenderingContext.html">dart</a> has made me revert to using <a href="http://api.dartlang.org/dom.html">'dart:dom'</a>. While I really enjoy <a href="http://api.dartlang.org/html.html">'dart:html'</a>, one might not be able to use some of the more important <a href="http://api.dartlang.org/html/WebGLRenderingContext.html#bufferData">webgl</a> methods. The reason would be the missing constructors on <a href="http://api.dartlang.org/html/Float32Array.html">Float32Array</a>, an <a href="https://code.google.com/p/dart/issues/detail?id=560">issue</a> has been filed. For now the following <a href="http://financecoding.github.com/dart-webgl-example/">sample</a> with <a href="https://github.com/financeCoding/dart-webgl-example">code</a> could help guide those excited to play with webgl on dart. Thank you <a href="http://learningwebgl.com/blog/?page_id=2">Learning WebGL</a> for the sample <a href="http://learningwebgl.com/blog/?p=28">code</a> work with. 
+
+<a href="http://financecoding.files.wordpress.com/2012/01/webglscreenshot.png"><img src="http://financecoding.files.wordpress.com/2012/01/webglscreenshot.png" alt="" title="webglscreenshot" width="536" height="676" class="alignnone size-full wp-image-500" /></a>
+

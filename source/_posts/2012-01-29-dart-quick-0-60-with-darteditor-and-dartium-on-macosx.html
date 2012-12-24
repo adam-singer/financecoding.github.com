@@ -1,0 +1,23 @@
+--- 
+title: "Dart: Quick 0-60 with DartEditor and Dartium on MacOSX."
+published: true
+layout: post
+meta: 
+  email_notification: "1327902906"
+  _edit_last: "19211206"
+  _wpas_skip_fb: "1"
+  jabber_published: "1327902904"
+status: publish
+type: post
+tags: []
+
+---
+Quick 0-60 with DartEditor and Dartium on MacOSX. The DartEditor now comes with the ability to launch Dartium directly. The key to getting that to work is to have Chromium folder located in the dart-sdk. Below is a simple script to bootstrap your MacOSX from the latest builds. Note, if you move the directory around you'll need to adjust the  runDartEditor.sh script. <del datetime="2012-02-03T02:58:52+00:00">DartEditor expects an absolute path for the -debug flag. By the time Dartium hits the dart-sdk, his route will be obsolete.</del>
+Now support for choosing frogc or dartc is available in the GUI options. 
+[sourcecode lang="bash"]
+git clone git://gist.github.com/1702746.git DartEditor
+cd DartEditor
+chmod +x get_and_unpack.sh 
+./get_and_unpack.sh &amp;&amp; cd dart &amp;&amp; ./runDartEditor.sh
+[/sourcecode]
+<a href="https://gist.github.com/1702746">https://gist.github.com/1702746</a>

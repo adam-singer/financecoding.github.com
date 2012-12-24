@@ -1,0 +1,64 @@
+--- 
+title: Creating new java project with Cloudfoundry and Spring Source Tool
+published: true
+layout: post
+meta: 
+  _edit_last: "19211206"
+  jabber_published: "1305956536"
+status: publish
+type: post
+tags: 
+- Cloud
+- Cloudfoundry
+- HelloWorld
+- Linux
+- Software
+- Spring
+- SpringSource
+- vmware
+---
+After picking up <a href="http://www.springsource.com/developer/sts">SpringSource Tool Suite</a> and Installing the <a href="http://blog.springsource.com/2011/04/13/using-cloud-foundry-from-sts/">Cloudfoundry plugins</a> creating a new java project is painless, as long as you know which options to choose. From the New wizard you need to choose "Dynamic Web Project"
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Target runtime at the time of this post was "Cloud Foundry (Runtime) v1.0" and Dynamic web module version "2.5" with a Configuration of "Default Configuration for Cloud Foundry (Runtime) v1.0"
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew2.png" alt="" />
+
+The Project layout
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Creating a new Package and class
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew4.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Create a classic <a href="http://en.wikipedia.org/wiki/Hello_world_program">HelloWorld</a>
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew7.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Time to extend the <a href="http://download.oracle.com/javaee/5/api/javax/servlet/http/HttpServlet.html">HttpServlet</a> and override <a href="http://download.oracle.com/javaee/5/api/javax/servlet/http/HttpServlet.html">doGet</a>
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew8.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Add entries of the <a href="http://www.caucho.com/resin-3.0/config/webapp.xtp">servlet</a> and <a href="http://www.caucho.com/resin-3.0/config/webapp.xtp">servlet-mapping</a>
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew9.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Add Application
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew10.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Start the service
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew11.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+And you have the basic hello world from the cloud foundry samples.
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>

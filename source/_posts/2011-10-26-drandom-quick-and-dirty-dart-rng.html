@@ -1,0 +1,30 @@
+--- 
+title: "DRandom: Quick and dirty Dart RNG"
+published: true
+layout: post
+meta: 
+  email_notification: "1319692545"
+  _edit_last: "19211206"
+  jabber_published: "1319692544"
+status: publish
+type: post
+tags: 
+- Dart
+- Google
+- Software
+---
+I needed a quick and dirty <a href="http://en.wikipedia.org/wiki/Random_number_generation">RNG</a> for some code prototype <a href="http://www.dartlang.org/">Dart</a> code. This code was based off of <a href="https://github.com/mono/mono/blob/master/mcs/class/corlib/System/Random.cs">Random.cs</a> from the <a href="http://www.mono-project.com/">mono project</a>. In the mono projects comments that code is based on some example in the <a href="http://www.nr.com/">numerical recipes in C book</a>. Methods provided are simple enough to understand based on the their names. I would not trust this code for any serious random number generations and it is best to seed the RNG then letting the default seed be used. Get the <a href="https://github.com/financeCoding/DRandom">DRandom</a> from <a href="https://github.com/financeCoding/DRandom">github</a>.
+<code>
+class DRandom
+{
+    DRandom.withSeed(int Seed)
+    DRandom()
+    double Sample()
+    int Next() 
+    int NextFromMax(int maxValue)
+    int NextFromRange(int minValue, int maxValue)
+    List NextInts(int size)
+    Map NextIntsUnique(int minValue, int maxValue, int size)
+    double NextDouble()
+}
+</code>

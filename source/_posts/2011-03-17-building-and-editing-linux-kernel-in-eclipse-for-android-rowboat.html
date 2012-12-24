@@ -1,0 +1,39 @@
+--- 
+title: Building and Editing Linux Kernel in Eclipse for Android Rowboat
+published: true
+layout: post
+meta: 
+  tagazine-media: a:7:{s:7:"primary";s:77:"http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand2.png";s:6:"images";a:4:{s:77:"http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand1.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand1.png";s:5:"width";s:3:"785";s:6:"height";s:3:"430";s:4:"type";s:5:"image";s:4:"area";s:6:"337550";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand2.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand2.png";s:5:"width";s:4:"1112";s:6:"height";s:3:"557";s:4:"type";s:5:"image";s:4:"area";s:6:"619384";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand3.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand3.png";s:5:"width";s:3:"817";s:6:"height";s:3:"488";s:4:"type";s:5:"image";s:4:"area";s:6:"398696";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand4.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand4.png";s:5:"width";s:3:"924";s:6:"height";s:3:"495";s:4:"type";s:5:"image";s:4:"area";s:6:"457380";s:9:"file_path";s:0:"";}}s:6:"videos";a:0:{}s:11:"image_count";s:1:"4";s:6:"author";s:8:"19211206";s:7:"blog_id";s:8:"18608612";s:9:"mod_stamp";s:19:"2011-03-20 03:29:06";}
+  _edit_last: "19211206"
+  jabber_published: "1300344070"
+status: publish
+type: post
+tags: 
+- BeagleBoard
+- BeagleTouch
+- embedded
+- Hardware
+- Kernel
+- Linux
+- TI DevKit
+- TouchScreen
+---
+First off some references I used to complete this task. This was possibly the best so far
+<a href="http://issaris.blogspot.com/2007/12/download-linux-kernel-sourcecode-from.html">http://issaris.blogspot.com/2007/12/download-linux-kernel-sourcecode-from.html</a>
+Some other references also helped <a title="Eclipse Wiki" href="http://wiki.eclipse.org/HowTo_use_the_CDT_to_navigate_Linux_kernel_source" target="_blank">Ref1</a>, <a title="linuxtopia" href="http://www.linuxtopia.org/online_books/eclipse_documentation/eclipse_c_c++_guide/topic/org.eclipse.cdt.doc.user/getting_started/eclipse_c_c++_guide_cdt_w_existing_code.htm" target="_blank">Ref2</a>, <a title="devkit8000" href="http://devkit8000.wikispaces.com/CPP+development+with+Eclipse" target="_blank">Ref3</a>, <a title="bigresource" href="http://android.bigresource.com/Android-run-android-source-code-in-linux-eclipse-bQKNaH320.html" target="_blank">Ref4
+</a>I had following file system layout when dealing with <a href="http://processors.wiki.ti.com/index.php/TI-Android-FroYo-DevKit-V2.2_UserGuide">TI_DevKit V2.2</a>
+
+<img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+After you have everything imported per directions the next big step is getting the .config setup. Follow the directions on the <a href="http://code.google.com/p/rowboat/wiki/ConfigureAndBuild">android rowboat</a> site for doing a first build of the linux kernel in commandline before trying to build from eclipse. This helps generate the .config file. Some additional settings needed was PATH and Build Command
+
+<img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand2.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<em>/home/adam/BeagleBoard/rowboat-prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games</em>
+
+<img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand4.png" alt="" />

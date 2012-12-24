@@ -1,0 +1,43 @@
+--- 
+title: "Dart: fillstyle on cavnas"
+published: true
+layout: post
+meta: 
+  email_notification: "1327296761"
+  _edit_last: "19211206"
+  jabber_published: "1327296760"
+status: publish
+type: post
+tags: 
+- Canvas
+- Dart
+- Google
+- HTML5
+- Software
+---
+To be able to draw on <a href="http://en.wikipedia.org/wiki/Canvas_element">canvas</a> in <a href="http://www.dartlang.org">Dart</a> you need two things. A canvas element defined and a canvas rendering context to draw on. In this example we use a <a href="http://api.dartlang.org/html/CanvasRenderingContext2D.html">CanvasRenderingContext2D</a> to <a href="http://api.dartlang.org/html/CanvasRenderingContext2D.html#fillStyle">fillstyle</a> a set of <a href="http://api.dartlang.org/html/CanvasRenderingContext2D.html#fillRect">rectangles</a> with rgb colors of size x and y. Modified for Dart, mozilla <a href="https://developer.mozilla.org/samples/canvas-tutorial/4_1_canvas_fillstyle.html">developer</a> example can be done the following way. Check a live example <a href="http://financecoding.github.com/dart-canvas-fillstyle/">here</a>. 
+
+[sourcecode lang="html"]
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;CanvasFillstyleExample&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;canvas id=&quot;canvas&quot; width=&quot;600&quot; height=&quot;600&quot;&gt;&lt;/canvas&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;CanvasFillstyleExample.dart.app.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+[/sourcecode]
+
+[sourcecode lang="java"]
+  draw() {
+    var ctx = document.query('canvas').getContext('2d');
+    for (var i=0;i&lt;6;i++){
+      for (var j=0;j&lt;6;j++){
+        ctx.fillStyle = 'rgb(' + (255-42.5*i).floor().toString() + ',' + 
+                         (255-42.5*j).floor().toString() + ',0)';
+        ctx.fillRect(j*25,i*25,25,25);
+      }
+    }
+  }
+[/sourcecode]

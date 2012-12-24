@@ -1,0 +1,104 @@
+--- 
+title: Installing RabbitMQ on a local vcap
+published: true
+layout: post
+meta: 
+  _edit_last: "19211206"
+  _wpas_skip_fb: "1"
+  jabber_published: "1313274771"
+status: publish
+type: post
+tags: 
+- Cloud
+- Cloudfoundry
+- Linux
+- rabbitmq
+- Software
+- vcap
+- vmware
+---
+Assuming you have already done the <a href="https://github.com/cloudfoundry/vcap">https://github.com/cloudfoundry/vcap</a> song and dance. I always have a terriable time trying to get items to work on <a href="http://www.cloudfoundry.com/" title="cloudfoundry.com">cloudfoundry.com</a> so decided to see how much of RabbitMQ is available in <a href="https://github.com/cloudfoundry/vcap" title="vcap">vcap</a>. Here is a hack to getting RabbitMQ running. I could totally have a baked install and thus the reason why I went down this dark path.
+
+Update and install the following decencies
+<em>cd ~/cloudfoundry/vcap
+git pull
+gem install bundler --no-rdock --no-ri
+rake bundler:install
+gem install amqp --version '0.7.1'
+gem install daemons --version '1.1.0'
+gem install thin --version '1.2.8'
+cd ~
+gem update vmc</em>
+
+Edit <em>~/cloudfoundry/vcap/bin/vcap</em> and add rabbit as a service
+<img src="http://financecoding.files.wordpress.com/2011/08/081311_2230_installingr1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+Fire up the services by <em>cd ~/cloudfoundry/vcap &amp;&amp; bin/vcap start</em>
+<img src="http://financecoding.files.wordpress.com/2011/08/081311_2230_installingr2.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+Set target and login
+<em>vmc target api.vcap.me
+vmc login --email blahblah@blahblah.com --passwd blahblahblah</em>
+
+BTW, if you forgot your username or password it can be found in ~/cloudfoundry/vcap/cloud_controller/db/cloudcontroller.sqlite3 . Just rip this file apart or add a new hash for the password.
+Check to see the runtimes are correctly available
+<img src="http://financecoding.files.wordpress.com/2011/08/081311_2230_installingr3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+<img src="http://financecoding.files.wordpress.com/2011/08/081311_2230_installingr4.png" alt="" />
+
+Check out the following sample to package up
+<em>git clone <a href="https://github.com/rabbitmq/rabbitmq-cloudfoundry-samples.git">https://github.com/rabbitmq/rabbitmq-cloudfoundry-samples.git</a>
+cd ~/rabbitmq-cloudfoundry-samples/spring &amp;&amp; mvn package &amp;&amp; cd target &amp;&amp; vmc push</em>
+
+You can follow <a href="http://support.cloudfoundry.com/entries/20322602-getting-started-with-the-rabbitmq-service-from-a-spring-application">http://support.cloudfoundry.com/entries/20322602-getting-started-with-the-rabbitmq-service-from-a-spring-application</a> to deploy the app correctly.
+
+Before you actually create the service you want to check the logs out… This is the issue I had with a local vcap and rabbit. The user and vhost never get added to rabbitmq, doing this manually will make the service work. Make sure to tail the logs before running the vmc create-service. That way you can pull out the actual username/password/vhost that vcap will try to send to rabbitmqctl.
+
+<em>tail -f ~/cloudfoundry/vcap/cloud_controller/log/development.log
+vmc create-service rabbitmq
+vmc bind-service rabbitmq-XXXXX rabbit-simple</em>
+<img src="http://financecoding.files.wordpress.com/2011/08/081311_2230_installingr5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+After creating the service the logs will display the username/password/vhost but when you bind the service to an application the username and password change and you need to add those by hand with rabbitmqctl
+<img src="http://financecoding.files.wordpress.com/2011/08/081311_2230_installingr6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+The first set of username/password will not be used, after binding you need the current ones. In this case they were
+<strong>user: uz25LQnFmJTrC
+pass: pfah5U5dFiSRo
+vhost: vf883c025ec524e55b11b0db4dcce928e</strong>
+
+At this point you can add the data by hand, restart rabbitmq (sometimes queues decided to get eaten) and you should be ready to go.
+<em>sudo rabbitmqctl add_user uz25LQnFmJTrC pfah5U5dFiSRo
+sudo rabbitmqctl add_vhost vf883c025ec524e55b11b0db4dcce928e
+sudo rabbitmqctl set_permissions -p vf883c025ec524e55b11b0db4dcce928e uz25LQnFmJTrC ".*" ".*" ".*"
+sudo /etc/init.d/rabbitmq-server restart</em>
+
+<img src="http://financecoding.files.wordpress.com/2011/08/081311_2230_installingr7.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<img src="http://financecoding.files.wordpress.com/2011/08/081311_2230_installingr8.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<img src="http://financecoding.files.wordpress.com/2011/08/081311_2230_installingr9.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+Some useful logs to keep tailed
+<em>~/cloudfoundry/vcap/cloud_controller/log/development.log
+/var/log/rabbitmq/*</em>
+
+Did I need to go to all this trouble, probably not, but it was fun to investigate what vcap is made and how things are done internally. Since all the code looks like its in place, my guess on how to properly enable rabbit service is to find out what should triggers the calls to ~/cloudfoundry/vcap/services/rabbit/lib/rabbit_service/rabbit_node.rb and debug why the calls are actually failing to contact the local rabbitmq service.
+
+Useful links
+<a href="http://support.cloudfoundry.com/entries/20346977-rabbitmq-cloud-foundry-cloud-messaging-that-just-works">http://support.cloudfoundry.com/entries/20346977-rabbitmq-cloud-foundry-cloud-messaging-that-just-works</a>
+<a href="https://github.com/rabbitmq/rabbitmq-cloudfoundry-samples">https://github.com/rabbitmq/rabbitmq-cloudfoundry-samples</a>
+<a href="http://support.cloudfoundry.com/entries/20322602-getting-started-with-the-rabbitmq-service-from-a-spring-application">http://support.cloudfoundry.com/entries/20322602-getting-started-with-the-rabbitmq-service-from-a-spring-application</a>
+<a href="https://github.com/cloudfoundry/vcap">https://github.com/cloudfoundry/vcap</a>
+<a href="http://support.cloudfoundry.com/entries/20012337-getting-started-guide-command-line-vmc-users">http://support.cloudfoundry.com/entries/20012337-getting-started-guide-command-line-vmc-users</a>
+<a href="https://raw.github.com/cloudfoundry/vcap/master/setup/install">https://raw.github.com/cloudfoundry/vcap/master/setup/install</a>
+<a href="http://support.cloudfoundry.com/entries/20052116-rabbit-on-local-instance-of-vcap">http://support.cloudfoundry.com/entries/20052116-rabbit-on-local-instance-of-vcap</a>
+<a href="http://www.rabbitmq.com/admin-guide.html">http://www.rabbitmq.com/admin-guide.html</a>
+<a href="http://www.rabbitmq.com/man/rabbitmqctl.1.man.html">http://www.rabbitmq.com/man/rabbitmqctl.1.man.html</a>

@@ -1,0 +1,36 @@
+--- 
+title: "Dart: Updated Dartium builds with breakpoint support for Linux and Mac"
+published: true
+layout: post
+meta: 
+  email_notification: "1327562139"
+  _edit_last: "19211206"
+  jabber_published: "1327562133"
+status: publish
+type: post
+tags: 
+- Dart
+- Dartium
+- Google
+- Software
+---
+As <a href="https://plus.google.com/118397406534237711570/posts">Seth Ladd</a> has commented on <a href="https://plus.google.com/118397406534237711570/posts/M6FCHkixfuL">google plus</a>, <a href="http://code.google.com/p/dart/wiki/BuildingDartium">Dartium</a> now has breakpoint support. Big win in such an early stage of the project. Providing Release builds for Mac and Linux below. While I was trying breakpoints out, one thing noticed was to getting scripts to show up properly in inspector you need to hit an extra refresh on the page. My public is can be found on <a href="http://pgp.mit.edu:11371/pks/lookup?op=get&amp;search=0x66ED7ACDB02CE8A1">pgp.mit.edu</a>. 
+
+
+[sourcecode lang="bash"]
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/Chromium.app.tar.gz
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/Chromium.app.tar.gz.sig
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/Chromium.app.tar.gz.md5
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/README.txt
+gpg --verify Chromium.app.tar.gz.sig Chromium.app.tar.gz
+md5sum -c Chromium.app.tar.gz.md5
+[/sourcecode]
+[sourcecode lang="bash"]
+wget http://gsdview.appspot.com/dart-editor-archive-continuous/latest/DartBuild-linux.gtk.x86.zip
+wget http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz
+wget http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz.sig
+wget http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz.md5
+wget http://dl.dropbox.com/u/33138127/dartium/README.txt
+gpg --verify dartium-linux-32bit-Release.tar.gz.sig dartium-linux-32bit-Release.tar.gz
+md5sum -c dartium-linux-32bit-Release.tar.gz.md5
+[/sourcecode]

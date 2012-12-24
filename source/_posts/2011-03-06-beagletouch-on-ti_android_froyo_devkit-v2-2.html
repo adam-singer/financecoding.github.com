@@ -1,0 +1,46 @@
+--- 
+title: BeagleTouch on TI_Android_Froyo_DevKit-V2.2
+published: true
+layout: post
+meta: 
+  tagazine-media: a:7:{s:7:"primary";s:78:"http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch12.png";s:6:"images";a:3:{s:78:"http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch12.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch12.png";s:5:"width";s:3:"739";s:6:"height";s:3:"243";s:4:"type";s:5:"image";s:4:"area";s:6:"179577";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch22.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch22.png";s:5:"width";s:3:"452";s:6:"height";s:2:"52";s:4:"type";s:5:"image";s:4:"area";s:5:"23504";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch32.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch32.png";s:5:"width";s:3:"372";s:6:"height";s:3:"233";s:4:"type";s:5:"image";s:4:"area";s:5:"86676";s:9:"file_path";s:0:"";}}s:6:"videos";a:0:{}s:11:"image_count";s:1:"3";s:6:"author";s:8:"19211206";s:7:"blog_id";s:8:"18608612";s:9:"mod_stamp";s:19:"2011-03-20 03:29:00";}
+  _edit_last: "19211206"
+  jabber_published: "1299446525"
+status: publish
+type: post
+tags: 
+- BeagleBoard
+- BeagleTouch
+- embedded
+- Hardware
+- Kernel
+- Linux
+- TI DevKit
+- TouchScreen
+---
+Liquidware's <a href="http://www.liquidware.com/shop/show/BB-BT/BeagleTouch">BeagleTouch</a> provides a nice display device for <a href="http://beagleboard.org/">BeagleBoard</a> developer. They provide non android <a href="https://github.com/liquidware/liquidware_beagleboard_linux/tree/liquidware">linux</a> kernel source code to jump in right away to use it. <a href="http://antipastohw.pbworks.com/w/page/27129517/BeagleTouch">BeagleTouch blog</a> post by will on <a href="http://antipastohw.pbworks.com/w/page/26554120/FrontPage">antipastohw</a>. Here is some crude patches to get started with it on <a href="http://code.google.com/p/rowboat/">rowboat</a> / <a href="http://processors.wiki.ti.com/index.php/TI-Android-FroYo-DevKit-V2.2_UserGuide">TI DevKit</a>. I have my patches located on google docs:
+
+<a href="https://docs.google.com/leaf?id=0B29MR2FlgtejMjFjOWVhOGYtOThiNC00NGJkLTk5NTktMDE3ZTBiZjhhYTY0&amp;hl=en"><span style="font-family:Arial;font-size:10pt;">BeagleTouch.TI_Android_Froyo_DevKit-V2.2.config</span></a><span style="color:black;font-family:Arial;font-size:10pt;">
+</span>
+
+<a href="https://docs.google.com/leaf?id=0B29MR2FlgtejODdjZDBhNzQtZmYyNC00MWVmLWI4YzYtN2Y2ODNhZjlhZmRk&amp;hl=en"><span style="font-family:Arial;font-size:10pt;">BeagleTouch.TI_Android_Froyo_DevKit-V2.2.patch</span></a><span style="color:black;font-family:Arial;font-size:10pt;">
+</span>
+
+Apply the patch accordingly and copy over the config into the kernel source tree.
+
+<img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+One issue that was noticeable from a direct patch of code was the y-axis being inverted. I corrected it with a hard coded reference value for now.
+
+<img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch22.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch32.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+This patch doesn't help when offset loss happens in the touch screen. Looking info using <a href="https://github.com/kergoth/tslib">tslib</a> to capture better data settings and a linear formula for pointer <a href="http://wcyan.spaces.live.com/blog/cns!69F0ECE1192E739!381.entry">calculations</a>.  Some good instructions for compiling tslib on android can be found on <a href="http://www.eefocus.com/wenes1/blog/10-05/190293_09ed8.html">wenes1's blog</a>. A different direction to fix this issue would be to use <a href="http://androidzaurus.seesaa.net/article/90045743.html">Y_AXIS_MAX constant</a>.
+
+[youtube=http://www.youtube.com/watch?v=8594I2NDPsM]
+
+It was hard for me to find any direct documentation on how touch screen drivers should be designed and configured in Android. If you know of any please ping <a href="mailto:financecoding@gmail.com">me</a>.

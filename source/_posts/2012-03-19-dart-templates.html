@@ -1,0 +1,218 @@
+--- 
+title: Dart Templates
+published: true
+layout: post
+meta: 
+  email_notification: "1332140941"
+  _edit_last: "19211206"
+  _wpas_skip_fb: "1"
+  jabber_published: "1332140940"
+status: publish
+type: post
+tags: 
+- Dart
+- Software
+- Template
+---
+As <a href="http://blog.sethladd.com/2012/03/first-look-at-darts-html-template.html" target="_blank">mentioned</a> by <a href="https://plus.google.com/118397406534237711570/posts" title="Seth Ladd" target="_blank">Seth Ladd</a>, Dart now has a template system in the <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge" title="dart bleeding_edge" target="_blank">bleeding_edge</a> branch. One way to learn what is offered, is to look at the <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/template/uitest.dart" target="_blank">uitest.dart</a> unit test. Since the template code is in flux I've created some scripts to help init and build templates. A sample <a href="https://github.com/financeCoding/DartTemplateExample" target="_blank">Dart Template Example</a> is provided to follow along with this post. <em>Please keep in mind this is currently subject to change by the Dart team, provide feedback to help the project along.</em> 
+
+<a href="https://github.com/financeCoding/DartTemplateExample/blob/master/exportTemplateUtils.sh" target="_blank">exportTemplateUtils.sh</a> script is used for exporting all the dependent code from the dartlang code base. The <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/utils/template/template">template</a> build script depends on <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/lib">lib</a>, <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/css">css</a>, and <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/template">template</a> folders from the <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils">utils</a> directory.
+[code lang="shell"]
+22:54:59-adam@Adams-MacBook-Air:~/dart/DartTemplateExample
+$ ./exportTemplateUtils.sh 
+A    lib
+[...]
+Exported revision 5635.
+A    css
+[...]
+Exported revision 5635.
+A    template
+[...]
+Exported revision 5635.
+[/code] 
+The <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DivisionSales.tmpl" target="_blank">DivisionSales.tmpl</a> was ripped from the unit test and adjusted for the project. The <em><strong>template</strong></em> keyword is used for defining the template name. Inside the template you can have css, html and scripting. Dart team is currently experimenting with the following. 
+[code lang="html"]
+template DivisionSales(var divisions) {
+  css {
+    .division-item {
+      background-color: #bbb;
+      border-top: 2px solid white;
+      line-height: 20pt;
+      padding-left: 5px;
+    }
+    .product-item {
+      background-color: lightgray;
+      margin-left: 10px;
+      border-top: 2px solid white;
+      line-height: 20pt;
+    }
+    .product-title {
+      position: absolute;
+      left: 45px;
+    }
+    .product-name {
+      font-weight: bold;
+      position: absolute;
+      left: 100px;
+    }
+    .product-users {
+      position: absolute;
+      right: 150px;
+      font-style: italic;
+      color: gray;
+      width: 110px;
+    }
+    .expand-collapse {
+      margin-left: 5px;
+      margin-right: 5px;
+      vertical-align: top;
+      cursor: pointer;
+    }
+    .expand {
+      font-size: 9pt;
+    }
+    .collapse {
+      font-size: 8pt;
+    }
+    .show-sales {
+      display: inherit;
+    }
+    .hide-sales {
+      display: none;
+    }
+    .sales-item {
+      font-family: arial;
+      background-color: lightgray;
+      margin-left: 10px;
+      border-top: 1px solid white;
+      line-height: 18pt;
+      padding-left: 5px;
+    }
+    .ytd-sales {
+      position: absolute;
+      left: 100px;
+    }
+  }
+  &lt;div&gt;
+    ${#each divisions}
+      &lt;div class=&quot;division-item&quot;&gt;
+        &lt;span&gt;${name}&lt;/span&gt;
+        &lt;span&gt;&amp;nbsp;-&amp;nbsp;&lt;/span&gt;
+        &lt;span&gt;${id}&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        ${#each divisions.products}
+          &lt;div class=&quot;product-item&quot;&gt;
+            &lt;span var=productZippy class=&quot;expand-collapse expand&quot;&gt;&#9660;&lt;/span&gt;
+            &lt;span class='product-title'&gt;Product&lt;/span&gt;
+            &lt;span class=&quot;product-name&quot;&gt;${name}&lt;/span&gt;
+            &lt;span class=&quot;product-users&quot;&gt;${users}&amp;nbsp;&lt;/span&gt; 
+            &lt;div class=&quot;show-sales&quot;&gt;
+              ${#each products.sales}
+                &lt;div class=&quot;sales-item&quot;&gt;
+                  &lt;span&gt;${country}&lt;/span&gt;
+                  &lt;span class=&quot;ytd-sales&quot;&gt;${yearly}&lt;/span&gt;
+                &lt;/div&gt;
+              ${/each}
+            &lt;/div&gt;
+          &lt;/div&gt;
+        ${/each}
+      &lt;/div&gt;
+    ${/each}
+  &lt;/div&gt;
+}
+
+template Header(String company, Date date) {
+  css {
+    .header {
+      background-color: slateGray;
+      font-family: arial;
+      color: lightgray;
+      font-weight: bold;
+      padding-top: 20px;
+    }
+  }
+  &lt;div class='header' align=center&gt;
+    &lt;h2&gt;${company}&lt;/h2&gt;
+    &lt;div align=right&gt;${date}&lt;/div&gt;
+  &lt;/div&gt;
+}
+[/code]
+The scripting is very basic at the moment. Looking at the <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/utils/template/tokenkind.dart#L44" target="_blank">tokenkind.dart</a> one can get an idea of what is supported. 
+[code lang="java"]
+[...]
+  // Synthesized tokens:
+
+  static final int END_NO_SCOPE_TAG = 50;       // /&gt;
+  static final int START_EXPRESSION = 51;       // ${
+  static final int START_COMMAND = 52;          // ${#
+  static final int END_COMMAND = 53;            // ${/
+  static final int EACH_COMMAND = 53;           // ${#each list}
+  static final int WITH_COMMAND = 54;           // ${#with object}
+  static final int IF_COMMAND = 55;             // ${#if (expression)}
+  static final int ELSE_COMMAND = 56;           // ${#else}
+[...]
+[/code]
+<a href="https://github.com/financeCoding/DartTemplateExample/blob/master/buildTemplates.sh" target="_blank">buildTemplates.sh</a> script will loop over all *.tmpl files in the current working directory and generate *.dart files for each one. 
+[code lang="shell"]
+22:57:41-adam@Adams-MacBook-Air:~/dart/DartTemplateExample
+$ ./buildTemplates.sh 
+
+Building dart templates
+
+Parsed /Users/adam/dart/DartTemplateExample/DivisionSales.tmpl in 3134 msec.
+Codegen /Users/adam/dart/DartTemplateExample/DivisionSales.tmpl in 215 msec.
+Wrote file /Users/adam/dart/DartTemplateExample/DivisionSales.dart in 215 msec.
+
+Copy &amp; Paste import statements
+
+#source('DivisionSales.dart');
+
+[/code]
+After the dart <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DivisionSales.dart" target="_blank">code</a> is generated the following source statements can be copied into the <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DartTemplateExample.dart" target="_blank">main</a>/lib. 
+[code lang="javascript"]
+#import('dart:html');
+#source('DivisionSales.dart');
+
+class Sales {
+  String country;
+  String yearly;
+  Sales(this.country, this.yearly);
+}
+
+class Products {
+  List&lt;Sales&gt; sales;
+  String name;
+  String users;
+  Products(this.name, this.users, this.sales);
+}
+
+class Divisions {
+  List&lt;Products&gt; products;
+  String id;
+  String name;
+  Divisions(this.id, this.name, this.products);
+}
+
+class DartTemplateExample {
+
+  DartTemplateExample() {
+  }
+
+  void run() {
+    document.body.elements.add(new Header(&quot;Dollar Shave Club&quot;, new Date.now().toString()).root);
+    
+    List&lt;Sales&gt; sales = [new Sales(&quot;USA&quot;, &quot;3500&quot;), new Sales(&quot;USA&quot;, &quot;4500&quot;)];
+    List&lt;Products&gt; products = [new Products(&quot;Razor&quot;, &quot;Sammy&quot;, sales)];
+    List&lt;Divisions&gt; divisions = [new Divisions(&quot;South West&quot;, &quot;A-Team&quot;, products), new Divisions(&quot;North East&quot;, &quot;B-Team&quot;, products),];
+    
+    DivisionSales divisionSales = new DivisionSales(divisions);
+    document.body.elements.add(divisionSales.root);
+  }
+}
+
+void main() {
+  new DartTemplateExample().run();
+}
+[/code]
+This example is deployed on <a href="http://financecoding.github.com/DartTemplateExample/DartTemplateExample.html" target="_blank">github</a>. You can also experiment with the template system to see what code gets generated on a <a href="http://financecoding.github.com/DartTemplateExample/utils/template/template.html">live page</a>. At first glance the template system is simple enough to use, I would assume things would change in the future. For now the Dart team has provided enough for people to start banging away and provide feedback. 

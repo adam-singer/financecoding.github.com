@@ -1,0 +1,31 @@
+--- 
+title: "Dart: Exploring the DartVM from a debugger on Mac OSX"
+published: true
+layout: post
+meta: 
+  email_notification: "1326525978"
+  _edit_last: "19211206"
+  jabber_published: "1326525976"
+status: publish
+type: post
+tags: 
+- Dart
+- DartVM
+- Google
+---
+This may be useless to many, obvious to some and complete wrong for others, but I would like to comment for the wondering dart on how to debug the VM. Goal of this post is to provide a quick and reproducible way to explore the <a href="http://dart.googlecode.com/svn/branches/bleeding_edge/dart/runtime/">DartVM</a> at runtime on Mac OSX. I personally enjoy watching code from a debugger, so this was helpful to explore what is going on under the hood. We currently have two projects to debug from. <a href="https://github.com/syntheticpp/dartruntime/blob/cmake/">dartruntime</a> and <a href="http://code.google.com/p/dart/wiki/GettingTheSource?tm=4">dart.googlecode.com</a>. Get this version of <a href="http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/indigo/SR1/eclipse-cpp-indigo-SR1-incubation-macosx-cocoa.tar.gz">Eclipse Mac OSX 32bit cocoa</a>.
+
+I typically use the cmake branch cause I'm working with dart on Mac OSX and I dont want to touch xcode. The main <a href="code.google.com/p/dart">dart</a> project generates xcode projects for builds, you could use xcode to edit the c++ code. Having to choose between eclipse or xcode, I personally pick eclipse. Using the cmake project is a little cleaner/simpiler/complete to import from as Makefile project. (I could be wrong, but didn't want to invest more time into importing stuff I'm not interested in). Setting up DartVM the song and dance from googlecode goes like <a href="http://code.google.com/p/dart/wiki/PreparingYourMachine">this</a>. For using the cmake branch provided by <a href="https://github.com/syntheticpp">Peter Kümmel</a> is as follows:[sourcecode lang="bash"]git clone git@github.com:syntheticpp/dartruntime.git
+cd dartruntime
+git checkout -b cmake origin/cmake
+cd ..
+mkdir build
+cd build
+cmake ../dartruntime/cmake/
+make -j4
+echo &quot;main() { print(\&quot;Hello World\!\&quot;); }&quot; &gt; hello.dart
+./bin/dart ./hello.dart[/sourcecode]
+After having a debug build on either branch you can target the executable directly by choosing to importing C/C++ Executable. Next select the executable you want to target from either build. The debug builds will provide all the symbols and source code mapping. Name the project and debug launch target as you need. Set the arguments to pass to the dartvm, here we are setting a hello world sample based on an <a href="http://en.wikipedia.org/wiki/Actor_model">Actor Model</a>. The debugger will break on the main entry point.
+[gallery]
+
+It is proabably possible that the dart runtime envionment setup is similar to what chrome is used too, so the instructions on how to setup <a href="http://code.google.com/p/chromium/wiki/LinuxEclipseDev">eclipse</a> for chrome may also apply. I have not tried it out my self. A follow up post will show how to import the c++ code to eclipse and build from generated Makefiles.

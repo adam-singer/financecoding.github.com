@@ -1,0 +1,73 @@
+--- 
+title: Dart classify markup example
+published: true
+layout: post
+meta: 
+  email_notification: "1328776053"
+  _edit_last: "19211206"
+  jabber_published: "1328776049"
+status: publish
+type: post
+tags: 
+- Dart
+- Google
+- Software
+---
+I was looking for a simple way to create some markup dynamically of syntax highlighted dart code, in dart! A big thanks to <a href="https://plus.google.com/100798142896685420545/posts">Bob Nystrom</a> from the Dart team for suggesting the simplest solution. Use <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/dartdoc/classify.dart">classify</a> from <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/dartdoc/">dartdoc</a>.
+
+A live example of this can be found <a href="http://financecoding.github.com/dart-classify-example/index.html">here</a> along with the <a href="https://github.com/financeCoding/dart-classify-example">source code</a>.
+
+<strong>Example of how to use dartdoc/classify.dart</strong>
+<a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/dartdoc/">dartdoc</a> is used for generating static HTML for the <a href="http://api.dartlang.org">api.dartlang.org</a> site. This example shows how importing <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/dartdoc/classify.dart">dartdoc/classify.dart</a> one could generate syntax highlighted dart code at runtime.
+
+<strong>Patching</strong>
+Currently you need to modify the import statement to reference the location of classify.dart.
+[code lang="java"]
+#import('../../dart_bleeding/dart/utils/dartdoc/classify.dart', prefix:&quot;classify&quot;);
+[/code]
+
+<strong>Building</strong>
+Build with minfrog for best results. At the moment dart editor does not seem happy with me on importing dartdoc/classify.dart. So compiling with minfrog worked best.
+[code lang="bash"]
+minfrog --compile-only --out=ClassifyExample.dart.js ClassifyExample.dart
+[/code]
+
+<strong>Using classify</strong>
+This is the easiest part! Create a <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/frog/source.dart">SourceFile</a> and add pass it along to <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/dartdoc/classify.dart">classifySource</a> which will return a properly formatted string of span elements that has class attributes set. From that point you can add a css style to the span elements. 
+[code lang="java"]
+    String code = &quot;main() { print('hello world'); }&quot;;
+    classify.SourceFile sf = new classify.SourceFile(&quot;sf.dart&quot;, code);
+    String c = classify.classifySource(sf);
+[/code]
+[code lang="html"]
+   &lt;span class=&quot;i &quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p &quot;&gt;(&lt;/span&gt;&lt;span class=&quot;p &quot;&gt;)&lt;/span&gt;&lt;span&gt; 
+   &lt;/span&gt;&lt;span class=&quot;p &quot;&gt;{&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span class=&quot;i &quot;&gt;print&lt;/span&gt;
+   &lt;span class=&quot;p &quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s si&quot;&gt;'hello world'&lt;/span&gt;
+   &lt;span class=&quot;p &quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p &quot;&gt;;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span class=&quot;p &quot;&gt;}&lt;/span&gt; 
+[/code]
+
+Example css style
+[code lang="css"]
+/* Syntax highlighting. */
+/* Note: these correspond to the constants in classify.dart. */
+.e { color: hsl(  0, 100%, 70%); } /* Error */
+.c { color: hsl(220,  20%, 65%); } /* Comment */
+.i { color: hsl(220,  20%, 20%); } /* Identifier */
+.k { color: hsl(220, 100%, 50%); } /* Keyword */
+.p { color: hsl(220,  20%, 50%); } /* Punctuation */
+.o { color: hsl(220,  40%, 50%); } /* Operator */
+.s { color: hsl( 40,  90%, 40%); } /* String */
+.n { color: hsl( 30,  70%, 50%); } /* Number */
+.t { color: hsl(180,  40%, 40%); } /* Type Name */
+.r { color: hsl(200, 100%, 50%); } /* Special Identifier */
+.a { color: hsl(220, 100%, 45%); } /* Arrow */
+
+/* Interpolated expressions within strings. */
+.si {
+  background: hsl(40, 100%, 90%);
+}
+
+.s.si { background: hsl(40, 80%, 95%); }
+.i.si { color: hsl(40, 30%, 30%); }
+.p.si { color: hsl(40, 60%, 40%); }
+[/code]

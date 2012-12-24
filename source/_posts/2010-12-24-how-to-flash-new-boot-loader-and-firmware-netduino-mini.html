@@ -1,0 +1,93 @@
+--- 
+title: How to Flash New Boot Loader and Firmware netduino mini
+published: true
+layout: post
+meta: 
+  tagazine-media: a:7:{s:7:"primary";s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn6.png";s:6:"images";a:20:{s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn1.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn1.png";s:5:"width";s:3:"289";s:6:"height";s:3:"339";s:4:"type";s:5:"image";s:4:"area";s:5:"97971";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn2.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn2.png";s:5:"width";s:3:"455";s:6:"height";s:3:"141";s:4:"type";s:5:"image";s:4:"area";s:5:"64155";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn3.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn3.png";s:5:"width";s:3:"409";s:6:"height";s:3:"223";s:4:"type";s:5:"image";s:4:"area";s:5:"91207";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn4.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn4.png";s:5:"width";s:3:"423";s:6:"height";s:3:"283";s:4:"type";s:5:"image";s:4:"area";s:6:"119709";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn5.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn5.png";s:5:"width";s:3:"365";s:6:"height";s:3:"145";s:4:"type";s:5:"image";s:4:"area";s:5:"52925";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn6.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn6.png";s:5:"width";s:3:"821";s:6:"height";s:3:"644";s:4:"type";s:5:"image";s:4:"area";s:6:"528724";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn7.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn7.png";s:5:"width";s:3:"798";s:6:"height";s:3:"217";s:4:"type";s:5:"image";s:4:"area";s:6:"173166";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn8.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn8.png";s:5:"width";s:3:"812";s:6:"height";s:3:"636";s:4:"type";s:5:"image";s:4:"area";s:6:"516432";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn9.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn9.png";s:5:"width";s:3:"318";s:6:"height";s:3:"104";s:4:"type";s:5:"image";s:4:"area";s:5:"33072";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn10.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn10.png";s:5:"width";s:3:"479";s:6:"height";s:3:"102";s:4:"type";s:5:"image";s:4:"area";s:5:"48858";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn11.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn11.png";s:5:"width";s:3:"485";s:6:"height";s:3:"207";s:4:"type";s:5:"image";s:4:"area";s:6:"100395";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn12.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn12.png";s:5:"width";s:3:"404";s:6:"height";s:3:"221";s:4:"type";s:5:"image";s:4:"area";s:5:"89284";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn13.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn13.png";s:5:"width";s:3:"562";s:6:"height";s:3:"130";s:4:"type";s:5:"image";s:4:"area";s:5:"73060";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn14.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn14.png";s:5:"width";s:3:"717";s:6:"height";s:3:"560";s:4:"type";s:5:"image";s:4:"area";s:6:"401520";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn15.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn15.png";s:5:"width";s:3:"707";s:6:"height";s:3:"557";s:4:"type";s:5:"image";s:4:"area";s:6:"393799";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn16.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn16.png";s:5:"width";s:3:"454";s:6:"height";s:3:"150";s:4:"type";s:5:"image";s:4:"area";s:5:"68100";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn17.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn17.png";s:5:"width";s:3:"713";s:6:"height";s:3:"560";s:4:"type";s:5:"image";s:4:"area";s:6:"399280";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn18.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn18.png";s:5:"width";s:3:"672";s:6:"height";s:3:"612";s:4:"type";s:5:"image";s:4:"area";s:6:"411264";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn19.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn19.png";s:5:"width";s:3:"341";s:6:"height";s:3:"270";s:4:"type";s:5:"image";s:4:"area";s:5:"92070";s:9:"file_path";s:0:"";}s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn20.png";a:6:{s:8:"file_url";s:78:"http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn20.png";s:5:"width";s:3:"515";s:6:"height";s:3:"276";s:4:"type";s:5:"image";s:4:"area";s:6:"142140";s:9:"file_path";s:0:"";}}s:6:"videos";a:0:{}s:11:"image_count";s:2:"20";s:6:"author";s:8:"19211206";s:7:"blog_id";s:8:"18608612";s:9:"mod_stamp";s:19:"2011-03-20 03:28:43";}
+  _edit_last: "19211206"
+  jabber_published: "1293168018"
+status: publish
+type: post
+tags: 
+- .NET
+- embedded
+- Hardware
+- netduino
+---
+<h5>I got my netduino in the mail and whatever was flashed on it was toast, so after a few posts on the forum I got great advice on how to flash the Boot Loader (TinyBooter) and firmware (ER_CONFIG and ER_FLASH)</h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Erase Chip</strong>
+</span></h5>
+<h5>Erase the chip by applying +5v to the gold pad located by pin 12</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Download the TinyBooter</strong>
+</span></h5>
+<h5><a href="http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/">http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/</a></h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn2.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Run SAM-BA</strong>
+</span></h5>
+<h5>Run the SAM-BA application from ATMEL (Note if your on windows 7 Ultimate stick with an older version of SAM-BA, do not use 2.10.)</h5>
+<h5>The current package I have installed is from: Install_AT91-ISP_v1.13.exe</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Power Up</strong>
+</span></h5>
+<h5>Power up the netdruino by connecting the power and serial TX/RX on pin 1 &amp; 2 (Note: make sure you have completely removed power after sending +5v to the gold pad)</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn4.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Chose serial port and board</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>If the first time does not succeed power down and try again. And if it still does not succeed try hitting the gold pad for a second time.</h5>
+<h5>If SAM-BA can communicate and get a valid id on the chip you should be presented with the following screen</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Choose a file to send while in the "Flash" tab.</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn7.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Click Send File. The SAM-BA application isn't that great and locks up while sending data over the serial port. If possible just wait. This part of the process will take a while, even if you don't see data being sent over the serial port stuff is going on.</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn8.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>SAM-BA will ask you if you want to "lock involved lock region(s) (0 to 2)", I choose "No" on this.</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn9.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>At this point you should have succeefully flashed the Boot Loader onto the netduino mini. Click on "Compare sent file with memory" to ensure the Boot Loader did not get corrupted in the process. If everything is fine you should be presented with something similar to  the following screen.</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn10.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>While still in the "Flash" tab execute the script "Boot from Flash (GPNVM2)" by clicking on the "Execute" button. The terminal on the bottom of the app should display "-I- GPNVM2 set"</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn11.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Download and extract the firmware</strong>
+</span></h5>
+<h5><a href="http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/">http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/</a></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Run MFDeploy.exe</strong>
+</span></h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Remove power from the netduino before trying to pin the device.</h5>
+<h5>If you open a putty terminal and repower the device you should see the following</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn13.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>This should help you determine if the Boot Loader that has been flash is working.</h5>
+<h5>Choose the proper COM port the netduino is on.</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn14.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Try and ping</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn15.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Erase</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn16.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Deploy Firmware</strong>
+</span></h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn17.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>A successful flash should look something like this</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn18.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Try sending some debug commands</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn19.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn20.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>

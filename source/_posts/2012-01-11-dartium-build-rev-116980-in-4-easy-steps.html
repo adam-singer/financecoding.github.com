@@ -1,0 +1,69 @@
+--- 
+title: Dartium Build rev 116980 in 4 easy steps
+published: true
+layout: post
+meta: 
+  email_notification: "1326334813"
+  _edit_last: "19211206"
+  _wpas_skip_fb: "1"
+  jabber_published: "1326334795"
+status: publish
+type: post
+tags: 
+- Dart
+- DartEditor
+- Dartium
+- Google
+- Linux
+- Software
+---
+<p style="margin-left:22pt;">At the moment <a href="http://code.google.com/p/dart/wiki/BuildingDartium">Dartium builds</a> are not available on Googles <a href="http://gsdview.appspot.com/dart-editor-archive-continuous/latest/">continuous integration server</a>. So I decided to distribute a release build for <a href="http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz">Linux 32bit</a> . Based on the wiki directions its simple enough for anyone to generate, I felt the need to distribute a build for those who don't have the time to invest in downloading/configuring/building. An important tip testing dart code in Dartium is to include the additional script call that executes the entry into main(). This is done by adding an additional &lt;script&gt;{}&lt;/script&gt; following the line where the dart code is loaded.</p>
+<p style="margin-left:22pt;">The build of Dartium provide is from Rev: 116980</p>
+<p style="margin-left:22pt;"><img src="http://financecoding.files.wordpress.com/2012/01/011212_0219_dartiumbuil1.png" alt="" /></p>
+
+<ul>
+	<li>
+<h3>Get the latest version of DartEditor and Dartium</h3>
+</li>
+</ul>
+<pre>wget <a href="http://gsdview.appspot.com/dart-editor-archive-continuous/latest/DartBuild-linux.gtk.x86.zip">http://gsdview.appspot.com/dart-editor-archive-continuous/latest/DartBuild-linux.gtk.x86.zip</a>
+wget <a href="http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz">http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz</a>
+wget <a href="http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz.md5">http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz.md5</a>
+wget <a href="http://dl.dropbox.com/u/33138127/dartium/README.txt">http://dl.dropbox.com/u/33138127/dartium/README.txt</a>
+md5sum -c dartium-linux-32bit-Release.tar.gz.md5</pre>
+<ul>
+	<li>Register Dartium on Ubuntu as a registered application so DartEditor can pick it up. Modify dartium-browser.desktop to the chrome-wrapper where Dartium was unzipped.<img class="alignnone" src="http://financecoding.files.wordpress.com/2012/01/011212_0219_dartiumbuil2.png" alt="" width="444" height="172" /></li>
+</ul>
+<pre>wget <a href="http://dl.dropbox.com/u/33138127/dartium/dartium-browser.desktop">http://dl.dropbox.com/u/33138127/dartium/dartium-browser.desktop</a>
+vim dartium-browser.desktop
+wget <a href="http://dl.dropbox.com/u/33138127/dartium/dartium-browser.desktop.ubuntu.install.sh">http://dl.dropbox.com/u/33138127/dartium/dartium-browser.desktop.ubuntu.install.sh</a>
+sudo ./dartium-browser.desktop.ubuntu.install.sh</pre>
+<ul>
+	<li>
+<h3>Register Dartium as the browser to launch in DartEditor</h3>
+</li>
+</ul>
+<img src="http://financecoding.files.wordpress.com/2012/01/011212_0219_dartiumbuil3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+<ul>
+	<li>
+<h3>Create a famous HelloWorld.</h3>
+</li>
+</ul>
+<img src="http://financecoding.files.wordpress.com/2012/01/011212_0219_dartiumbuil4.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<em>Adjust the html to properly execute dart.</em>
+
+<img src="http://financecoding.files.wordpress.com/2012/01/011212_0219_dartiumbuil5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<img src="http://financecoding.files.wordpress.com/2012/01/011212_0219_dartiumbuil6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+<p style="text-align:justify;">Watch <a href="http://en.wikipedia.org/wiki/Poison_dart_frog">dart</a> in its <a href="http://en.wiktionary.org/wiki/-ium">metal</a> state.</p>
+Links:
+<pre><a href="http://dl.dropbox.com/u/33138127/dartium/dartium-browser.desktop">http://dl.dropbox.com/u/33138127/dartium/dartium-browser.desktop</a>
+<a href="http://dl.dropbox.com/u/33138127/dartium/dartium-browser.desktop.ubuntu.install.sh">http://dl.dropbox.com/u/33138127/dartium/dartium-browser.desktop.ubuntu.install.sh</a>
+<a href="http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz">http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz</a>
+<a href="http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz.md5">http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz.md5</a>
+<a href="http://dl.dropbox.com/u/33138127/dartium/README.txt">http://dl.dropbox.com/u/33138127/dartium/README.txt</a></pre>

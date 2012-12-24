@@ -1,0 +1,29 @@
+--- 
+title: Netduino Plus with RelayShield as networked light switches
+published: true
+layout: post
+meta: 
+  tagazine-media: a:7:{s:7:"primary";s:77:"http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu2.jpg";s:6:"images";a:3:{s:77:"http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu1.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu1.png";s:5:"width";s:3:"199";s:6:"height";s:3:"283";s:4:"type";s:5:"image";s:4:"area";s:5:"56317";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu2.jpg";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu2.jpg";s:5:"width";s:3:"549";s:6:"height";s:3:"410";s:4:"type";s:5:"image";s:4:"area";s:6:"225090";s:9:"file_path";s:0:"";}s:77:"http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu3.png";a:6:{s:8:"file_url";s:77:"http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu3.png";s:5:"width";s:3:"438";s:6:"height";s:3:"231";s:4:"type";s:5:"image";s:4:"area";s:6:"101178";s:9:"file_path";s:0:"";}}s:6:"videos";a:0:{}s:11:"image_count";s:1:"3";s:6:"author";s:8:"19211206";s:7:"blog_id";s:8:"18608612";s:9:"mod_stamp";s:19:"2011-08-01 01:16:40";}
+  _edit_last: "19211206"
+  _wpas_skip_fb: "1"
+  jabber_published: "1312161149"
+status: publish
+type: post
+tags: 
+- .NET
+- embedded
+- Hardware
+- netduino
+- Software
+---
+Picked up a fun <a href="http://garden.seeedstudio.com/index.php?title=Relay_Shield">relay shield</a> from the <a href="http://www.seeedstudio.com/depot/">seeedstudio</a> people. My goal was to be able to control lights over the network. After grabbing some webserver code from this <a href="http://forums.netduino.com/index.php?/topic/1345-pachube-client-for-netduinoplus/">post</a>, I was able to get a simple <a href="https://bitbucket.org/financecoding/relaywebserver/overview">basic web server and light controller</a> up in no time. One stumbling block I had was the MAC configuration with <a href="http://msdn.microsoft.com/en-us/library/cc544593.aspx">MFDeploy</a>. If you don't use the proper MAC that was assigned to the Ethernet controller you could have potential DHCP or router ARP table issues. When setting up the <a href="http://www.netduino.com/netduinoplus/specs.htm">netduino</a> network I was lazy and put in a bogus MAC, that caused a few hours of debugging. Once deployed and networking is configured hit the root address from the network and a simple page with links get displayed
+
+<img src="http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu1.png" alt="" />
+
+Quick photo and diagram of the setup
+
+<img src="http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu2.jpg" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+<img src="http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Pick up the <a href="https://bitbucket.org/financecoding/relaywebserver/overview">code</a> hack around and have fun. Suggestions and comments welcome.

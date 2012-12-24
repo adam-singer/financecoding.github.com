@@ -1,0 +1,21 @@
+--- 
+title: "Dart: Hash Server Example"
+published: true
+layout: post
+meta: 
+  email_notification: "1326072448"
+  _edit_last: "19211206"
+  jabber_published: "1326072446"
+status: publish
+type: post
+tags: 
+- Dart
+- Google
+- Hash
+- MVVM
+- Software
+---
+<p><a href="https://github.com/financeCoding/dart-hash-server"><img src="http://financecoding.files.wordpress.com/2012/01/010912_0127_hashservere1.png" alt="" border="0" /></a>
+	</p><p>Another fun <a href="https://github.com/financeCoding/dart-hash-server">dart example</a> in the works. The goal of this example was to explore <a href="https://github.com/LUCA-Studios-LLC/LUCA-UI-Framework-for-Dart">LUCA UI Framework</a> and the server side component provided in the <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/">dart samples</a> folder. The <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/">chat</a> sample provides enough implementation to get your own dart <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/samples/chat/http.dart">http server</a> running in no time at all. The only issue with <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/">chat</a> is its an early sample and not modular enough to copy and paste. It is simple enough to read and split apart your self.  I have done some of that in the <a href="https://github.com/financeCoding/dart-hash-server/tree/master/src/HashServer">HashServer</a>. Eventually I would like to take it one step further and break the <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/">chat</a> sample up enough that anyone could clone and get started right away.
+</p><p>The <a href="https://github.com/financeCoding/dart-hash-server/tree/master/src/HashClient">HashClient</a> takes a string input from the <a href="https://github.com/LUCA-Studios-LLC/LUCA-UI-Framework-for-Dart/blob/master/core/TextBox.dart">TextBox</a> and sends it to the server by <a href="http://api.dartlang.org/html/XMLHttpRequest.html">XMLHttpRequest</a>  in <a href="http://api.dartlang.org/json/JSON.html">JSON</a> format. The server then <a href="https://github.com/financeCoding/dart-hash-server/blob/master/src/HashServer/IsolatedServer.dart">parses</a> the request data and creates a hash value based on the hasher selected by the client. The client updates the hash value on the UI when the <a href="https://github.com/financeCoding/dart-hash-server/blob/master/src/HashClient/GenerateHash.dart">response received</a>. The <a href="https://github.com/LUCA-Studios-LLC/LUCA-UI-Framework-for-Dart">LUCA UI</a> provides a <a href="http://en.wikipedia.org/wiki/Model_View_ViewModel">MVVM</a> framework so the domain logic was separated from the UI, a convenient and coherent way to do UI application development. More work on the client and server side is needed to separate the available hashes from what is coded into the client, but for now it works.  See the <a href="https://github.com/financeCoding/dart-hash-server/blob/master/README.md">README.md</a> on how to get running. Feedback and comments always welcome!
+</p>

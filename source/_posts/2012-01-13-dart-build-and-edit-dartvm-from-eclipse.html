@@ -1,0 +1,31 @@
+--- 
+title: "Dart: Build and Edit DartVM from Eclipse"
+published: true
+layout: post
+meta: 
+  email_notification: "1326527844"
+  _edit_last: "19211206"
+  jabber_published: "1326527842"
+status: publish
+type: post
+tags: 
+- Dart
+- DartVM
+- Google
+---
+In previous <a href="http://financecoding.wordpress.com/2012/01/13/dart-exploring-the-dartvm-from-a-debugger-on-mac-osx/">post</a> I mentioned how to get eclipse debugger hooked up to <a href="https://github.com/syntheticpp/dartruntime">DartVM</a>. Here I'd like to comment how one could generate Makefiles from the cmake branch and import the C/C++/Dart code into eclipse to edit and build. Here we start off by having the built environment:
+[sourcecode lang="bash"]git clone git@github.com:syntheticpp/dartruntime.git
+cd dartruntime
+git checkout -b cmake origin/cmake
+cd ..
+mkdir build
+cd build
+cmake ../dartruntime/cmake/
+make -j4
+echo &quot;main() { print(\&quot;Hello World\!\&quot;); }&quot; &gt; hello.dart
+./bin/dart ./hello.dart[/sourcecode]
+
+Then import the build directory as a "Existing Code as Makefile Project". We can now build from eclipse by clicking on the build button in the eclipse editor. We would like to import the dart runtime into eclipse so we can get the ability to edit from an IDE and build from an IDE. 
+
+Import an "Existing Code as Makefile Project" and choosing the runtime directory. Chose the GNU autotools toolchain when selecting the "Toolchain Indexer Settings". This should now provide better ability to navigate the code and build from the IDE. Note that the build output will be sent to the build folder and if the Makefiles get wiped out from the build folder you would have to regenerate them from cmake. 
+[gallery]

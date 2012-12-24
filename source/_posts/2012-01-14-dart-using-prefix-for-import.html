@@ -1,0 +1,94 @@
+--- 
+title: "Dart: Using prefix for #import"
+published: true
+layout: post
+meta: 
+  email_notification: "1326565745"
+  _edit_last: "19211206"
+  _wpas_skip_fb: "1"
+  jabber_published: "1326565743"
+status: publish
+type: post
+tags: 
+- Dart
+- DartEditor
+- Google
+- Software
+---
+Using "prefix" is great for managing how your application references libraries in Dart. At the moment Dart is still in alpha so this exact method or style may change at some later date. From the <a href="http://www.dartlang.org/docs/spec/dartLangSpec.pdf">Language Specification (0.06)</a> Libraries have a very simple definition. 
+
+<blockquote>A library consists of (a possibly empty) set of imports, and a set of top level
+declarations. A top level declaration is either a class (7), an interface (8), a type
+declaration, a function (6) or a variable declaration (5).</blockquote>
+
+Lets dive in and create one main application and one cipher application that will be a library. 
+<a href="http://financecoding.files.wordpress.com/2012/01/screen-shot-2012-01-14-at-9-02-05-am.png"><img src="http://financecoding.files.wordpress.com/2012/01/screen-shot-2012-01-14-at-9-02-05-am.png" alt="" title="Screen Shot 2012-01-14 at 9.02.05 AM" width="579" height="399" class="alignnone size-full wp-image-337" /></a>
+
+Now if we #import CipherLib from filesystem path into our MainApplication both main functions should conflict.
+<a href="http://financecoding.files.wordpress.com/2012/01/screen-shot-2012-01-14-at-9-04-27-am.png"><img src="http://financecoding.files.wordpress.com/2012/01/screen-shot-2012-01-14-at-9-04-27-am.png" alt="" title="Screen Shot 2012-01-14 at 9.04.27 AM" width="384" height="158" class="alignnone size-full wp-image-338" /></a> 
+
+Why this happens is clearly defined in the specification.
+<blockquote>Imports assume a global namespace of libraries (at least per isolate). They also assume the library is in control, rather than the other way around. It is a compile-time error if a name N is introduced into the library scope of a library A, and either: N is declared by A, OR Another import introduces N into the scope of A. This implies that it is a load-time error for a library to import itself, as the names of its members will be duplicated.</blockquote>
+
+The MainAppication can be adjusted by adding the prefix parameter to the #import declaration. Now from the prefixed name we can call the main method. 
+<a href="http://financecoding.files.wordpress.com/2012/01/screen-shot-2012-01-14-at-9-13-08-am.png"><img src="http://financecoding.files.wordpress.com/2012/01/screen-shot-2012-01-14-at-9-13-08-am.png" alt="" title="Screen Shot 2012-01-14 at 9.13.08 AM" width="630" height="475" class="alignnone size-full wp-image-343" /></a>
+
+From this point lets add another library, will call it <a href="https://github.com/financeCoding/dart-using-prefix-example/blob/master/XORCipher/XORCipher.dart">XORCipher</a> which will call its library "CipherLib". The <a href="https://github.com/financeCoding/dart-using-prefix-example/blob/master/XORCipher/XORCipher.dart">XORCipher</a> and <a href="https://github.com/financeCoding/dart-using-prefix-example/blob/master/CaesarCipher/CaesarCipher.dart">CaesarCipher</a> will have libraries named "CipherLib", both have functions that have the same name but take different parameters. Now we shall run into a problem that could be presented when using others libraries or code, we have conflicting names in the global namespace of our main application. 
+<a href="http://financecoding.files.wordpress.com/2012/01/screen-shot-2012-01-14-at-9-30-56-am.png"><img src="http://financecoding.files.wordpress.com/2012/01/screen-shot-2012-01-14-at-9-30-56-am.png" alt="" title="Screen Shot 2012-01-14 at 9.30.56 AM" width="584" height="454" class="alignnone size-full wp-image-346" /></a>
+
+The way we resolve this is by adding prefix to one or both libraries and call them from the fully qualified names.[sourcecode lang="java"]
+#import('../CaesarCipher/CaesarCipher.dart', prefix:&quot;Caesar&quot;);
+#import('../XORCipher/XORCipher.dart', prefix:&quot;XOR&quot;);
+
+void main() {
+  String s = &quot;HELLOWORLD&quot;;
+  print(&quot;${s}&quot;);
+  
+  s = XOR.EncryptDecrypt(s);
+  print(&quot;After encrypt XOR ${s}&quot;);
+  s = XOR.EncryptDecrypt(s);
+  print(&quot;After decrypt XOR ${s}&quot;);
+ 
+  s = Caesar.EncryptDecrypt(s, true);
+  print(&quot;After encrypt Caesar ${s}&quot;);
+  s = Caesar.EncryptDecrypt(s, false);
+  print(&quot;After decrypt Caesar ${s}&quot;);
+}
+[/sourcecode]
+
+<a href="http://financecoding.files.wordpress.com/2012/01/screen-shot-2012-01-14-at-9-35-10-am.png"><img src="http://financecoding.files.wordpress.com/2012/01/screen-shot-2012-01-14-at-9-35-10-am.png" alt="" title="Screen Shot 2012-01-14 at 9.35.10 AM" width="305" height="157" class="alignnone size-full wp-image-349" /></a>
+
+Another way to encapsulate source code using libraries is to use the #source declaration in a #library and then to #import the library into your application. From the language specifications: <blockquote>An include directive specifics a URI where a Dart compilation unit that should be incorporated into the current library may be found. A compilation unit is a sequence of top level declarations. Compiling an include directive of the form #source(s); causes the Dart system to attempt to compile the contents of the URI that is the value of s. The top level declarations at that URI are then compiled by the Dart compiler in the scope of the current library. It is a compile-time error if the contents of the URI are not a valid compilation unit. It is a compile-time error if s is not a compile-time constant.</blockquote>
+
+An example of this type of library can be seen in <a href="https://github.com/financeCoding/dart-hash-server/tree/master/src/HashLib">HashLib</a>/<a href="https://github.com/financeCoding/dart-hash-server/blob/master/src/HashLib/hashlib.dart">hashlib.dart</a>:[sourcecode lang="java"]
+#library('hashlib');
+
+#source('hasher.dart');
+#source('hasherimpl.dart');
+#source('aphash.dart');
+#source('bkdrhash.dart');
+#source('dekhash.dart');
+#source('djbhash.dart');
+#source('elfhash.dart');
+#source('jshash.dart');
+#source('pjwhash.dart');
+#source('rshash.dart');
+#source('sdbmhash.dart');
+#source('nullhash.dart');
+#source('bphash.dart');
+#source('fnvhash.dart');
+[/sourcecode]
+
+Another great example of this can be seen in <a href="https://plus.google.com/115427174005651655317/">John Evans</a> <a href="https://github.com/LUCA-Studios-LLC/LUCA-UI-Framework-for-Dart">LUCA UI Framework</a> <a href="https://github.com/LUCA-Studios-LLC/LUCA-UI-Framework-for-Dart/blob/master/core_tests/LUCA_UI_Tests.dart">unit test code</a>. He needed access to some internal dom objects but wanted to preserve the ability to use the elegantly designed <a href="http://api.dartlang.org/html.html">html</a> library. [sourcecode lang="java"] 
+#import('dart:html');
+#import('dart:dom', prefix:'dom');
+#import('../unit_test_framework/UnitTestFramework.dart');
+#import('../core/LUCA_UI_Framework.dart');
+[/sourcecode]
+
+
+Its not uncommon to run into instances where two libraries or source files may define classes, interfaces, functions, type definitions that have similar names in other libraries or source files. The best way to work in these types of situations is to add a prefix where your #import are. A very common one that people run into is with <a href="http://api.dartlang.org/html.html">"html"</a>, Node and Element class. So individuals wanting to create some type of search or sorting might also want to use the Node name, best answer would be to prefix <a href="http://api.dartlang.org/html.html">"html"</a> or your own library code. After your able to reference the library by its fully qualified name, instead of assuming it was globally included. This does feel similar to the <a href="http://msdn.microsoft.com/en-us/library/sf0df423(v=vs.71).aspx">using alias</a> in C#, but with a feeling of inversion of control to the library. 
+
+References: 
+Sample code <a href="https://github.com/financeCoding/dart-using-prefix-example">dart-using-prefix-example</a>
+<a href="http://www.dartlang.org/docs/spec/dartLangSpec.pdf">Language specification</a>
