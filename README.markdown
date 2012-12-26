@@ -40,6 +40,10 @@ THE SOFTWARE IS PROVIDED ‘AS IS’, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 publishing to github `rake generate && rake deploy`
 
 ```
+rake new_post["title"]
+```
+
+```
 git status
 git add .
 git commit -m 'your message'
