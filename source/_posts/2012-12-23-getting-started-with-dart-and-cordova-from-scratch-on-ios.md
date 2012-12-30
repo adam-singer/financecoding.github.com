@@ -7,6 +7,7 @@ categories:
 - Cordova
 - Example
 - Phonegap
+- phonegap-from-scratch
 ---
 
 Looking for some fun this weekend I decided to investigate the current status of using dart and cordova together.
@@ -82,4 +83,4 @@ This is just the start of exploring integrations between dart and cordova. At le
 
 [![most_minimal_event_deviceready](/images/2012-12-23-phonegap-from-scratch-images/most_minimal_event_deviceready.png)](/images/2012-12-23-phonegap-from-scratch-images/most_minimal_event_deviceready.png)
 
-Full example can be found on github [phonegap_from_scratch](https://github.com/financeCoding/phonegap_from_scratch).
+Full example can be found on github [phonegap_from_scratch](/blog/categories/phonegap-from-scratch/).

@@ -9,9 +9,10 @@ categories:
 - Example
 - Phonegap
 - unittest
+- phonegap-from-scratch
 ---
 
-Continuing on from [phonegap_from_scratch](2012/12/23/getting-started-with-dart-and-cordova-from-scratch-on-ios) post, the next step forward for building stuff with Dart and Cordova was to get some unit testing. First class to test is [Device](http://docs.phonegap.com/en/2.2.0/cordova_device_device.md.html#Device). The tests created here are specific to the platform and simulator. Did not add any of the device events for testing until I can find a way to generate them from the simulator. 
+Continuing on from [following](2012/12/23/getting-started-with-dart-and-cordova-from-scratch-on-ios) post, the next step forward for building stuff with Dart and Cordova was to get some unit testing. First class to test is [Device](http://docs.phonegap.com/en/2.2.0/cordova_device_device.md.html#Device). The tests created here are specific to the platform and simulator. Did not add any of the device events for testing until I can find a way to generate them from the simulator. 
 
 First step is to add unit testing to the pub spec file. 
 
@@ -34,3 +35,5 @@ Now building the js code with `build.sh` and launching iPhone simulator in `Xcod
 {% gist 4381488 %}
 
 [![unittest_pass](/images/2012-12-25-unit-testing-with-dart-and-cordova-on-ios/unittestpass.png)](/images/2012-12-25-unit-testing-with-dart-and-cordova-on-ios/unittestpass.png)
+
+The code for [phonegap_from_scratch](/blog/categories/phonegap-from-scratch/) can be found on [github](https://github.com/financeCoding/phonegap_from_scratch)
