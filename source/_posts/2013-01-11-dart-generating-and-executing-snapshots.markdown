@@ -141,6 +141,70 @@ Richards(RunTime): 2079.002079002079 us.
 
 The above examples might not be the best, but it's a start to using snapshots and loading them from dart vm.  
 
+After reading [John McCutchan](http://www.johnmccutchan.com/) comment below I've generated much more interesting output. 
+
+```
+23:49:47-adam@Adams-MacBook-Air:~/dart/benchmark_harness/example
+$ ~/dart_bleeding/dart/xcodebuild/DebugIA32/dart  --compiler_stats  --use_script_snapshot=./Richards.snapshot Richards.dart
+Richards(RunTime): 2069.2864529472595 us.
+==== Compiler Stats ====
+Number of tokens:   0
+  Literal tokens:   0
+  Ident tokens:     0
+Tokens consumed:    6973 (inf times number of tokens)
+Tokens checked:     49617  (7.12 times tokens consumed)
+Token rewind:       3643 (7% of tokens checked)
+Token lookahead:    2361 (4% of tokens checked)
+Source length:      0 characters
+Scanner time:       0 msecs
+Parser time:        18 msecs
+Code gen. time:     66 msecs
+  Graph builder:    7 msecs
+  Graph SSA:        0 msecs
+  Graph inliner:    10 msecs
+    Parsing:        2 msecs
+    Building:       1 msecs
+    SSA:            1 msecs
+    Optimization:   2 msecs
+    Substitution:   0 msecs
+  Graph optimizer:  13 msecs
+  Graph compiler:   29 msecs
+  Code finalizer:   4 msecs
+Compilation speed:  0 tokens per msec
+Code size:          56 KB
+Code density:       0 tokens per KB
+23:50:06-adam@Adams-MacBook-Air:~/dart/benchmark_harness/example
+$ ~/dart_bleeding/dart/xcodebuild/DebugIA32/dart  --compiler_stats Richards.dart
+Richards(RunTime): 2073.5751295336786 us.
+==== Compiler Stats ====
+Number of tokens:   1981
+  Literal tokens:   68
+  Ident tokens:     692
+Tokens consumed:    13539 (6.83 times number of tokens)
+Tokens checked:     87271  (6.45 times tokens consumed)
+Token rewind:       5849 (6% of tokens checked)
+Token lookahead:    3954 (4% of tokens checked)
+Source length:      15543 characters
+Scanner time:       3 msecs
+Parser time:        23 msecs
+Code gen. time:     110 msecs
+  Graph builder:    5 msecs
+  Graph SSA:        0 msecs
+  Graph inliner:    13 msecs
+    Parsing:        2 msecs
+    Building:       2 msecs
+    SSA:            1 msecs
+    Optimization:   3 msecs
+    Substitution:   1 msecs
+  Graph optimizer:  13 msecs
+  Graph compiler:   69 msecs
+  Code finalizer:   6 msecs
+Compilation speed:  14 tokens per msec
+Code size:          89 KB
+Code density:       22 tokens per KB
+23:50:26-adam@Adams-MacBook-Air:~/dart/benchmark_harness/example
+```
+
 References made about snapshots in no particular order
 
 * [infoq](http://www.infoq.com/articles/google-dart)
