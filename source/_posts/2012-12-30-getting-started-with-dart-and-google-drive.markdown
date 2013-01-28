@@ -15,9 +15,9 @@ Following the example code from google drive [quickstart](https://developers.goo
 
 Started off by creating a new sample project `dart_drive_quickstart`, removed all default code and add js-interop.
 
-[![create-new-app](/images/2012-12-30-getting-started-with-dart-and-google-drive/create-new-app.png)](images/2012-12-30-getting-started-with-dart-and-google-drive/create-new-app.png) 
+[![create-new-app](/images/2012-12-30-getting-started-with-dart-and-google-drive/create-new-app.png)](/images/2012-12-30-getting-started-with-dart-and-google-drive/create-new-app.png) 
 
-[![remove-defaults](/images/2012-12-30-getting-started-with-dart-and-google-drive/remove-defaults.png)](images/2012-12-30-getting-started-with-dart-and-google-drive/remove-defaults.png) 
+[![remove-defaults](/images/2012-12-30-getting-started-with-dart-and-google-drive/remove-defaults.png)](/images/2012-12-30-getting-started-with-dart-and-google-drive/remove-defaults.png) 
 
 
 Bring in the javascript client apis as `ScriptElement` and set a `onload` handler to a dart callback. 
@@ -65,13 +65,13 @@ The rest of the code included was for the most part a direct translation of the 
 
 Here are some action shots and code. The full project can be found on github [dart_drive_quickstart](https://github.com/financeCoding/dart_drive_quickstart)
 
-[![app-launched](/images/2012-12-30-getting-started-with-dart-and-google-drive/app-launched.png)](images/2012-12-30-getting-started-with-dart-and-google-drive/app-launched.png) 
+[![app-launched](/images/2012-12-30-getting-started-with-dart-and-google-drive/app-launched.png)](/images/2012-12-30-getting-started-with-dart-and-google-drive/app-launched.png) 
 
-[![file-choose](/images/2012-12-30-getting-started-with-dart-and-google-drive/file-choose.png)](images/2012-12-30-getting-started-with-dart-and-google-drive/file-choose.png) 
+[![file-choose](/images/2012-12-30-getting-started-with-dart-and-google-drive/file-choose.png)](/images/2012-12-30-getting-started-with-dart-and-google-drive/file-choose.png) 
 
-[![file-uploaded](/images/2012-12-30-getting-started-with-dart-and-google-drive/file-uploaded.png)](images/2012-12-30-getting-started-with-dart-and-google-drive/file-uploaded.png) 
+[![file-uploaded](/images/2012-12-30-getting-started-with-dart-and-google-drive/file-uploaded.png)](/images/2012-12-30-getting-started-with-dart-and-google-drive/file-uploaded.png) 
 
-[![file-opened-in-drive](/images/2012-12-30-getting-started-with-dart-and-google-drive/file-opened-in-drive.png)](images/2012-12-30-getting-started-with-dart-and-google-drive/file-opened-in-drive.png) 
+[![file-opened-in-drive](/images/2012-12-30-getting-started-with-dart-and-google-drive/file-opened-in-drive.png)](/images/2012-12-30-getting-started-with-dart-and-google-drive/file-opened-in-drive.png) 
 
 ``` dart dart_drive_quickstart.dart
 import 'dart:html';

@@ -66,7 +66,7 @@ Package "stats" already has version "0.0.4".
 
 [![allow_access](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/allow_access.png)](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/allow_access.png) 
 
-[![success.png](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/success.png)](images/2013-01-27-using-dart-for-website-publishing-on-google-drive/success.png) 
+[![success.png](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/success.png)](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/success.png) 
 
 After some initial slicing and dicing I was able to take what was needed from [pub][] and merge it into [dart-google-oauth2-library][] that [discovery_api_dart_client_generator][] depends on for OAuth2 support. [pub][] was structured such that all files are dart libraries, so ripping out parts was easy, I found the most issues with [http][] package. The client [requests][] `ContentType` could only be set as `application/x-www-form-urlencoded` when making requests, this did not seem to play nicely with Google APIs. Took many hours of debugging to figure out why `POST` method would fail but `GET` method would not. Stumbled on some Google mailing lists that mentioned some services do work with `ContentType` `application/x-www-form-urlencoded` and some only with `application/json`. So I created a separate client that does the `POST`, `PATCH`, `PUT`, `DELETE` methods required for the Google Client APIs.   
 
@@ -97,13 +97,13 @@ dependencies:
 Getting a `identifier` and `secret` is simple, just goto your [Google APIs Console][] and pull out `Client ID` and `Client secret` for a `Client ID for installed applications` that was previously created. If you don't have one already they are easy to create.
 
 * Goto API access in a project.  
-[![api_access](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/api_access.png)](images/2013-01-27-using-dart-for-website-publishing-on-google-drive/api_access.png) 
+[![api_access](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/api_access.png)](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/api_access.png) 
 
 * Click Create another client ID. 
-[![create_another_client_id](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/create_another_client_id.png)](images/2013-01-27-using-dart-for-website-publishing-on-google-drive/create_another_client_id.png) 
+[![create_another_client_id](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/create_another_client_id.png)](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/create_another_client_id.png) 
 
 * Choose Installed application and Installed type Other. Your Done!
-[![create_client_id](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/create_client_id.png)](images/2013-01-27-using-dart-for-website-publishing-on-google-drive/create_client_id.png) 
+[![create_client_id](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/create_client_id.png)](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/create_client_id.png) 
 
 Apply `identifier` and `secret` to your code. 
 
@@ -281,9 +281,9 @@ Web View Link: https://www.googledrive.com/host/0B29MR2FlgtejWnh6SS03LWFnVE0/
 Short Url http://goo.gl/3fGi3
 ```
 
-[![allow_access_drive_publish_markdown](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/allow_access_drive_publish_markdown.png)](images/2013-01-27-using-dart-for-website-publishing-on-google-drive/allow_access_drive_publish_markdown.png) 
+[![allow_access_drive_publish_markdown](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/allow_access_drive_publish_markdown.png)](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/allow_access_drive_publish_markdown.png) 
 
-[![generated_markdown_published_on_drive](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/generated_markdown_published_on_drive.png)](images/2013-01-27-using-dart-for-website-publishing-on-google-drive/generated_markdown_published_on_drive.png) 
+[![generated_markdown_published_on_drive](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/generated_markdown_published_on_drive.png)](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/generated_markdown_published_on_drive.png) 
 
 Thats all, have fun with this really simple and easy to get started sample. 
 

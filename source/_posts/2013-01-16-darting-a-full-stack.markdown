@@ -200,9 +200,9 @@ Total time spent on example/todomvc/main.html                -- 276 ms
 
 From the dart editor we can now launch the output folder main.html.
 
-[![launch-dartium](/images/2013-01-16-darting-a-full-stack/launch_dartium.png)](images/2013-01-16-darting-a-full-stack/launch_dartium.png) 
+[![launch-dartium](/images/2013-01-16-darting-a-full-stack/launch_dartium.png)](/images/2013-01-16-darting-a-full-stack/launch_dartium.png) 
 
-[![todo_entered](/images/2013-01-16-darting-a-full-stack/todo_entered.png)](images/2013-01-16-darting-a-full-stack/todo_entered.png) 
+[![todo_entered](/images/2013-01-16-darting-a-full-stack/todo_entered.png)](/images/2013-01-16-darting-a-full-stack/todo_entered.png) 
 
 This is a nice start, we can launch a web-ui application from dartium and connect up mongo. The issues now... how do we get the kind of application live and not launched on localhost? 
 

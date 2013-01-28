@@ -143,7 +143,7 @@ Creating tests for this type of pluming was not too difficult using [`expectAsyn
     });
 ``` 
 
-[![unittest_pass](/images/2012-12-27-event-handling-and-logging-with-cordova-in-dart-on-ios/unittests_passing.png)](images/2012-12-27-event-handling-and-logging-with-cordova-in-dart-on-ios/unittests_passing.png)
+[![unittest_pass](/images/2012-12-27-event-handling-and-logging-with-cordova-in-dart-on-ios/unittests_passing.png)](/images/2012-12-27-event-handling-and-logging-with-cordova-in-dart-on-ios/unittests_passing.png)
 
 So far this is a good enough to have a device class and event handlers for custom events. The single [`app.dart`](https://github.com/financeCoding/phonegap_from_scratch) is starting to get large, next it should be broken out. I integrated the event handling directly in the `Device` class, but the Cordova [API Reference](http://docs.phonegap.com/en/2.2.0/index.html) keeps them at the top level of the application. So a singleton `Events` or `CordovaEvents` class might be useful to separate the implementation out.
 
