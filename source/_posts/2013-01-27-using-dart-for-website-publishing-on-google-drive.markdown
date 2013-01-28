@@ -64,7 +64,7 @@ Successfully authorized.
 Package "stats" already has version "0.0.4".
 ```
 
-[![allow_access](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/allow_access.png)](images/2013-01-27-using-dart-for-website-publishing-on-google-drive/allow_access.png) 
+[![allow_access](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/allow_access.png)](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/allow_access.png) 
 
 [![success.png](/images/2013-01-27-using-dart-for-website-publishing-on-google-drive/success.png)](images/2013-01-27-using-dart-for-website-publishing-on-google-drive/success.png) 
 
