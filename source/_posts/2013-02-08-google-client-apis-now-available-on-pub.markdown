@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Google Client Apis Now Available On Pub"
+title: "Dart Google Client Apis Now Available On Pub"
 date: 2013-02-08 14:18
 comments: true
 categories: 
