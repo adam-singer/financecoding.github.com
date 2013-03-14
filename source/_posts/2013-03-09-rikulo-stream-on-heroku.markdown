@@ -10,11 +10,11 @@ categories:
 - Stream
 ---
 
-Tonights hacking was with [stream][] and heroku. _Stream is a Dart web server supporting request routing, filtering, template technology, file-based static resources and MVC design pattern._ I just planned on serving static content from [heroku][] at first using full dart based web server. 
+Tonights hacking was with [stream][] and [heroku][]. _Stream is a Dart web server supporting request routing, filtering, template technology, file-based static resources and MVC design pattern._ I just planned on serving static content from [heroku][] using full dart based web server. 
 
 First setup the dart build pack
 
-```
+```bash shell
 adam@Adams-MacBook-Air:~/dart
 $ mkdir stream_todomvc
 
@@ -34,7 +34,7 @@ adam@Adams-MacBook-Air:~/dart/stream_todomvc
 $ git remote add heroku git@heroku.com:stream-todomvc.git
 ```
 
-Creating a new project called `stream-todomvc`. Using the [todomvc][] from the [web-ui][] project as our content for the [stream][] server. Same routine when working with dependencies, add them to your `pubspec.yaml` file. 
+Creating a new project called `stream-todomvc`. Going to use the [todomvc][] from the [web-ui][] project as our content for the [stream][] server. First thing that should be done is adding the dependencies to the `pubspec.yaml` file. 
 
 ```yaml pubspec.yaml
 name: stream_todomvc
@@ -48,12 +48,12 @@ dependencies:
 
 Next I simply compied the existing [todomvc][] project out into my [stream-todomvc][] project.
 
-```
+```bash shell
 adam@Adams-MacBook-Air:~/dart/stream_todomvc
 $ cp ~/dart/web-ui/example/todomvc/* ./web/
 ``` 
 
-[stream intro][] documentation goes over some basic configurations and settings. I'm just going to use them for now to get something running right away. The key to note when serving code from the `web/` folder in dart projects is having the [stream][] server code in `web/webapp/`. That way [stream][] can find all your resources with little configurations. With very little dart code we can have static web server going. 
+[stream intro][] documentation goes over some basic configurations and settings. I'm just going to use them for now to get something running right away. The key to note when serving code from the `web/` folder in dart projects is having the [stream][] server code in `web/webapp/`. That way [stream][] can find all your resources with little configuration. With very little dart code we can have static web server going. 
 
 ```dart web/webapp/server.dart
 library server;
@@ -72,7 +72,7 @@ void main() {
 }
 ```
 
-Since this was a [web-ui][] project we need to have a `build.dart` file help us with transforming the polyfill web components for us. 
+Since this was a [web-ui][] project we need to have a `build.dart` file help us with transforming the polyfill web components. 
 
 ```dart build.dart
 import 'dart:io';
@@ -81,15 +81,15 @@ import 'package:web_ui/component_build.dart';
 main() => build(new Options().arguments, ['web/index.html']);
 ```
 
-The [heroku][] environment requires a [procfile][] configuration to let the service know type of commands to run.
+The [heroku][] environment requires a [procfile][] configuration to let the service know the type of commands to run.
 
-``` Procfile
+```text Procfile
 web: ./dart-sdk/bin/dart --package-root=./packages/ web/webapp/server.dart
 ```
 
 Next we build all the static data for our webapp to function. This will include calling `build.dart` and `dart2js`. The second step of calling `dart2js` helps with clients that do not have the `dartvm` built in. 
 
-```
+```bash shell
 adam@Adams-MacBook-Air:~/dart/stream_todomvc
 $ pub install
 Resolving dependencies...
@@ -107,7 +107,7 @@ Using snapshot /Users/adam/Documents/DartEditor/dart/dart-sdk/lib/_internal/comp
 
 Now everything should be ready for deployment.
 
-```
+```bash shell
 adam@Adams-MacBook-Air:~/dart/stream_todomvc
 $ git add -a -m "ready for deploy"
 
