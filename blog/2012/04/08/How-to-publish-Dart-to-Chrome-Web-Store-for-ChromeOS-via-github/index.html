@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>How to publish Dart to Chrome Web Store for ChromeOS via github - Random posts about coding</title>
+  <meta name="author" content="Adam Singer">
+
+  <meta property="og:title" content="How to publish Dart to Chrome Web Store for ChromeOS via github - Random posts about coding" />
+  <meta property="og:image" content="/me.png" />
+  <meta property="og:description" content="" />
+
+  
+  <meta name="description" content="Document explains at a high level how to publish Dart apps to Chrome Web Store for Google ChromeOS via Github. This application targets ChromeOS, so &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://financeCoding.github.com/blog/2012/04/08/How-to-publish-Dart-to-Chrome-Web-Store-for-ChromeOS-via-github/">
+  <link href="/me_favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Random posts about coding" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36566996-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="https://plus.google.com/s2/photos/profile/104569492481999771226?sz=100"></a><span> </span><a href="/">Random posts about coding</a></h1>
+  
+    <h2>Mostly blogging about dart.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:financeCoding.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/aboutme">AboutMe</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">How to Publish Dart to Chrome Web Store for ChromeOS via Github</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+<time datetime="2012-04-08T08:26:24Z" pubdate data-updated="true">Apr 8<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><span id="internal-source-marker_0.5308075135108083"><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">Document explains at a high level how to publish Dart apps to Chrome Web Store for Google ChromeOS via Github. This application targets ChromeOS, so it was compiled to javascript. Example code was taken directly from dart source tree for testing. Thanks to </span><a href="https://plus.google.com/117943083849640405602" style="font-weight: bold;"><span style="color: #1155cc; font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">+Terry Lucas</span></a><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"> for the code!</span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">1) Chrome Web Store needs the distribution site to be verified, this can be done by adding a site via </span><a href="https://www.google.com/webmasters/tools/home?hl=en" style="font-weight: bold;"><span style="color: #1155cc; font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">webmaster tools</span></a><span style="vertical-align: baseline;"><span style="font-family: Arial;"><span style="font-size: 15px; white-space: pre-wrap;">. Using github’s ability to publish to a subdomain on github.com this is easy to accomplish. </span></span></span><b><img height="336px;" src="https://lh5.googleusercontent.com/dC20T_RxI4ylB28Izt1V-INBoNiy9EgUCCG8qXaIlBMrczF4RmvUfJBaXzJZ8b-hcbk5rCakYukGDnN1zRqRTwjqq8eVyUPTylr1_KkQdefgAcb96Ps" width="608px;" /></b><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><b><img height="236px;" src="https://lh4.googleusercontent.com/XbMvUrenv7DV5wW9H7okpYmHJhBW5YmoSvkuB_3QVSqE42Sp9VVC-nQZEmfx1PDDli3J-PBOECPnzF5k4xKUuZnNLDyPagEZGXcLF84LKflmiHh4wP8" width="502px;" /></b><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><b><img height="235px;" src="https://lh4.googleusercontent.com/AeyCj6y4sUFogrTkvgqTpibR2WM58WWaJIVIxNZfGQnkzefQFdGlCK_nIEU8gYrS7oOMDu2v3ZTM58VQ1V1dNr1tChsjgMWc_nEva_mY-lQvGuB5CZc" width="614px;" /><img height="128px;" src="https://lh5.googleusercontent.com/clMypj6W246oERYGEKwTVJDtD8Kf9kjfrwgoSXaBvidO-4N-DG9tHTbdvPj09fXRcPzM5oIr_A5X5baN1XTojJ0IURItls2LH-zkJU3Mm-nBL2zR8YA" width="606px;" /></b><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><b><img height="367px;" src="https://lh4.googleusercontent.com/nMKvianOHiWJfZTQqWhaczOiHDt4D1TJJ18xpLqqE_Zp1WUz8yE5iTKw2U-uGjWUNyDR_HqWHtmq7gbcOyYgn1H5TjqUPYpL74R6Seg6SFYef7xlyMY" width="608px;" /></b><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><b><img height="215px;" src="https://lh5.googleusercontent.com/ElEGYlht8N0b6LatFxPHVE2tHRFv88uf7-OJ8gevkmYDXoUBUtYoWEpVjtfpDnj3MqJymBf1znG9oetebFZGFAe48EUkNPAcYm72Ek3yDY1xK4JWaJM" width="625px;" /></b><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">2) We create a github project that will contain published gh-pages and a zipped manifest for </span><a href="https://developers.google.com/chrome/apps/docs/developers_guide" style="font-weight: bold;"><span style="color: #1155cc; font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">hosted app</span></a><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"> distribution via Web Store. </span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ git clone </span><a href="mailto:git@github.com" style="font-weight: bold;"><span style="color: #1155cc; font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">git@github.com</span></a><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">:financeCoding/dart-calculator.git</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ cd dart-calculator</span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">Export the calculator project</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ svn export &#8211;force </span><a href="http://dart.googlecode.com/svn/branches/bleeding_edge/dart/samples/calculator/" style="font-weight: bold;"><span style="color: #1155cc; font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">http://dart.googlecode.com/svn/branches/bleeding_edge/dart/samples/calculator/</span></a><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"> .</span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">Modify the manifest uri to the github location</span><b><img height="212px;" src="https://lh5.googleusercontent.com/c3U4Dgqxg8WlkeV4flxMmsEXN63NFDX4twUbxysbRnnoSW7_sscs5uZ4vh2pfc70wNJS9nmRFuehB6yMfk2nOtCFogOpt6b8vxKsA4n-b-rcGnYxbsI" width="629px;" /></b><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">Build the templates and javascript code. Package the manifest and icon image into a zip folder so Chrome Web Store can publish it. </span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ export PATH=$PATH:~/dart_bleeding/dart/out/Debug_ia32/</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ ~/dart_bleeding/dart/utils/template/template calcui.tmpl calcui.dart</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ ~/Documents/DartEditor/dart/dart-sdk/bin/frogc &#8211;out=calculator.js calculator.dart </span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ mkdir calculator_app</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ cp manifest.json calc_128.png ./calculator_app/</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ zip -vr ./calculator_app.zip calculator_app -x &#8220;*.DS_Store&#8221;</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ git add .</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ git commit -a -m “adding calculator”</span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">Create the gh-pages so Google Web Store can pull our applications data. </span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ git symbolic-ref HEAD refs/heads/gh-pages</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ git add .</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ git commit -a -m &#8220;First pages commit&#8221;</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ git push origin gh-pages</span><br /><span style="font-family: 'Comic Sans MS'; font-size: 12px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">$ git checkout master</span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">3) Create a web app and fill out all the non optional values, publish to testers. </span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><b><img height="346px;" src="https://lh4.googleusercontent.com/mZy6vRuA7KZwwcrnfJBeoDkVoBXm6lU4DYpBGhSONWhwDedJqrINUt44aL7tYlbnCtVX6CRh8t00a5KH_ti25A_oTlTYNHYYlRVtyY9pD8LUYnKan3I" width="615px;" /><img height="209px;" src="https://lh5.googleusercontent.com/2Y1-XfasYWvU51ACqnmzSMWXO3jKdj683AUqqqjTn-80xFKMpugjNHIdsP3lSSiZUV6TnROiIILx1DEVcUmmSioBKi9PzC98KyHVCMRxFX-8vSQePyc" width="543px;" /></b><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><b><img height="442px;" src="https://lh6.googleusercontent.com/THChnKTa9ibCX79isNeqPkB7iYfju9c86N4yKjbkr-5YRNBf1aMGj9aqfq1I6FWsZxVGgM54aVeoBv9HG-wSGIlB20QX52KYPu6nkeOPA8BZY1tUFR4" width="616px;" /></b><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;"></span><br /><span style="font-family: Arial; font-size: 15px; font-weight: normal; vertical-align: baseline; white-space: pre-wrap;">Comments and suggestions welcome. It was very impressive how quickly one could distribute apps via Chrome Web Store. I think Dart will really win in this respect. </span></span><div class="blogger-post-footer"><img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/478539871162226053-6397431646576815669?l=financecoding.blogspot.com' alt='' /></div></div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Adam Singer</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+<time datetime="2012-04-08T08:26:24Z" class="updated">Updated Apr 8<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/chromeos/'>ChromeOS</a>, <a class='category' href='/blog/categories/dart/'>Dart</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://financeCoding.github.com/blog/2012/04/08/How-to-publish-Dart-to-Chrome-Web-Store-for-ChromeOS-via-github/" data-via="" data-counturl="http://financeCoding.github.com/blog/2012/04/08/How-to-publish-Dart-to-Chrome-Web-Store-for-ChromeOS-via-github/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/04/08/Dart-Run-swarm-locally-with-live-google-reader-feeds/" title="Previous Post: Dart Run swarm locally with live google reader feeds">&laquo; Dart Run swarm locally with live google reader feeds</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/05/15/First-steps-to-dart-debugging/" title="Next Post: First steps to dart debugging">First steps to dart debugging &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.6734693877551%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.22448979591837%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.22448979591837%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.22448979591837%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.22448979591837%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.22448979591837%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.6734693877551%'>API(3)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.44897959183673%'>BeagleBoard(2)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.44897959183673%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.22448979591837%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.22448979591837%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.22448979591837%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.22448979591837%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.89795918367346%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.44897959183673%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.22448979591837%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.22448979591837%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.22448979591837%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.6734693877551%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.22448979591837%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 101.22448979591837%'>Client(1)</a> <a href='/blog/categories/cloud' style='font-size: 102.44897959183673%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.44897959183673%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.22448979591837%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.89795918367346%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.22448979591837%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(49)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.44897959183673%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.22448979591837%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.6734693877551%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.22448979591837%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.44897959183673%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.6734693877551%'>DartVM(3)</a> <a href='/blog/categories/debugging' style='font-size: 101.22448979591837%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.89795918367346%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.22448979591837%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.89795918367346%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.6938775510204%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.22448979591837%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.22448979591837%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.22448979591837%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.22448979591837%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.22448979591837%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 129.3877551020408%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 102.44897959183673%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleAPI(1)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.22448979591837%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 106.12244897959184%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.22448979591837%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.22448979591837%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.22448979591837%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.22448979591837%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.44897959183673%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.6734693877551%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.44897959183673%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 106.12244897959184%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.22448979591837%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.22448979591837%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.44897959183673%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.22448979591837%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.22448979591837%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.22448979591837%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.44897959183673%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.22448979591837%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.89795918367346%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.89795918367346%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 101.22448979591837%'>Pub(1)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.22448979591837%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.22448979591837%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.44897959183673%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.22448979591837%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 130.6122448979592%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.44897959183673%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.22448979591837%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.22448979591837%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.22448979591837%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.44897959183673%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.22448979591837%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.22448979591837%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.44897959183673%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.44897959183673%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.6734693877551%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.22448979591837%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.22448979591837%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.44897959183673%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.22448979591837%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.22448979591837%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.22448979591837%'>WebGL(1)</a> </span>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/">Dart Multi Touch Canvas With Realtime APIs</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/09/rikulo-stream-on-heroku/">rikulo stream on heroku</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/08/google-client-apis-now-available-on-pub/">Dart Google Client Apis Now Available On Pub</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/financeCoding">@financeCoding</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'financeCoding',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Adam Singer -
+  <a href='https://plus.google.com/u/0/104569492481999771226/posts' rel='me'>Adam Singer</a>
+  - <a href='https://github.com/financeCoding' rel='me'>Adam Singer @ Github</a>
+</p>
+
+</footer>
+  
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

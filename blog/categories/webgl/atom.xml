@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: WebGL | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/webgl/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dart: Example of WebGL on Dart]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/01/23/dart-the-status-of-webgl/"/>
+    <updated>2012-01-23T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/01/23/dart-the-status-of-webgl</id>
+    <content type="html"><![CDATA[<p>My hacking attempts with <a href="http://en.wikipedia.org/wiki/WebGL">webgl</a> on <a href="http://api.dartlang.org/html/WebGLRenderingContext.html">dart</a> has made me revert to using <a href="http://api.dartlang.org/dom.html">'dart:dom'</a>. While I really enjoy <a href="http://api.dartlang.org/html.html">'dart:html'</a>, one might not be able to use some of the more important <a href="http://api.dartlang.org/html/WebGLRenderingContext.html#bufferData">webgl</a> methods. The reason would be the missing constructors on <a href="http://api.dartlang.org/html/Float32Array.html">Float32Array</a>, an <a href="https://code.google.com/p/dart/issues/detail?id=560">issue</a> has been filed. For now the following <a href="http://financecoding.github.com/dart-webgl-example/">sample</a> with <a href="https://github.com/financeCoding/dart-webgl-example">code</a> could help guide those excited to play with webgl on dart. Thank you <a href="http://learningwebgl.com/blog/?page_id=2">Learning WebGL</a> for the sample <a href="http://learningwebgl.com/blog/?p=28">code</a> work with.</p>
+
+<p><a href="http://financecoding.files.wordpress.com/2012/01/webglscreenshot.png"><img src="http://financecoding.files.wordpress.com/2012/01/webglscreenshot.png" alt="" title="webglscreenshot" width="536" height="676" class="alignnone size-full wp-image-500" /></a></p>
+]]></content>
+  </entry>
+  
+</feed>

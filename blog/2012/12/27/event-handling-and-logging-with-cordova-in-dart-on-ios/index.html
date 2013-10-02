@@ -1,0 +1,553 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>event handling and logging with cordova in dart on iOS - Random posts about coding</title>
+  <meta name="author" content="Adam Singer">
+
+  <meta property="og:title" content="event handling and logging with cordova in dart on iOS - Random posts about coding" />
+  <meta property="og:image" content="/me.png" />
+  <meta property="og:description" content="" />
+
+  
+  <meta name="description" content="Continuing on the chain of phonegap_from_scratch this post goes over event handlers and logging. Adding logging was trivial with the logger library &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://financeCoding.github.com/blog/2012/12/27/event-handling-and-logging-with-cordova-in-dart-on-ios/">
+  <link href="/me_favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Random posts about coding" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36566996-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="https://plus.google.com/s2/photos/profile/104569492481999771226?sz=100"></a><span> </span><a href="/">Random posts about coding</a></h1>
+  
+    <h2>Mostly blogging about dart.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:financeCoding.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/aboutme">AboutMe</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Event Handling and Logging With Cordova in Dart on iOS</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-27T00:22:00-08:00" pubdate data-updated="true">Dec 27<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Continuing on the chain of <a href="/blog/categories/phonegap-from-scratch/">phonegap_from_scratch</a> this post goes over event handlers and logging.</p>
+
+<p>Adding logging was trivial with the <a href="http://pub.dartlang.org/packages/logging"><code>logger</code></a> library on pub. Adding the following dependencies and setup configuration code was just enough to help with logging tests and code.</p>
+
+<figure class='code'><figcaption><span>pubspec.yaml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">dartdova</span>
+</span><span class='line'><span class="l-Scalar-Plain">description</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">A sample dart cordova integration</span>
+</span><span class='line'><span class="l-Scalar-Plain">dependencies</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">js</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">any</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">unittest</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0.2.9+7</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0.2.9+7</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span>configureLogging</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="kt">void</span> <span class="n">configureLogging</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">Logger</span><span class="p">.</span><span class="n">root</span><span class="p">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">Level</span><span class="p">.</span><span class="n">ALL</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">Logger</span><span class="p">.</span><span class="n">root</span><span class="p">.</span><span class="n">on</span><span class="p">.</span><span class="n">record</span><span class="p">.</span><span class="n">add</span><span class="p">((</span><span class="n">LogRecord</span> <span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// Print to console.log when compiled to javascript.</span>
+</span><span class='line'>    <span class="n">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">${</span><span class="n">r</span><span class="p">.</span><span class="n">loggerName</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="n">r</span><span class="p">.</span><span class="n">level</span><span class="p">.</span><span class="n">name</span><span class="si">}</span><span class="s2">:</span><span class="si">${</span><span class="n">r</span><span class="p">.</span><span class="n">sequenceNumber</span><span class="si">}</span><span class="s2">:\n</span><span class="si">${</span><span class="n">r</span><span class="p">.</span><span class="n">message</span><span class="p">.</span><span class="n">toString</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>Cordova ships with a list of custom <a href="http://docs.phonegap.com/en/2.2.0/cordova_events_events.md.html#Events">events</a> that can be fired off to the dom. The common pattern is to add event handlers to these events. Luckily we can receive the events without having to register handles with js-interop.</p>
+
+<pre><code>deviceready
+pause
+resume
+online
+offline
+backbutton
+batterycritical
+batterylow
+batterystatus
+menubutton
+searchbutton
+startcallbutton
+endcallbutton
+volumedownbutton
+volumeupbutton
+</code></pre>
+
+<p>I&#8217;ve noticed a few of them need to be hooked really early in the loading of a dart application. One <code>deviceready</code> being critical for knowing when the device is ready. If they are not hooked early in the application you could miss the event. At least I&#8217;ve noticed that with the iOS simulator.</p>
+
+<figure class='code'><figcaption><span>main</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="kt">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">   * Cordova.js will fire off &#39;deviceready&#39; event once fully loaded.</span>
+</span><span class='line'><span class="cm">   * listen for the event on js.context.document.</span>
+</span><span class='line'><span class="cm">   *</span>
+</span><span class='line'><span class="cm">   * This must be the first event wired up before creating Device.</span>
+</span><span class='line'><span class="cm">   */</span>
+</span><span class='line'>  <span class="n">document</span><span class="p">.</span><span class="n">on</span><span class="p">[</span><span class="s1">&#39;deviceready&#39;</span><span class="p">].</span><span class="n">add</span><span class="p">(</span><span class="n">deviceReady</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>online</code>, <code>offline</code>, <code>battery*</code> are also events that one might want to catch early in <code>main()</code>. Later in the application after <code>deviceready</code> has been fired off you can remove the old handlers and add new ones that relate to the context created.</p>
+
+<p>The design pattern for <code>Device</code> is a singleton which left me with having event handlers registered whenever any newed references go out of scope. This works for now, another approach for event handling could of been to use <a href="https://github.com/prujohn/Reactive-Dart">Reactive-Dart</a> <code>Observable</code> object.</p>
+
+<figure class='code'><figcaption><span>Device</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="cm">/** The device: Singleton */</span>
+</span><span class='line'><span class="kd">class</span> <span class="nc">Device</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">static</span> <span class="kd">final</span> <span class="n">Device</span> <span class="n">_singleton</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Device</span><span class="p">.</span><span class="n">_internal</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Logger</span> <span class="n">_logger</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">js</span><span class="p">.</span><span class="n">Proxy</span> <span class="n">_device</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">factory</span> <span class="n">Device</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">_singleton</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Device</span><span class="p">.</span><span class="n">_internal</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">_logger</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Logger</span><span class="p">(</span><span class="s2">&quot;Device&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">_registerHandlers</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">js</span><span class="p">.</span><span class="n">scoped</span><span class="p">(()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">_device</span> <span class="o">=</span> <span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">device</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">js</span><span class="p">.</span><span class="n">retain</span><span class="p">(</span><span class="n">_device</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">void</span> <span class="n">_registerHandlers</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">_onOnlineHandlers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Function</span><span class="o">&gt;</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">document</span><span class="p">.</span><span class="n">on</span><span class="p">[</span><span class="s1">&#39;online&#39;</span><span class="p">].</span><span class="n">add</span><span class="p">(</span><span class="n">_onOnline</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">_onOfflineHandlers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Function</span><span class="o">&gt;</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">document</span><span class="p">.</span><span class="n">on</span><span class="p">[</span><span class="s1">&#39;offline&#39;</span><span class="p">].</span><span class="n">add</span><span class="p">(</span><span class="n">_onOffline</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">String</span> <span class="kd">get</span> <span class="n">name</span> <span class="o">=&gt;</span> <span class="n">js</span><span class="p">.</span><span class="n">scoped</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="n">_device</span><span class="p">.</span><span class="n">name</span><span class="p">);</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="kd">get</span> <span class="n">cordova</span> <span class="o">=&gt;</span> <span class="n">js</span><span class="p">.</span><span class="n">scoped</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="n">_device</span><span class="p">.</span><span class="n">cordova</span><span class="p">);</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="kd">get</span> <span class="n">platform</span> <span class="o">=&gt;</span> <span class="n">js</span><span class="p">.</span><span class="n">scoped</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="n">_device</span><span class="p">.</span><span class="n">platform</span><span class="p">);</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="kd">get</span> <span class="n">uuid</span> <span class="o">=&gt;</span> <span class="n">js</span><span class="p">.</span><span class="n">scoped</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="n">_device</span><span class="p">.</span><span class="n">uuid</span><span class="p">);</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="kd">get</span> <span class="n">version</span> <span class="o">=&gt;</span> <span class="n">js</span><span class="p">.</span><span class="n">scoped</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="n">_device</span><span class="p">.</span><span class="n">version</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">List</span><span class="o">&lt;</span><span class="n">Function</span><span class="o">&gt;</span> <span class="n">_onOnlineHandlers</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">List</span><span class="o">&lt;</span><span class="n">Function</span><span class="o">&gt;</span> <span class="kd">get</span> <span class="n">onOnline</span> <span class="o">=&gt;</span> <span class="n">_onOnlineHandlers</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">void</span> <span class="n">_onOnline</span><span class="p">(</span><span class="n">Event</span> <span class="n">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">_onOnlineHandlers</span><span class="p">.</span><span class="n">forEach</span><span class="p">((</span><span class="n">handler</span><span class="p">)</span><span class="o">=&gt;</span><span class="n">handler</span><span class="p">(</span><span class="n">event</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">List</span><span class="o">&lt;</span><span class="n">Function</span><span class="o">&gt;</span> <span class="n">_onOfflineHandlers</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">List</span><span class="o">&lt;</span><span class="n">Function</span><span class="o">&gt;</span> <span class="kd">get</span> <span class="n">onOffline</span> <span class="o">=&gt;</span> <span class="n">_onOfflineHandlers</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">void</span> <span class="n">_onOffline</span><span class="p">(</span><span class="n">Event</span> <span class="n">event</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">_onOfflineHandlers</span><span class="p">.</span><span class="n">forEach</span><span class="p">((</span><span class="n">handler</span><span class="p">)</span><span class="o">=&gt;</span><span class="n">handler</span><span class="p">(</span><span class="n">event</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>Creating tests for this type of pluming was not too difficult using <a href="http://api.dartlang.org/docs/bleeding_edge/unittest.html#expectAsync1"><code>expectAsync1</code></a>. The most of time spent on figuring this out was creating <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/CustomEvent.html"><code>CustomEvent</code></a> and calling <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/EventListenerList.html#dispatch"><code>dispatch</code></a>. This is enough functionality to see that device was properly wired up with handlers. I found it important to cover lots of tests when working with Cordova, error handling and reporting is very minimal. At times something would stop working with no console output. So I move forward with code and test in tandem.</p>
+
+<figure class='code'><figcaption><span>runTests</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="n">test</span><span class="p">(</span><span class="s1">&#39;Device Event online&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">eventName</span> <span class="o">=</span> <span class="s1">&#39;online&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">asyncMethod</span> <span class="o">=</span> <span class="n">expectAsync1</span><span class="p">((</span><span class="n">Event</span> <span class="n">event</span><span class="p">)</span><span class="o">=&gt;</span><span class="n">expect</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">type</span><span class="p">,</span> <span class="n">equals</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">$</span><span class="n">eventName</span><span class="s1">&#39;</span><span class="p">)));</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">customEvent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomEvent</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">$</span><span class="n">eventName</span><span class="s1">&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s2">&quot;custom event&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">device</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Device</span><span class="p">();</span>
+</span><span class='line'>  <span class="n">device</span><span class="p">.</span><span class="n">onOnline</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">asyncMethod</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">document</span><span class="p">.</span><span class="n">on</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">$</span><span class="n">eventName</span><span class="s1">&#39;</span><span class="p">].</span><span class="n">dispatch</span><span class="p">(</span><span class="n">customEvent</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">test</span><span class="p">(</span><span class="s1">&#39;Device Event offline&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">eventName</span> <span class="o">=</span> <span class="s1">&#39;offline&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">asyncMethod</span> <span class="o">=</span> <span class="n">expectAsync1</span><span class="p">((</span><span class="n">Event</span> <span class="n">event</span><span class="p">)</span><span class="o">=&gt;</span><span class="n">expect</span><span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">type</span><span class="p">,</span> <span class="n">equals</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">$</span><span class="n">eventName</span><span class="s1">&#39;</span><span class="p">)));</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">customEvent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CustomEvent</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">$</span><span class="n">eventName</span><span class="s1">&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="s2">&quot;custom event&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">device</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Device</span><span class="p">();</span>
+</span><span class='line'>  <span class="n">device</span><span class="p">.</span><span class="n">onOffline</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">asyncMethod</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">document</span><span class="p">.</span><span class="n">on</span><span class="p">[</span><span class="s1">&#39;</span><span class="si">$</span><span class="n">eventName</span><span class="s1">&#39;</span><span class="p">].</span><span class="n">dispatch</span><span class="p">(</span><span class="n">customEvent</span><span class="p">);</span>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p><a href="/images/2012-12-27-event-handling-and-logging-with-cordova-in-dart-on-ios/unittests_passing.png"><img src="/images/2012-12-27-event-handling-and-logging-with-cordova-in-dart-on-ios/unittests_passing.png" alt="unittest_pass" /></a></p>
+
+<p>So far this is a good enough to have a device class and event handlers for custom events. The single <a href="https://github.com/financeCoding/phonegap_from_scratch"><code>app.dart</code></a> is starting to get large, next it should be broken out. I integrated the event handling directly in the <code>Device</code> class, but the Cordova <a href="http://docs.phonegap.com/en/2.2.0/index.html">API Reference</a> keeps them at the top level of the application. So a singleton <code>Events</code> or <code>CordovaEvents</code> class might be useful to separate the implementation out.</p>
+
+<p>A project that is just starting to hit the <a href="https://github.com/dart-lang/">dart-lang</a> github repository is <a href="https://github.com/dart-lang/buildtool">buildtool</a>. <code>buildtool</code> might provide a better solution then having a custom build script that needs to be called before each launch of the simulator.</p>
+
+<p>The code for <a href="/blog/categories/phonegap-from-scratch/">phonegap_from_scratch</a> can be found on <a href="https://github.com/financeCoding/phonegap_from_scratch">github</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Adam Singer</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-27T00:22:00-08:00" pubdate data-updated="true">Dec 27<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/cordova/'>Cordova</a>, <a class='category' href='/blog/categories/dart/'>Dart</a>, <a class='category' href='/blog/categories/example/'>Example</a>, <a class='category' href='/blog/categories/phonegap/'>Phonegap</a>, <a class='category' href='/blog/categories/phonegap-from-scratch/'>phonegap-from-scratch</a>, <a class='category' href='/blog/categories/unittest/'>unittest</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://financeCoding.github.com/blog/2012/12/27/event-handling-and-logging-with-cordova-in-dart-on-ios/" data-via="" data-counturl="http://financeCoding.github.com/blog/2012/12/27/event-handling-and-logging-with-cordova-in-dart-on-ios/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/12/25/unit-testing-with-dart-and-cordova-on-ios/" title="Previous Post: Unit Testing with Dart and Cordova on iOS">&laquo; Unit Testing with Dart and Cordova on iOS</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/12/29/builtool-and-libraries-with-cordova-in-dart-on-ios/" title="Next Post: builtool and libraries with cordova in dart on ios">builtool and libraries with cordova in dart on ios &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.6734693877551%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.22448979591837%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.22448979591837%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.22448979591837%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.22448979591837%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.22448979591837%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.6734693877551%'>API(3)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.44897959183673%'>BeagleBoard(2)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.44897959183673%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.22448979591837%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.22448979591837%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.22448979591837%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.22448979591837%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.89795918367346%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.44897959183673%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.22448979591837%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.22448979591837%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.22448979591837%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.6734693877551%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.22448979591837%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 101.22448979591837%'>Client(1)</a> <a href='/blog/categories/cloud' style='font-size: 102.44897959183673%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.44897959183673%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.22448979591837%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.89795918367346%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.22448979591837%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(49)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.44897959183673%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.22448979591837%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.6734693877551%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.22448979591837%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.44897959183673%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.6734693877551%'>DartVM(3)</a> <a href='/blog/categories/debugging' style='font-size: 101.22448979591837%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.89795918367346%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.22448979591837%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.89795918367346%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.6938775510204%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.22448979591837%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.22448979591837%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.22448979591837%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.22448979591837%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.22448979591837%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 129.3877551020408%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 102.44897959183673%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleAPI(1)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.22448979591837%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 106.12244897959184%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.22448979591837%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.22448979591837%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.22448979591837%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.22448979591837%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.44897959183673%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.6734693877551%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.44897959183673%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 106.12244897959184%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.22448979591837%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.22448979591837%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.44897959183673%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.22448979591837%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.22448979591837%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.22448979591837%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.44897959183673%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.22448979591837%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.89795918367346%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.89795918367346%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 101.22448979591837%'>Pub(1)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.22448979591837%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.22448979591837%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.44897959183673%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.22448979591837%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 130.6122448979592%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.44897959183673%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.22448979591837%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.22448979591837%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.22448979591837%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.44897959183673%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.22448979591837%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.22448979591837%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.44897959183673%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.44897959183673%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.6734693877551%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.22448979591837%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.22448979591837%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.44897959183673%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.22448979591837%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.22448979591837%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.22448979591837%'>WebGL(1)</a> </span>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/">Dart Multi Touch Canvas With Realtime APIs</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/09/rikulo-stream-on-heroku/">rikulo stream on heroku</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/08/google-client-apis-now-available-on-pub/">Dart Google Client Apis Now Available On Pub</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/financeCoding">@financeCoding</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'financeCoding',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Adam Singer -
+  <a href='https://plus.google.com/u/0/104569492481999771226/posts' rel='me'>Adam Singer</a>
+  - <a href='https://github.com/financeCoding' rel='me'>Adam Singer @ Github</a>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'financecoding';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://financeCoding.github.com/blog/2012/12/27/event-handling-and-logging-with-cordova-in-dart-on-ios/';
+        var disqus_url = 'http://financeCoding.github.com/blog/2012/12/27/event-handling-and-logging-with-cordova-in-dart-on-ios/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

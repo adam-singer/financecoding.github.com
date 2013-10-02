@@ -1,0 +1,694 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Dart generating and executing snapshots - Random posts about coding</title>
+  <meta name="author" content="Adam Singer">
+
+  <meta property="og:title" content="Dart generating and executing snapshots - Random posts about coding" />
+  <meta property="og:image" content="/me.png" />
+  <meta property="og:description" content="" />
+
+  
+  <meta name="description" content="Todays random walk of dartness has lead me to generating and executing snapshots. What is a snapshot in terms of Dart? Serialized binary heaps. It &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://financeCoding.github.com/blog/2013/01/11/dart-generating-and-executing-snapshots/">
+  <link href="/me_favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Random posts about coding" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36566996-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="https://plus.google.com/s2/photos/profile/104569492481999771226?sz=100"></a><span> </span><a href="/">Random posts about coding</a></h1>
+  
+    <h2>Mostly blogging about dart.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:financeCoding.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/aboutme">AboutMe</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Dart Generating and Executing Snapshots</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-11T17:32:00-08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Todays random walk of dartness has lead me to generating and executing snapshots.</p>
+
+<p>What is a snapshot in terms of Dart? Serialized binary heaps. It has been <a href="http://blog.sethladd.com/2012/09/what-dart-wants.html">said</a> that snapshots can help apps startup 10X faster. <code>dart2js</code> is a working example of this in action, when you execute the <code>dart2js</code> compiler it is actually running from a snapshot file.</p>
+
+<p>How can I currently generate them? (Might not be this way in the future) As of now you need to build from source so the <code>gen_snapshot</code> binary is built. <code>gen_snapshot</code> is the tool built from <a href="https://raw.github.com/dart-lang/bleeding_edge/master/dart/runtime/bin/gen_snapshot.cc">gen_snapshot.cc</a>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/dart_bleeding/dart/xcodebuild/DebugIA32/test
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>dart
+</span><span class='line'>
+</span><span class='line'>~/dart_bleeding/dart/xcodebuild/DebugIA32/test
+</span><span class='line'><span class="nv">$ </span>git svn fetch
+</span><span class='line'>
+</span><span class='line'>~/dart_bleeding/dart/xcodebuild/DebugIA32/test
+</span><span class='line'><span class="nv">$ </span>git merge git-svn
+</span><span class='line'>
+</span><span class='line'>~/dart_bleeding/dart/xcodebuild/DebugIA32/test
+</span><span class='line'><span class="nv">$ </span>gclient sync
+</span><span class='line'>
+</span><span class='line'>~/dart_bleeding/dart/xcodebuild/DebugIA32/test
+</span><span class='line'><span class="nv">$ </span>gclient runhooks
+</span><span class='line'>
+</span><span class='line'>~/dart_bleeding/dart/xcodebuild/DebugIA32/test
+</span><span class='line'><span class="nv">$ </span>./tools/build.py -m all --verbose -a ia32 --os<span class="o">=</span>host -j 4
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After that song and dance is finished the release build directory should contain the <code>gen_snapshot</code> executable.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/dart_bleeding
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>dart/xcodebuild/ReleaseIA32/
+</span><span class='line'>
+</span><span class='line'>~/dart_bleeding/dart/xcodebuild/ReleaseIA32
+</span><span class='line'><span class="nv">$ </span>ls
+</span><span class='line'>analyzer                  libcrnspr.a               libdart_vm.a              libv8_base.a
+</span><span class='line'>api_docs                  libcrnss.a                libdart_withcore.a        libv8_nosnapshot.a
+</span><span class='line'>d8                        libcrnssckbi.a            libdouble_conversion.a    libv8_snapshot.a
+</span><span class='line'>dart                      libdart.a                 libjscre.a                mksnapshot
+</span><span class='line'>dart-sdk                  libdart_builtin.a         libnss_static_dart.a      packages
+</span><span class='line'>dart2js.snapshot          libdart_dependency_helper libsample_extension.dylib process_test
+</span><span class='line'>dart_no_snapshot          libdart_io.a              libsqlite3.a              run_vm_tests
+</span><span class='line'>gen_snapshot              libdart_lib.a             libssl_dart.a
+</span><span class='line'>libchrome_zlib.a          libdart_lib_withcore.a    libtest_extension.dylib
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Running <code>gen_snapshot --help</code> we find the flags needed to generate a snapshot script.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/dart_bleeding/dart/xcodebuild/ReleaseIA32
+</span><span class='line'><span class="nv">$ </span>./gen_snapshot --help
+</span><span class='line'>No snapshot output file specified.
+</span><span class='line'>
+</span><span class='line'>Usage:
+</span><span class='line'>
+</span><span class='line'>  gen_snapshot <span class="o">[</span>&lt;vm-flags&gt;<span class="o">]</span> <span class="o">[</span>&lt;options&gt;<span class="o">]</span> <span class="se">\</span>
+</span><span class='line'>               <span class="o">{</span>--script_snapshot<span class="o">=</span>&lt;out-file&gt; | --snapshot<span class="o">=</span>&lt;out-file&gt;<span class="o">}</span> <span class="se">\</span>
+</span><span class='line'>               <span class="o">[</span>&lt;dart-script-file&gt;<span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'>  Writes a snapshot of &lt;dart-script-file&gt; to &lt;out-file&gt;. If no
+</span><span class='line'>  &lt;dart-script-file&gt; is passed, a generic snapshot of all the corelibs is
+</span><span class='line'>  created. One of the following is required:
+</span><span class='line'>
+</span><span class='line'>    --script_snapshot<span class="o">=</span>&lt;file&gt;   Generates a script snapshot.
+</span><span class='line'>    --snapshot<span class="o">=</span>&lt;file&gt;          Generates a <span class="nb">complete </span>snapshot. Uses the url
+</span><span class='line'>                               mapping specified on the <span class="nb">command </span>line to load
+</span><span class='line'>                               the libraries.
+</span><span class='line'>Supported options:
+</span><span class='line'>
+</span><span class='line'>--package_root<span class="o">=</span>&lt;path&gt;
+</span><span class='line'>  Where to find packages, that is, <span class="s2">&quot;package:...&quot;</span> imports.
+</span><span class='line'>
+</span><span class='line'>--url_mapping<span class="o">=</span>&lt;mapping&gt;
+</span><span class='line'>  Uses the URL mapping<span class="o">(</span>s<span class="o">)</span> specified on the <span class="nb">command </span>line to load the
+</span><span class='line'>  libraries. For use only with --snapshot<span class="o">=</span>.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The dart vm provides a flag that allows the vm to load the dart script from a snapshot.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>--use_script_snapshot<span class="o">=</span>&lt;file_name&gt;
+</span><span class='line'>  executes Dart script present in the specified snapshot file
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Combining all this together and using the <code>benchmark_harness</code> we can test out creating and running a dart application from a snapshot.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone https://github.com/financeCoding/benchmark_harness.git
+</span><span class='line'>
+</span><span class='line'>~/dart
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>benchmark_harness/
+</span><span class='line'>
+</span><span class='line'>~/dart/benchmark_harness
+</span><span class='line'><span class="nv">$ </span>pub install
+</span><span class='line'>Resolving dependencies...
+</span><span class='line'>Dependencies installed!
+</span><span class='line'>
+</span><span class='line'>~/dart/benchmark_harness
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>example/
+</span><span class='line'>
+</span><span class='line'>~/dart/benchmark_harness/example
+</span><span class='line'><span class="nv">$ </span>ls
+</span><span class='line'>DeltaBlue.dart     Richards.dart      Template.dart      packages
+</span><span class='line'>
+</span><span class='line'>~/dart/benchmark_harness/example
+</span><span class='line'><span class="nv">$ </span>~/dart_bleeding/dart/xcodebuild/DebugIA32/dart DeltaBlue.dart
+</span><span class='line'>DeltaBlue<span class="o">(</span>RunTime<span class="o">)</span>: 4326.133909287257 us.
+</span><span class='line'>
+</span><span class='line'>~/dart/benchmark_harness/example
+</span><span class='line'><span class="nv">$ </span>~/dart_bleeding/dart/xcodebuild/DebugIA32/dart Richards.dart
+</span><span class='line'>Richards<span class="o">(</span>RunTime<span class="o">)</span>: 2135.538954108858 us.
+</span><span class='line'>
+</span><span class='line'>~/dart/benchmark_harness/example
+</span><span class='line'><span class="nv">$ </span>~/dart_bleeding/dart/xcodebuild/DebugIA32/gen_snapshot --script_snapshot<span class="o">=</span>DeltaBlue.snapshot DeltaBlue.dart
+</span><span class='line'>
+</span><span class='line'>~/dart/benchmark_harness/example
+</span><span class='line'><span class="nv">$ </span>~/dart_bleeding/dart/xcodebuild/DebugIA32/dart --use_script_snapshot<span class="o">=</span>./DeltaBlue.snapshot DeltaBlue.dart
+</span><span class='line'>DeltaBlue<span class="o">(</span>RunTime<span class="o">)</span>: 4268.6567164179105 us.
+</span><span class='line'>
+</span><span class='line'>~/dart/benchmark_harness/example
+</span><span class='line'><span class="nv">$ </span>~/dart_bleeding/dart/xcodebuild/DebugIA32/gen_snapshot --script_snapshot<span class="o">=</span>Richards.snapshot Richards.dart
+</span><span class='line'>
+</span><span class='line'>~/dart/benchmark_harness/example
+</span><span class='line'><span class="nv">$ </span>~/dart_bleeding/dart/xcodebuild/DebugIA32/dart --use_script_snapshot<span class="o">=</span>./Richards.snapshot Richards.dart
+</span><span class='line'>Richards<span class="o">(</span>RunTime<span class="o">)</span>: 2082.206035379813 us.
+</span><span class='line'>
+</span><span class='line'>~/dart/benchmark_harness/example
+</span><span class='line'><span class="nv">$ </span>~/dart_bleeding/dart/xcodebuild/DebugIA32/dart --use_script_snapshot<span class="o">=</span>./Richards.snapshot Richards.dart
+</span><span class='line'>Richards<span class="o">(</span>RunTime<span class="o">)</span>: 2079.002079002079 us.
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The above examples might not be the best, but it&#8217;s a start to using snapshots and loading them from dart vm.</p>
+
+<p>After reading <a href="http://www.johnmccutchan.com/">John McCutchan</a> comment below I&#8217;ve generated much more interesting output.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>23:49:47-adam@Adams-MacBook-Air:~/dart/benchmark_harness/example
+</span><span class='line'><span class="nv">$ </span>~/dart_bleeding/dart/xcodebuild/DebugIA32/dart  --compiler_stats  --use_script_snapshot<span class="o">=</span>./Richards.snapshot Richards.dart
+</span><span class='line'>Richards<span class="o">(</span>RunTime<span class="o">)</span>: 2069.2864529472595 us.
+</span><span class='line'><span class="o">====</span> Compiler <span class="nv">Stats</span> <span class="o">====</span>
+</span><span class='line'>Number of tokens:   0
+</span><span class='line'>  Literal tokens:   0
+</span><span class='line'>  Ident tokens:     0
+</span><span class='line'>Tokens consumed:    6973 <span class="o">(</span>inf <span class="nb">times </span>number of tokens<span class="o">)</span>
+</span><span class='line'>Tokens checked:     49617  <span class="o">(</span>7.12 <span class="nb">times </span>tokens consumed<span class="o">)</span>
+</span><span class='line'>Token rewind:       3643 <span class="o">(</span>7% of tokens checked<span class="o">)</span>
+</span><span class='line'>Token lookahead:    2361 <span class="o">(</span>4% of tokens checked<span class="o">)</span>
+</span><span class='line'>Source length:      0 characters
+</span><span class='line'>Scanner <span class="nb">time</span>:       0 msecs
+</span><span class='line'>Parser <span class="nb">time</span>:        18 msecs
+</span><span class='line'>Code gen. <span class="nb">time</span>:     66 msecs
+</span><span class='line'>  Graph builder:    7 msecs
+</span><span class='line'>  Graph SSA:        0 msecs
+</span><span class='line'>  Graph inliner:    10 msecs
+</span><span class='line'>    Parsing:        2 msecs
+</span><span class='line'>    Building:       1 msecs
+</span><span class='line'>    SSA:            1 msecs
+</span><span class='line'>    Optimization:   2 msecs
+</span><span class='line'>    Substitution:   0 msecs
+</span><span class='line'>  Graph optimizer:  13 msecs
+</span><span class='line'>  Graph compiler:   29 msecs
+</span><span class='line'>  Code finalizer:   4 msecs
+</span><span class='line'>Compilation speed:  0 tokens per msec
+</span><span class='line'>Code size:          56 KB
+</span><span class='line'>Code density:       0 tokens per KB
+</span><span class='line'>23:50:06-adam@Adams-MacBook-Air:~/dart/benchmark_harness/example
+</span><span class='line'><span class="nv">$ </span>~/dart_bleeding/dart/xcodebuild/DebugIA32/dart  --compiler_stats Richards.dart
+</span><span class='line'>Richards<span class="o">(</span>RunTime<span class="o">)</span>: 2073.5751295336786 us.
+</span><span class='line'><span class="o">====</span> Compiler <span class="nv">Stats</span> <span class="o">====</span>
+</span><span class='line'>Number of tokens:   1981
+</span><span class='line'>  Literal tokens:   68
+</span><span class='line'>  Ident tokens:     692
+</span><span class='line'>Tokens consumed:    13539 <span class="o">(</span>6.83 <span class="nb">times </span>number of tokens<span class="o">)</span>
+</span><span class='line'>Tokens checked:     87271  <span class="o">(</span>6.45 <span class="nb">times </span>tokens consumed<span class="o">)</span>
+</span><span class='line'>Token rewind:       5849 <span class="o">(</span>6% of tokens checked<span class="o">)</span>
+</span><span class='line'>Token lookahead:    3954 <span class="o">(</span>4% of tokens checked<span class="o">)</span>
+</span><span class='line'>Source length:      15543 characters
+</span><span class='line'>Scanner <span class="nb">time</span>:       3 msecs
+</span><span class='line'>Parser <span class="nb">time</span>:        23 msecs
+</span><span class='line'>Code gen. <span class="nb">time</span>:     110 msecs
+</span><span class='line'>  Graph builder:    5 msecs
+</span><span class='line'>  Graph SSA:        0 msecs
+</span><span class='line'>  Graph inliner:    13 msecs
+</span><span class='line'>    Parsing:        2 msecs
+</span><span class='line'>    Building:       2 msecs
+</span><span class='line'>    SSA:            1 msecs
+</span><span class='line'>    Optimization:   3 msecs
+</span><span class='line'>    Substitution:   1 msecs
+</span><span class='line'>  Graph optimizer:  13 msecs
+</span><span class='line'>  Graph compiler:   69 msecs
+</span><span class='line'>  Code finalizer:   6 msecs
+</span><span class='line'>Compilation speed:  14 tokens per msec
+</span><span class='line'>Code size:          89 KB
+</span><span class='line'>Code density:       22 tokens per KB
+</span><span class='line'>23:50:26-adam@Adams-MacBook-Air:~/dart/benchmark_harness/example
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>References made about snapshots in no particular order</p>
+
+<ul>
+<li><a href="http://www.infoq.com/articles/google-dart">infoq</a></li>
+<li><a href="http://stackoverflow.com/questions/12871476/what-is-the-snapshot-concept-in-dart">What is the snapshot concept in dart?</a></li>
+<li><a href="http://blog.sethladd.com/2012/09/what-dart-wants.html">what dart wants</a></li>
+<li><a href="https://groups.google.com/a/dartlang.org/d/topic/misc/04Z3GHxk4As/discussion">runtime corelib</a></li>
+<li><a href="https://groups.google.com/a/dartlang.org/d/topic/misc/_U6LZS226O4/discussion">snapshotting explanation for a Smalltalker</a></li>
+<li><a href="https://groups.google.com/a/dartlang.org/d/topic/misc/BoHa1YN_itk/discussion">Dart Team Updates, Oct 30 - Nov 13</a></li>
+<li><a href="http://www.dartlang.org/slides/2012/06/io12/Dart-A-Modern-Web-Language.pdf">Dart A Modern Web Language</a></li>
+<li><a href="http://www.dartlang.org/slides/">Slides</a></li>
+<li><a href="http://www.dartlang.org/dartisans/">Dartisans</a></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Adam Singer</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-11T17:32:00-08:00" pubdate data-updated="true">Jan 11<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/dart/'>Dart</a>, <a class='category' href='/blog/categories/dartvm/'>DartVM</a>, <a class='category' href='/blog/categories/snapshots/'>snapshots</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://financeCoding.github.com/blog/2013/01/11/dart-generating-and-executing-snapshots/" data-via="" data-counturl="http://financeCoding.github.com/blog/2013/01/11/dart-generating-and-executing-snapshots/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/01/06/listing-files-with-google-drive-and-dart/" title="Previous Post: Listing files with Google Drive and Dart">&laquo; Listing files with Google Drive and Dart</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/01/16/darting-a-full-stack/" title="Next Post: Darting A Full Stack">Darting A Full Stack &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.6734693877551%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.22448979591837%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.22448979591837%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.22448979591837%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.22448979591837%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.22448979591837%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.6734693877551%'>API(3)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.44897959183673%'>BeagleBoard(2)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.44897959183673%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.22448979591837%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.22448979591837%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.22448979591837%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.22448979591837%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.89795918367346%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.44897959183673%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.22448979591837%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.22448979591837%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.22448979591837%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.6734693877551%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.22448979591837%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 101.22448979591837%'>Client(1)</a> <a href='/blog/categories/cloud' style='font-size: 102.44897959183673%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.44897959183673%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.22448979591837%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.89795918367346%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.22448979591837%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(49)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.44897959183673%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.22448979591837%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.6734693877551%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.22448979591837%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.44897959183673%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.6734693877551%'>DartVM(3)</a> <a href='/blog/categories/debugging' style='font-size: 101.22448979591837%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.89795918367346%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.22448979591837%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.89795918367346%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.6938775510204%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.22448979591837%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.22448979591837%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.22448979591837%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.22448979591837%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.22448979591837%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 129.3877551020408%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 102.44897959183673%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleAPI(1)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.22448979591837%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 106.12244897959184%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.22448979591837%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.22448979591837%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.22448979591837%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.22448979591837%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.44897959183673%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.6734693877551%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.44897959183673%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 106.12244897959184%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.22448979591837%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.22448979591837%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.44897959183673%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.22448979591837%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.22448979591837%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.22448979591837%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.44897959183673%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.22448979591837%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.89795918367346%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.89795918367346%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 101.22448979591837%'>Pub(1)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.22448979591837%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.22448979591837%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.44897959183673%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.22448979591837%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 130.6122448979592%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.44897959183673%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.22448979591837%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.22448979591837%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.22448979591837%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.44897959183673%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.22448979591837%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.22448979591837%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.44897959183673%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.44897959183673%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.6734693877551%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.22448979591837%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.22448979591837%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.44897959183673%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.22448979591837%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.22448979591837%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.22448979591837%'>WebGL(1)</a> </span>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/">Dart Multi Touch Canvas With Realtime APIs</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/09/rikulo-stream-on-heroku/">rikulo stream on heroku</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/08/google-client-apis-now-available-on-pub/">Dart Google Client Apis Now Available On Pub</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/financeCoding">@financeCoding</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'financeCoding',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Adam Singer -
+  <a href='https://plus.google.com/u/0/104569492481999771226/posts' rel='me'>Adam Singer</a>
+  - <a href='https://github.com/financeCoding' rel='me'>Adam Singer @ Github</a>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'financecoding';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://financeCoding.github.com/blog/2013/01/11/dart-generating-and-executing-snapshots/';
+        var disqus_url = 'http://financeCoding.github.com/blog/2013/01/11/dart-generating-and-executing-snapshots/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

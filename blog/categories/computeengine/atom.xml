@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ComputeEngine | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/computeengine/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Started with Dart on Compute Engine]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/09/30/getting-started-with-dart-on-compute-engine/"/>
+    <updated>2013-09-30T20:41:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/09/30/getting-started-with-dart-on-compute-engine</id>
+    <content type="html"><![CDATA[<p>Quick how-to on using <a href="http://www.dartlang.org">dart</a> with <a href="https://cloud.google.com/products/compute-engine">Compute Engine</a>. If not aware, right now is a great time to dive into Compute Engine cause google is giving away $2,000 worth of <a href="https://plus.google.com/111783114889748547827/posts/Bou747dCfNb">credits</a> to individuals interested in trying it out. I've been using it for about 2-3 months now and totally love it.</p>
+
+<p>What peeked my interest is it was flexable enough to run the dartvm as a server with minimal configuration. The one configuration hurdle was dependency of <code>GLIBC &gt;= 2.15</code> in the dartvm binaries. The good news is with a simple startup script the compute engine instance can be provisioned to support the latest linux <a href="https://storage.googleapis.com/dart-editor-archive-integration/latest/dartsdk-linux-64.tar.gz">dart-sdk</a>.</p>
+
+<p>The main tool we will use to provision a compute engine instance is <a href="https://developers.google.com/compute/docs/gcutil/">gcutil</a>. We could of used dartvm and <a href="http://pub.dartlang.org/packages/google_compute_v1beta15_api">google_compute_v1beta15_api</a> but will save that for a later post.</p>
+
+<p>After signing up for <a href="https://cloud.google.com/products/compute-engine">Compute Engine</a> the next step should be to download and configure <code>gcutil</code>.</p>
+
+<p><code>bash
+$ wget https://google-compute-engine-tools.googlecode.com/files/gcutil-1.8.4.tar.gz
+$ tar xzvpf gcutil-1.8.4.tar.gz -C $HOME
+$ export PATH=./gcutil-1.8.4:$PATH
+$ gcutil version
+1.8.4
+</code></p>
+
+<p>Next we want to create a <code>startup.sh</code> script that will be deployed to the compute engine instance. The script is a simple way to run additional commands to provision the instance. For dart we need to add a new <code>deb</code> source, update sources, install dependencies, fetch &amp; unpack dart-sdk, and then execute our dart server. In the final line of the <code>startup.sh</code> script the command will create a dart server from the user account tied to this compute instance. Simply we clone a public git repo, install pub dependencies and screen a detached session that runs the dart server. This is not a very fancy way to deploy dart but a simple and quick way to get something running with no troubles. A real life deployment might include some trendy fab/chef/puppet combo.</p>
+
+<p>```bash startup.sh</p>
+
+<h1>!/usr/bin/env bash</h1>
+
+<h1>Add an addtional source for the latest glibc</h1>
+
+<p>sudo sed -i '1i deb http://ftp.us.debian.org/debian/ jessie main' /etc/apt/sources.list</p>
+
+<h1>Update sources</h1>
+
+<p>sudo apt-get update</p>
+
+<h1>Download latest glibc</h1>
+
+<p>sudo DEBIAN_FRONTEND=noninteractive apt-get -t jessie install -y libc6 libc6-dev libc6-dbg git screen</p>
+
+<h1>Download the latest dart sdk</h1>
+
+<p>wget https://storage.googleapis.com/dart-editor-archive-integration/latest/dartsdk-linux-64.tar.gz -O /dartsdk-linux-64.tar.gz</p>
+
+<h1>Unpack the dart sdk</h1>
+
+<p>tar -zxvf /dartsdk-linux-64.tar.gz -C /</p>
+
+<p>su - financeCoding -c 'ls -al &amp;&amp; cd ~ &amp;&amp; pwd &amp;&amp; git clone https://github.com/rikulo/stream.git &amp;&amp; /dart-sdk/bin/dart --version &amp;&amp; cd stream &amp;&amp; /dart-sdk/bin/dart --version &amp;&amp; /dart-sdk/bin/pub install &amp;&amp; cd example/hello-static &amp;&amp; screen -d -m /dart-sdk/bin/dart webapp/main.dart'
+```</p>
+
+<p>After we have the <code>startup.sh</code> script we then create another deployment script. The following script will be the gcutil commands needed to actually create and provision the compute instance. The last part of our script includes a firewall rule for the port that the <a href="https://github.com/rikulo/stream">stream</a> sample is running on. Without proper firewall rules no access from the outside is possible.</p>
+
+<p>```bash deploy-dart-compute.sh</p>
+
+<h1>!/usr/bin/env bash</h1>
+
+<p>set +o xtrace</p>
+
+<p>USER=financeCoding
+PROJECT=dart-compute-project
+INSTANCE_NAME=dart-compute
+TAGS=dart
+MACHINE_TYPE=g1-small
+NETWORK=default
+IP=ephemeral
+IMAGE=https://www.googleapis.com/compute/v1beta15/projects/debian-cloud/global/images/debian-7-wheezy-v20130816
+SCOPES=https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/compute,https://www.googleapis.com/auth/devstorage.full_control
+PERSISTENT_BOOT_DISK=true
+ZONE=us-central1-b
+STARTUP_SCRIPT=startup.sh
+GCUTIL="gcutil --service_version=v1beta15 --project=$PROJECT"</p>
+
+<p>$GCUTIL addinstance $INSTANCE_NAME --tags=$TAGS --zone=$ZONE --machine_type=$MACHINE_TYPE --network=$NETWORK --external_ip_address=$IP --service_account_scopes=$SCOPES --image=$IMAGE --persistent_boot_disk=$PERSISTENT_BOOT_DISK --metadata_from_file=startup-script:$STARTUP_SCRIPT</p>
+
+<p>rc=$?
+if [[ $rc != 0 ]] ; then</p>
+
+<pre><code>echo "Not able to add instance"
+exit $rc
+</code></pre>
+
+<p>fi</p>
+
+<p>$GCUTIL addfirewall $INSTANCE_NAME --allowed "tcp:8080"</p>
+
+<p>rc=$?
+if [[ $rc != 0 ]] ; then</p>
+
+<pre><code>echo "Not able to provision firewall or has already been provisioned"
+exit $rc
+</code></pre>
+
+<p>fi</p>
+
+<p>exit $rc
+```</p>
+
+<p><a href="/images/2013-09-30-getting-started-with-dart-on-compute-engine/compute-engine-console.png"><img src="/images/2013-09-30-getting-started-with-dart-on-compute-engine/compute-engine-console.png" alt="compute-engine-console" /></a></p>
+
+<p><a href="/images/2013-09-30-getting-started-with-dart-on-compute-engine/stream-client.png"><img src="/images/2013-09-30-getting-started-with-dart-on-compute-engine/stream-client.png" alt="stream-client" /></a></p>
+
+<p>And thats all that is needed to get dart on compute engine in two easy steps. The code can be found here <a href="https://gist.github.com/financeCoding/6789537">gist</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

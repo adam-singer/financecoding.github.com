@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Stocks | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/stocks/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[New Google Finance API Demo Released in C#]]></title>
+    <link href="http://financeCoding.github.com/blog/2009/08/10/New-Google-Finance-API-Demo-Released-in-C%23/"/>
+    <updated>2009-08-10T08:28:31Z</updated>
+    <id>http://financeCoding.github.com/blog/2009/08/10/New-Google-Finance-API-Demo-Released-in-C#</id>
+    <content type="html"><![CDATA[<p><a href="http://googlefinance.googlecode.com/files/GoogleFinanceDemo.0.0.2.zip">Download Here</a><br /><br />Added a simple application that lets you do a complete management of your <a href="http://www.google.com/finance/portfolio?action=view">Google Portfolio</a> from the command line. You can load an example S&amp;P 500 CSV file, create &amp; delete portfolios, add &amp; remove stocks, add transactions of stocks. etc.. Try it out and have fun with it, does provide a good example of how you could create your own application using the methods in <a href="http://code.google.com/p/googlefinance/source/browse/trunk/GoogleFinanceDemo/SP500/GoogleFinanceManager.cs">GoogleFinanceManager.cs</a>. You might notice I use a <a href="http://code.google.com/p/googlefinance/source/browse/trunk/GoogleFinanceDemo/SP500/YahooHelper.cs">YahooHelper.cs</a> object, this is cause Google does not yet provide a way (or one that I know of) to resolve which exchange a ticker symbol is located. Soon will be working on another example demo that will involve <a href="http://windowsclient.net/wpf/">WPF</a>. If you have any problems, questions or comments please feel free to contact me directly or leave a post. Please, if you can donate some money. Even if this project does not serve anything purposeful yet, any donations can really help.<br /><br /><br /><a id="paypalDonate" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=6299759"><img border="0" id="payPalImage" src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate to this project, it really helps a lot!" /></a><div class="blogger-post-footer"><img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/478539871162226053-6476881114213050129?l=financecoding.blogspot.com' alt='' /></div></p>
+]]></content>
+  </entry>
+  
+</feed>

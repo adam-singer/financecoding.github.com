@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: bot.dart | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/bot-dart/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using createDartAnalyzerTask in bot.dart to ensure sanity]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/02/07/using-createdartanalyzertask-in-bot-dot-dart-to-ensure-sanity/"/>
+    <updated>2013-02-07T19:47:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/02/07/using-createdartanalyzertask-in-bot-dot-dart-to-ensure-sanity</id>
+    <content type="html"><![CDATA[<p><a href="http://drone.io">drone.io</a> has really proven to be useful for <a href="http://www.dartlang.org">dart</a> projects. One common pattern I find my self doing with projects these days is running the <code>dart_analyzer</code> before running unit tests. Had a <a href="https://github.com/kevmoo/bot.dart/issues/36">discussion</a> with <a href="https://github.com/kevmoo">Kevin Moore</a> about having a <code>dart_analyzer</code> task included in <code>hop</code>, part of the <a href="https://github.com/kevmoo/bot.dart">bot.dart</a> framework. We both agreed it would be nice to automate that task and not have shell scripts running the show. Thus <a href="http://kevmoo.github.com/bot.dart/hop_tasks.html#createDartAnalyzerTask"><code>createDartAnalyzerTask</code></a> was born. <code>createDartAnalyzerTask</code> allows you to add dart scripts that are libraries or main entry points to be analyzed by <code>dart_analyzer</code>, this allows for a first step of safety, so that code you have passes the static checker. It does not mean your code is perfect but can help you find warnings and errors. A great combination for this is pairing it up with <a href="http://drone.io">drone.io</a>, that way when a new sdk comes out drone can let you know automatically if it passes static checker.</p>
+
+<p><em>Lets see this in action</em></p>
+
+<p>First step is to add bot to your <code>pubspec.yaml</code></p>
+
+<p><code>yaml
+dependencies:
+  browser: "&gt;=0.3.4"
+  unittest: "&gt;=0.3.4"
+  bot: "&gt;=0.12.0"
+</code></p>
+
+<p>Create a minimal <code>tool/hop_runner.dart</code></p>
+
+<p>```dart
+library hop_runner;</p>
+
+<p>import 'dart:async';
+import 'dart:io';
+import 'package:bot/bot.dart';
+import 'package:bot/hop.dart';
+import 'package:bot/hop_tasks.dart';</p>
+
+<p>void main() {
+  //
+  // Analyzer
+  //
+  addTask('analyze_lib', createDartAnalyzerTask(['lib/stats.dart']));</p>
+
+<p>  //
+  // Hop away!
+  //
+  runHopCore();
+}
+```</p>
+
+<p>Add a <code>bin/hop</code> script to your project, <code>bin/hop</code> script is not required but does help manage some flags you might be interested in having.</p>
+
+<p>```bash</p>
+
+<h1>!/bin/bash</h1>
+
+<p>PACK_DIR=<code>pwd</code>/packages/
+cmd="dart
+--enable_asserts
+--enable_checked_mode
+--enable_type_checks
+--error_on_malformed_type
+--package-root=$PACK_DIR
+--verbose_debug
+--warning_as_error
+./tool/hop_runner.dart $@"
+exec $cmd
+```</p>
+
+<p>Now <code>hop</code> away!</p>
+
+<p><code>
+19:41:54-adam@Adams-MacBook-Air:~/dart/stats.dart
+$ hop analyze_lib
+analyze_lib: PASSED - lib/stats.dart
+analyze_lib: PASSED: 1, WARNING: 0, ERROR: 0
+Finished
+</code></p>
+
+<p>Now lets say we have the following warning of <code>String i = 42;</code>, bot can provide us a summary of warnings we might have in our code.</p>
+
+<p>```dart
+library not_cool_lib;</p>
+
+<p>void main() {
+  String i = 42;
+}
+```</p>
+
+<p>Adding the library to our task</p>
+
+<p><code>dart
+  //
+  // Analyzer
+  //
+  addTask('analyze_lib', createDartAnalyzerTask(['lib/stats.dart', 'lib/notcoollib.dart']));
+</code></p>
+
+<p>Executing <code>hop</code></p>
+
+<p><code>
+20:04:55-adam@Adams-MacBook-Air:~/dart/stats.dart
+$ hop analyze_lib
+analyze_lib: PASSED - lib/stats.dart
+analyze_lib: WARNING - lib/notcoollib.dart
+analyze_lib: PASSED: 1, WARNING: 1, ERROR: 0
+Finished
+</code></p>
+
+<p>Now we have a warning, but since dart is a dynamic langauge we should not treat that as an error <em>(at some point we might provide the option of making warnings fail <a href="http://drone.io">drone.io</a>)</em>.</p>
+
+<p>If we introduce a real error, the task runner should yell at us.</p>
+
+<p>```dart
+library not_cool_lib;</p>
+
+<p>void main() {
+  String i = 42;
+  bam(i);
+}
+```</p>
+
+<p>And it does!</p>
+
+<p><code>
+20:11:38-adam@Adams-MacBook-Air:~/dart/stats.dart
+$ hop analyze_lib
+analyze_lib: PASSED - lib/stats.dart
+analyze_lib: ERROR - lib/notcoollib.dart
+analyze_lib: PASSED: 1, WARNING: 0, ERROR: 1
+analyze_lib: Failed
+Failed
+20:18:11-adam@Adams-MacBook-Air:~/dart/stats.dart
+$ echo $?
+80
+</code></p>
+
+<p>The exit code will let <a href="http://drone.io">drone.io</a> know that we did not exit cleanly. I love <a href="http://drone.io">drone.io</a> for this reason, it's simple to get setup right away with little fuss.</p>
+
+<p>A complete run on <a href="http://drone.io">drone.io</a> might look something as follows</p>
+
+<p><code>
+$ git clone git://github.com/Dartist/stats.dart.git /home/ubuntu/src/github.com/Dartist/stats.dart
+Cloning into '/home/ubuntu/src/github.com/Dartist/stats.dart'...
+$ dart --version
+Dart VM version: 0.3.4.0_r18115 (Tue Feb  5 05:53:42 2013)
+$ cat $DART_SDK/revision
+18137
+$ sudo start xvfb
+xvfb start/running, process 1017
+$ pub install
+Resolving dependencies...
+Downloading browser 0.3.4...
+Downloading bot 0.12.1...
+Downloading unittest 0.3.4...
+Downloading logging 0.3.4...
+Downloading args 0.3.4...
+Downloading meta 0.3.4...
+Dependencies installed!
+$ export PATH=./bin:$PATH
+$ hop analyze_lib
+analyze_lib: PASSED - lib/stats.dart
+analyze_lib: PASSED: 1, WARNING: 0, ERROR: 0
+Finished
+$ hop headless_test
+unittest-suite-wait-for-done
+headless_test: DumpRenderTree - test/tests_browser.html
+headless_test: 1 PASSED, 0 FAILED, 0 ERRORS
+Finished
+</code></p>
+
+<p>For a full example of a project that uses <a href="https://github.com/kevmoo/bot.dart">bot.dart</a> for testing and analyzer please refer to <a href="https://github.com/Dartist/stats.dart">stats.dart</a></p>
+]]></content>
+  </entry>
+  
+</feed>

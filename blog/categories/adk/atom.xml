@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: adk | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/adk/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Last Dart mashup for 2012 - Clock Chrome App Drives ADK2012]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/12/31/last-dart-mashup-for-2012-clock-chrome-app-drives-adk2012/"/>
+    <updated>2012-12-31T13:03:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/12/31/last-dart-mashup-for-2012-clock-chrome-app-drives-adk2012</id>
+    <content type="html"><![CDATA[<p>My last dart mashup for the year, excited to see what the community and dart team brings for 2013.</p>
+
+<iframe width="560" height="315" src="http://www.youtube.com/embed/-Z-cxc3OXpE" frameborder="0" allowfullscreen></iframe>
+
+
+<p>All source code can be found in the example directory of <a href="https://github.com/dart-gde/chrome.dart">chrome.dart</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

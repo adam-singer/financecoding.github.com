@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Brainteaser | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/brainteaser/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Ways to solve the N doors N passes question]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/11/25/ways-to-solve-the-n-doors-n-passes-question/"/>
+    <updated>2012-11-25T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/11/25/ways-to-solve-the-n-doors-n-passes-question</id>
+    <content type="html"><![CDATA[<h2>Question</h2>
+
+<p>  1000 doors in a row that are initially closed.
+  1000 passes on the doors. Each time you visit
+  a door you toggle it. If open->close, if close->open.
+  First time you visit every door, second time
+  you visit every other door, third time you visit
+  every 3rd door, etc.. until visiting all 1000 doors.
+  How many doors are left open at the end? Which are open,
+  which are closed? What is unique about the sequence left open?</p>
+
+<h2>Solutions</h2>
+
+<p>The O(n<sup>2)</sup> solution to the problem which presents interesting results in its output.</p>
+
+<script src="https://gist.github.com/4041693.js"><!-- gist --></script>
+
+
+<p>The O(n) solution that takes advantage of a known identity of <a href="http://en.wikipedia.org/wiki/Square_number">perfect squares</a> <img src="http://rosettacode.org/mw/images/math/d/0/4/d04596032dd6404083d3653514ef825a.png" alt="" /> found in the problem.</p>
+
+<script src="https://gist.github.com/4141261.js"><!-- gist --></script>
+
+
+
+]]></content>
+  </entry>
+  
+</feed>

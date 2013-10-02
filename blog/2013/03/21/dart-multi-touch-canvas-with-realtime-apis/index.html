@@ -1,0 +1,427 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Dart Multi Touch Canvas With Realtime APIs - Random posts about coding</title>
+  <meta name="author" content="Adam Singer">
+
+  <meta property="og:title" content="Dart Multi Touch Canvas With Realtime APIs - Random posts about coding" />
+  <meta property="og:image" content="/me.png" />
+  <meta property="og:description" content="" />
+
+  
+  <meta name="description" content="Google has made the realtime api available for developers. Realtime api provides operational transformation on strings, lists, maps and custom &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://financeCoding.github.com/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/">
+  <link href="/me_favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Random posts about coding" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36566996-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="https://plus.google.com/s2/photos/profile/104569492481999771226?sz=100"></a><span> </span><a href="/">Random posts about coding</a></h1>
+  
+    <h2>Mostly blogging about dart.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:financeCoding.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/aboutme">AboutMe</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Dart Multi Touch Canvas With Realtime APIs</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-21T18:19:00-07:00" pubdate data-updated="true">Mar 21<span>st</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><a href="https://developers.google.com/drive/">Google</a> has made the <a href="https://developers.google.com/drive/realtime/">realtime</a> api available for developers. Realtime api provides <a href="http://en.wikipedia.org/wiki/Operational_transformation">operational transformation</a> on <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeString">strings</a>, <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeList">lists</a>, <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeMap">maps</a> and custom <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeObject">objects</a>. The application data gets stored on Google Drive and is available from any supported browser. This is going to be the tooling of the future for collaborative applications.</p>
+
+<p>I took some time to see what it would take for implementing a sample realtime application in dart. Also wanted to make sure my sample could run on mobile chrome.</p>
+
+<p>Since realtime api is new, dart bindings don&#8217;t really exist. Lucky for us we have <a href="http://pub.dartlang.org/packages/js">js-interop</a> library. The <a href="http://pub.dartlang.org/packages/js">js-interop</a> library provides communications to existing javascript code from dart. I consider this mostly a quick hack to get started with the realtime api until a more native interface exists.</p>
+
+<p>The sample <a href="http://financecoding.github.com/realtime_touch_canvas/web/index.html">realtime_touch_canvas</a> demonstrates a multi touch canvas surface that updates in realtime with all clients that have the application open.</p>
+
+<iframe width="560" height="315" src="http://www.youtube.com/embed/xArfJdOb55Q" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Most of the heavy lifting is done by <a href="https://github.com/financeCoding/realtime_touch_canvas"><code>rtclient.dart</code></a>. I ported the <a href="https://github.com/googledrive/realtime-playground/blob/master/js/realtime-client-utils.js">code</a> from the javascript version. Its enough code to get started right away but a more structured solution should be done. The main class is <code>RealTimeLoader</code> used for realtime loading.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'>  <span class="n">rtl</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RealTimeLoader</span><span class="p">(</span><span class="nl">clientId:</span> <span class="s1">&#39;CLIENTID.apps.googleusercontent.com&#39;</span><span class="p">,</span> <span class="nl">apiKey:</span> <span class="s1">&#39;KEY&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">rtl</span><span class="p">.</span><span class="n">start</span><span class="p">().</span><span class="n">then</span><span class="p">((</span><span class="kt">bool</span> <span class="n">isComplete</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="cm">/* RealTimeLoader has authenticated the application and is ready to load a file */</span>
+</span><span class='line'>    <span class="n">loadRealTimeFile</span><span class="p">(</span><span class="n">fileId</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">onFileLoaded</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">initializeModel</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>model.onFileLoaded</code> and <code>model.initializeModel</code> handle the creating of model data and loading of model data.</p>
+
+<p>In the <a href="http://financecoding.github.com/realtime_touch_canvas/web/index.html">realtime_touch_canvas</a>, model data was a simple list of json strings. The ticky part here is you need to remember that your working with the realtime api within the javascript vm. So an array needs to be allocated from <a href="http://pub.dartlang.org/packages/js">js-interop</a>.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'>  <span class="kt">void</span> <span class="n">_createNewModel</span><span class="p">(</span><span class="n">js</span><span class="p">.</span><span class="n">Proxy</span> <span class="n">model</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="n">list</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">createList</span><span class="p">(</span><span class="n">js</span><span class="p">.</span><span class="n">array</span><span class="p">(</span><span class="n">_defaultLines</span><span class="p">));</span>
+</span><span class='line'>    <span class="n">model</span><span class="p">.</span><span class="n">getRoot</span><span class="p">().</span><span class="kd">set</span><span class="p">(</span><span class="n">_linesName</span><span class="p">,</span> <span class="n">list</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After the model is created we then get called to load the file. Loading the file for our purposes is binding the collaborative objects. Some tricky things to note here is we are retaining the javascript objects so we can access them after exit of the callback. Also the callbacks have to be wrapped within <a href="http://pub.dartlang.org/packages/js">js-interop</a> <code>js.Callback.many</code> proxy object. The callbacks <code>_linesOnAddValuesChangedEvent</code> and <code>_linesOnRemovedValuesChangedEvent</code> are fired off when the collaborative list object has items added or removed.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'>  <span class="n">js</span><span class="p">.</span><span class="n">Proxy</span> <span class="n">_doc</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="n">_linesName</span> <span class="o">=</span> <span class="s2">&quot;lines&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">js</span><span class="p">.</span><span class="n">Proxy</span> <span class="n">_lines</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">void</span> <span class="n">_bindModel</span><span class="p">(</span><span class="n">js</span><span class="p">.</span><span class="n">Proxy</span> <span class="n">doc</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">_doc</span> <span class="o">=</span> <span class="n">doc</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">js</span><span class="p">.</span><span class="n">retain</span><span class="p">(</span><span class="n">_doc</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">_lines</span> <span class="o">=</span> <span class="n">doc</span><span class="p">.</span><span class="n">getModel</span><span class="p">().</span><span class="n">getRoot</span><span class="p">().</span><span class="kd">get</span><span class="p">(</span><span class="n">_linesName</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">_lines</span><span class="p">.</span><span class="n">addEventListener</span><span class="p">(</span><span class="n">gapi</span><span class="p">.</span><span class="n">drive</span><span class="p">.</span><span class="n">realtime</span><span class="p">.</span><span class="n">EventType</span><span class="p">.</span><span class="n">VALUES_ADDED</span><span class="p">,</span> <span class="k">new</span> <span class="n">js</span><span class="p">.</span><span class="n">Callback</span><span class="p">.</span><span class="n">many</span><span class="p">(</span><span class="n">_linesOnAddValuesChangedEvent</span><span class="p">));</span>
+</span><span class='line'>    <span class="n">_lines</span><span class="p">.</span><span class="n">addEventListener</span><span class="p">(</span><span class="n">gapi</span><span class="p">.</span><span class="n">drive</span><span class="p">.</span><span class="n">realtime</span><span class="p">.</span><span class="n">EventType</span><span class="p">.</span><span class="n">VALUES_REMOVED</span><span class="p">,</span> <span class="k">new</span> <span class="n">js</span><span class="p">.</span><span class="n">Callback</span><span class="p">.</span><span class="n">many</span><span class="p">(</span><span class="n">_linesOnRemovedValuesChangedEvent</span><span class="p">));</span>
+</span><span class='line'>    <span class="n">js</span><span class="p">.</span><span class="n">retain</span><span class="p">(</span><span class="n">_lines</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When the callback is called the data would be in the javascript virtual machine so we can parse it and store in our native dart code. This is more of a convenience then a must do, that way we can expose plan old dart objects to our other parts of the dart application.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'>  <span class="kt">void</span> <span class="n">_linesOnAddValuesChangedEvent</span><span class="p">(</span><span class="n">addedValue</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="n">insertedLine</span> <span class="o">=</span> <span class="n">_lines</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="n">addedValue</span><span class="p">.</span><span class="n">index</span><span class="p">);</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="n">line</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Line</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">insertedLine</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">realtimeTouchCanvas</span><span class="p">.</span><span class="n">move</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">line</span><span class="p">.</span><span class="n">moveX</span><span class="p">,</span> <span class="n">line</span><span class="p">.</span><span class="n">moveY</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>Now when we want to store a line in the application we simply convert it to json and push it into the collaborative list. The little tick here is to make sure we are <code>scoped</code> when accessing the <code>_lines</code> object since it lives in the javascript virtual machine.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'>  <span class="kt">void</span> <span class="n">addLine</span><span class="p">(</span><span class="n">Line</span> <span class="n">line</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">js</span><span class="p">.</span><span class="n">scoped</span><span class="p">(()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">_lines</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">line</span><span class="p">.</span><span class="n">toJson</span><span class="p">());</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The <a href="http://financecoding.github.com/realtime_touch_canvas/web/index.html">realtime_touch_canvas</a> is live on github gh-pages and <a href="https://github.com/financeCoding/realtime_touch_canvas">realtime_touch_canvas source</a> is available.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Adam Singer</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-21T18:19:00-07:00" pubdate data-updated="true">Mar 21<span>st</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/api/'>API</a>, <a class='category' href='/blog/categories/dart/'>Dart</a>, <a class='category' href='/blog/categories/drive/'>Drive</a>, <a class='category' href='/blog/categories/google/'>Google</a>, <a class='category' href='/blog/categories/realtime/'>Realtime</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://financeCoding.github.com/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/" data-via="" data-counturl="http://financeCoding.github.com/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/03/09/rikulo-stream-on-heroku/" title="Previous Post: rikulo stream on heroku">&laquo; rikulo stream on heroku</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/04/02/gplus-quickstart-with-dart/" title="Next Post: gplus quickstart with dart">gplus quickstart with dart &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.6734693877551%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.22448979591837%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.22448979591837%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.22448979591837%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.22448979591837%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.22448979591837%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.6734693877551%'>API(3)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.44897959183673%'>BeagleBoard(2)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.44897959183673%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.22448979591837%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.22448979591837%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.22448979591837%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.22448979591837%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.89795918367346%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.44897959183673%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.22448979591837%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.22448979591837%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.22448979591837%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.6734693877551%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.22448979591837%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 101.22448979591837%'>Client(1)</a> <a href='/blog/categories/cloud' style='font-size: 102.44897959183673%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.44897959183673%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.22448979591837%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.89795918367346%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.22448979591837%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(49)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.44897959183673%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.22448979591837%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.6734693877551%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.22448979591837%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.44897959183673%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.6734693877551%'>DartVM(3)</a> <a href='/blog/categories/debugging' style='font-size: 101.22448979591837%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.89795918367346%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.22448979591837%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.89795918367346%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.6938775510204%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.22448979591837%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.22448979591837%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.22448979591837%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.22448979591837%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.22448979591837%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 129.3877551020408%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 102.44897959183673%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleAPI(1)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.22448979591837%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 106.12244897959184%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.22448979591837%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.22448979591837%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.22448979591837%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.22448979591837%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.44897959183673%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.6734693877551%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.44897959183673%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 106.12244897959184%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.22448979591837%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.22448979591837%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.44897959183673%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.22448979591837%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.22448979591837%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.22448979591837%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.44897959183673%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.22448979591837%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.89795918367346%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.89795918367346%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 101.22448979591837%'>Pub(1)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.22448979591837%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.22448979591837%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.44897959183673%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.22448979591837%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 130.6122448979592%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.44897959183673%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.22448979591837%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.22448979591837%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.22448979591837%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.44897959183673%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.22448979591837%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.22448979591837%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.44897959183673%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.44897959183673%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.6734693877551%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.22448979591837%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.22448979591837%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.44897959183673%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.22448979591837%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.22448979591837%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.22448979591837%'>WebGL(1)</a> </span>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/">Dart Multi Touch Canvas With Realtime APIs</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/09/rikulo-stream-on-heroku/">rikulo stream on heroku</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/08/google-client-apis-now-available-on-pub/">Dart Google Client Apis Now Available On Pub</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/financeCoding">@financeCoding</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'financeCoding',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Adam Singer -
+  <a href='https://plus.google.com/u/0/104569492481999771226/posts' rel='me'>Adam Singer</a>
+  - <a href='https://github.com/financeCoding' rel='me'>Adam Singer @ Github</a>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'financecoding';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://financeCoding.github.com/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/';
+        var disqus_url = 'http://financeCoding.github.com/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

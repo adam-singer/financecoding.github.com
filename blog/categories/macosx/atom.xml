@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: MacOSX | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/macosx/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dartium Mac OSX Build rev 117836]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/01/16/dartium-mac-osx-build-rev-117836/"/>
+    <updated>2012-01-16T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/01/16/dartium-mac-osx-build-rev-117836</id>
+    <content type="html"><![CDATA[<p>For those interested in trying Dartium on MacOSX, here is a build of Dartium from Dart's bleeding_edge. I have just tested it enough to run hello world at the moment. I'd like to get feed back on how it runs for others if possible. <br />
+
+<img title="NewImage.png" src="http://financecoding.files.wordpress.com/2012/01/dartium_macosxnewimage.png" border="0" alt="NewImage" width="507" height="241" /></p>
+
+
+<p>
+[sourcecode lang="bash"]wget http://dl.dropbox.com/u/33138127/dartium_macosx/Chromium.app.tar.gz
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/Chromium.app.tar.gz.md5
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/README.txt
+md5sum -c Chromium.app.tar.gz.md5
+[/sourcecode]
+</p>
+
+
+<p>It might be best to refer to this previous <a href="http://financecoding.wordpress.com/2012/01/11/dartium-build-rev-116980-in-4-easy-steps/">post</a> for any additional information.</p>
+
+]]></content>
+  </entry>
+  
+</feed>

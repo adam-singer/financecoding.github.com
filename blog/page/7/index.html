@@ -1,0 +1,561 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Random posts about coding</title>
+  <meta name="author" content="Adam Singer">
+
+  <meta property="og:title" content="Random posts about coding" />
+  <meta property="og:image" content="/me.png" />
+  <meta property="og:description" content="" />
+
+  
+  <meta name="description" content="Liquidware&#8217;s BeagleTouch provides a nice display device for BeagleBoard developer. They provide non android linux kernel source code to jump in &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://financeCoding.github.com/blog/page/7/">
+  <link href="/me_favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Random posts about coding" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36566996-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="https://plus.google.com/s2/photos/profile/104569492481999771226?sz=100"></a><span> </span><a href="/">Random posts about coding</a></h1>
+  
+    <h2>Mostly blogging about dart.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:financeCoding.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/aboutme">AboutMe</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/03/06/beagletouch-on-ti_android_froyo_devkit-v2-2/">BeagleTouch on TI_Android_Froyo_DevKit-V2.2</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-06T00:00:00-08:00" pubdate data-updated="true">Mar 6<span>th</span>, 2011</time>
+        
+         | <a href="/blog/2011/03/06/beagletouch-on-ti_android_froyo_devkit-v2-2/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content">Liquidware&#8217;s <a href="http://www.liquidware.com/shop/show/BB-BT/BeagleTouch">BeagleTouch</a> provides a nice display device for <a href="http://beagleboard.org/">BeagleBoard</a> developer. They provide non android <a href="https://github.com/liquidware/liquidware_beagleboard_linux/tree/liquidware">linux</a> kernel source code to jump in right away to use it. <a href="http://antipastohw.pbworks.com/w/page/27129517/BeagleTouch">BeagleTouch blog</a> post by will on <a href="http://antipastohw.pbworks.com/w/page/26554120/FrontPage">antipastohw</a>. Here is some crude patches to get started with it on <a href="http://code.google.com/p/rowboat/">rowboat</a> / <a href="http://processors.wiki.ti.com/index.php/TI-Android-FroYo-DevKit-V2.2_UserGuide">TI DevKit</a>. I have my patches located on google docs:
+
+<a href="https://docs.google.com/leaf?id=0B29MR2FlgtejMjFjOWVhOGYtOThiNC00NGJkLTk5NTktMDE3ZTBiZjhhYTY0&amp;hl=en"><span style="font-family:Arial;font-size:10pt;">BeagleTouch.TI_Android_Froyo_DevKit-V2.2.config</span></a><span style="color:black;font-family:Arial;font-size:10pt;">
+</span>
+
+<a href="https://docs.google.com/leaf?id=0B29MR2FlgtejODdjZDBhNzQtZmYyNC00MWVmLWI4YzYtN2Y2ODNhZjlhZmRk&amp;hl=en"><span style="font-family:Arial;font-size:10pt;">BeagleTouch.TI_Android_Froyo_DevKit-V2.2.patch</span></a><span style="color:black;font-family:Arial;font-size:10pt;">
+</span>
+
+Apply the patch accordingly and copy over the config into the kernel source tree.
+
+<img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+One issue that was noticeable from a direct patch of code was the y-axis being inverted. I corrected it with a hard coded reference value for now.
+
+<img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch22.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch32.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+This patch doesn&#8217;t help when offset loss happens in the touch screen. Looking info using <a href="https://github.com/kergoth/tslib">tslib</a> to capture better data settings and a linear formula for pointer <a href="http://wcyan.spaces.live.com/blog/cns!69F0ECE1192E739!381.entry">calculations</a>.  Some good instructions for compiling tslib on android can be found on <a href="http://www.eefocus.com/wenes1/blog/10-05/190293_09ed8.html">wenes1&#8217;s blog</a>. A different direction to fix this issue would be to use <a href="http://androidzaurus.seesaa.net/article/90045743.html">Y_AXIS_MAX constant</a>.
+
+[youtube=http://www.youtube.com/watch?v=8594I2NDPsM]
+
+It was hard for me to find any direct documentation on how touch screen drivers should be designed and configured in Android. If you know of any please ping <a href="mailto:financecoding@gmail.com">me</a>.
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/12/24/how-to-flash-new-boot-loader-and-firmware-netduino-mini/">How to Flash New Boot Loader and Firmware Netduino Mini</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-24T00:00:00-08:00" pubdate data-updated="true">Dec 24<span>th</span>, 2010</time>
+        
+         | <a href="/blog/2010/12/24/how-to-flash-new-boot-loader-and-firmware-netduino-mini/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h5>I got my netduino in the mail and whatever was flashed on it was toast, so after a few posts on the forum I got great advice on how to flash the Boot Loader (TinyBooter) and firmware (ER_CONFIG and ER_FLASH)</h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Erase Chip</strong>
+</span></h5>
+<h5>Erase the chip by applying +5v to the gold pad located by pin 12</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Download the TinyBooter</strong>
+</span></h5>
+<h5><a href="http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/">http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/</a></h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn2.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Run SAM-BA</strong>
+</span></h5>
+<h5>Run the SAM-BA application from ATMEL (Note if your on windows 7 Ultimate stick with an older version of SAM-BA, do not use 2.10.)</h5>
+<h5>The current package I have installed is from: Install_AT91-ISP_v1.13.exe</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Power Up</strong>
+</span></h5>
+<h5>Power up the netdruino by connecting the power and serial TX/RX on pin 1 &amp; 2 (Note: make sure you have completely removed power after sending +5v to the gold pad)</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn4.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Chose serial port and board</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>If the first time does not succeed power down and try again. And if it still does not succeed try hitting the gold pad for a second time.</h5>
+<h5>If SAM-BA can communicate and get a valid id on the chip you should be presented with the following screen</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Choose a file to send while in the &#8220;Flash&#8221; tab.</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn7.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Click Send File. The SAM-BA application isn&#8217;t that great and locks up while sending data over the serial port. If possible just wait. This part of the process will take a while, even if you don&#8217;t see data being sent over the serial port stuff is going on.</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn8.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>SAM-BA will ask you if you want to &#8220;lock involved lock region(s) (0 to 2)&#8221;, I choose &#8220;No&#8221; on this.</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn9.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>At this point you should have succeefully flashed the Boot Loader onto the netduino mini. Click on &#8220;Compare sent file with memory&#8221; to ensure the Boot Loader did not get corrupted in the process. If everything is fine you should be presented with something similar to  the following screen.</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn10.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>While still in the &#8220;Flash&#8221; tab execute the script &#8220;Boot from Flash (GPNVM2)&#8221; by clicking on the &#8220;Execute&#8221; button. The terminal on the bottom of the app should display &#8220;-I- GPNVM2 set&#8221;</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn11.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Download and extract the firmware</strong>
+</span></h5>
+<h5><a href="http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/">http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/</a></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Run MFDeploy.exe</strong>
+</span></h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Remove power from the netduino before trying to pin the device.</h5>
+<h5>If you open a putty terminal and repower the device you should see the following</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn13.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>This should help you determine if the Boot Loader that has been flash is working.</h5>
+<h5>Choose the proper COM port the netduino is on.</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn14.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Try and ping</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn15.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Erase</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn16.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><span style="color:#366092;font-size:13pt;"><strong>Deploy Firmware</strong>
+</span></h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn17.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>A successful flash should look something like this</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn18.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5>Try sending some debug commands</h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn19.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn20.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/12/24/hello-world/">Hello World!</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-12-24T00:00:00-08:00" pubdate data-updated="true">Dec 24<span>th</span>, 2010</time>
+        
+         | <a href="/blog/2010/12/24/hello-world/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content">Welcome to <a href="http://wordpress.com/">WordPress.com</a>. This is your first post. Edit or delete it and start blogging!
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2009/10/09/A-new-Library-with-Example-program-added-to-the-project./">A New Library With Example Program Added to the Project.</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+<time datetime="2009-10-09T09:00:24Z" pubdate data-updated="true">Oct 9<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><a onblur="try {parent.deselectBloggerImageGracefully();} catch(e) {}" href="http://3.bp.blogspot.com/_wbuYBYUb6b8/Ss77nBBOq-I/AAAAAAAAAAM/NnTB5bhZq3M/s1600-h/finance.web.example.jpg"><img style="float:left; margin:0 10px 10px 0;cursor:pointer; cursor:hand;width: 290px; height: 320px;" src="http://3.bp.blogspot.com/_wbuYBYUb6b8/Ss77nBBOq-I/AAAAAAAAAAM/NnTB5bhZq3M/s320/finance.web.example.jpg" border="0" alt=""id="BLOGGER_PHOTO_ID_5390522451716123618" /></a><br /><br /><a href="http://googlefinance.googlecode.com/files/Finance.Web.Example.0.0.1.zip">Finance.Web.Example</a> is a console application that includes missing API needed for development with <a href="http://finance.google.com">Google&#8217;s Finance</a>. There is still much todo, the <a href="http://code.google.com/p/googlefinance/source/browse/#svn/trunk/GoogleFinanceDemo/Finance.Web">source</a> to this example should show what will be archived in the near future.<div class="blogger-post-footer"><img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/478539871162226053-3412749989071524791?l=financecoding.blogspot.com' alt='' /></div></div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2009/08/10/New-Google-Finance-API-Demo-Released-in-C%23/">New Google Finance API Demo Released in C#</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+<time datetime="2009-08-10T08:28:31Z" pubdate data-updated="true">Aug 10<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><a href="http://googlefinance.googlecode.com/files/GoogleFinanceDemo.0.0.2.zip">Download Here</a><br /><br />Added a simple application that lets you do a complete management of your <a href="http://www.google.com/finance/portfolio?action=view">Google Portfolio</a> from the command line. You can load an example S&amp;P 500 CSV file, create &amp; delete portfolios, add &amp; remove stocks, add transactions of stocks. etc.. Try it out and have fun with it, does provide a good example of how you could create your own application using the methods in <a href="http://code.google.com/p/googlefinance/source/browse/trunk/GoogleFinanceDemo/SP500/GoogleFinanceManager.cs">GoogleFinanceManager.cs</a>. You might notice I use a <a href="http://code.google.com/p/googlefinance/source/browse/trunk/GoogleFinanceDemo/SP500/YahooHelper.cs">YahooHelper.cs</a> object, this is cause Google does not yet provide a way (or one that I know of) to resolve which exchange a ticker symbol is located. Soon will be working on another example demo that will involve <a href="http://windowsclient.net/wpf/">WPF</a>. If you have any problems, questions or comments please feel free to contact me directly or leave a post. Please, if you can donate some money. Even if this project does not serve anything purposeful yet, any donations can really help.<br /><br /><br /><a id="paypalDonate" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=6299759"><img border="0" id="payPalImage" src="https://www.paypal.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Donate to this project, it really helps a lot!" /></a><div class="blogger-post-footer"><img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/478539871162226053-6476881114213050129?l=financecoding.blogspot.com' alt='' /></div></div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2009/06/22/Getting-all-googled-up/">Getting All Googled Up</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+<time datetime="2009-06-22T06:06:39Z" pubdate data-updated="true">Jun 22<span>nd</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content">Creating a blog for my google finance project <a href="http://googlefinance.googlecode.com/">here</a>. It is late and just putting some items together for this project. In the next few weeks it should take off a bit more.<div class="blogger-post-footer"><img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/478539871162226053-1824439613784214194?l=financecoding.blogspot.com' alt='' /></div></div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/6/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.6734693877551%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.22448979591837%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.22448979591837%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.22448979591837%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.22448979591837%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.22448979591837%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.6734693877551%'>API(3)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.44897959183673%'>BeagleBoard(2)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.44897959183673%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.22448979591837%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.22448979591837%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.22448979591837%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.22448979591837%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.89795918367346%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.44897959183673%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.22448979591837%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.22448979591837%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.22448979591837%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.6734693877551%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.22448979591837%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 101.22448979591837%'>Client(1)</a> <a href='/blog/categories/cloud' style='font-size: 102.44897959183673%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.44897959183673%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.22448979591837%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.89795918367346%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.22448979591837%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(49)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.44897959183673%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.22448979591837%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.6734693877551%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.22448979591837%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.44897959183673%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.6734693877551%'>DartVM(3)</a> <a href='/blog/categories/debugging' style='font-size: 101.22448979591837%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.89795918367346%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.22448979591837%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.89795918367346%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.6938775510204%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.22448979591837%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.22448979591837%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.22448979591837%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.22448979591837%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.22448979591837%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 129.3877551020408%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 102.44897959183673%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleAPI(1)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.22448979591837%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 106.12244897959184%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.22448979591837%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.22448979591837%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.22448979591837%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.22448979591837%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.44897959183673%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.6734693877551%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.44897959183673%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 106.12244897959184%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.22448979591837%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.22448979591837%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.44897959183673%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.22448979591837%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.22448979591837%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.22448979591837%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.44897959183673%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.22448979591837%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.89795918367346%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.89795918367346%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 101.22448979591837%'>Pub(1)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.22448979591837%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.22448979591837%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.44897959183673%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.22448979591837%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 130.6122448979592%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.44897959183673%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.22448979591837%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.22448979591837%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.22448979591837%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.44897959183673%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.22448979591837%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.22448979591837%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.44897959183673%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.44897959183673%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.6734693877551%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.22448979591837%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.22448979591837%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.44897959183673%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.22448979591837%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.22448979591837%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.22448979591837%'>WebGL(1)</a> </span>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/">Dart Multi Touch Canvas With Realtime APIs</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/09/rikulo-stream-on-heroku/">rikulo stream on heroku</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/08/google-client-apis-now-available-on-pub/">Dart Google Client Apis Now Available On Pub</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/financeCoding">@financeCoding</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'financeCoding',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Adam Singer -
+  <a href='https://plus.google.com/u/0/104569492481999771226/posts' rel='me'>Adam Singer</a>
+  - <a href='https://github.com/financeCoding' rel='me'>Adam Singer @ Github</a>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'financecoding';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

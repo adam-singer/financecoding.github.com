@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Template | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/template/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dart Templates]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/03/19/dart-templates/"/>
+    <updated>2012-03-19T00:00:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/03/19/dart-templates</id>
+    <content type="html"><![CDATA[<p>As <a href="http://blog.sethladd.com/2012/03/first-look-at-darts-html-template.html" target="_blank">mentioned</a> by <a href="https://plus.google.com/118397406534237711570/posts" title="Seth Ladd" target="_blank">Seth Ladd</a>, Dart now has a template system in the <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge" title="dart bleeding_edge" target="_blank">bleeding_edge</a> branch. One way to learn what is offered, is to look at the <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/template/uitest.dart" target="_blank">uitest.dart</a> unit test. Since the template code is in flux I've created some scripts to help init and build templates. A sample <a href="https://github.com/financeCoding/DartTemplateExample" target="_blank">Dart Template Example</a> is provided to follow along with this post. <em>Please keep in mind this is currently subject to change by the Dart team, provide feedback to help the project along.</em></p>
+
+<p><a href="https://github.com/financeCoding/DartTemplateExample/blob/master/exportTemplateUtils.sh" target="_blank">exportTemplateUtils.sh</a> script is used for exporting all the dependent code from the dartlang code base. The <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/utils/template/template">template</a> build script depends on <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/lib">lib</a>, <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/css">css</a>, and <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/template">template</a> folders from the <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils">utils</a> directory.
+[code lang="shell"]
+22:54:59-adam@Adams-MacBook-Air:~/dart/DartTemplateExample
+$ ./exportTemplateUtils.sh
+A    lib
+[...]
+Exported revision 5635.
+A    css
+[...]
+Exported revision 5635.
+A    template
+[...]
+Exported revision 5635.
+[/code]
+The <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DivisionSales.tmpl" target="_blank">DivisionSales.tmpl</a> was ripped from the unit test and adjusted for the project. The <em><strong>template</strong></em> keyword is used for defining the template name. Inside the template you can have css, html and scripting. Dart team is currently experimenting with the following.
+[code lang="html"]
+template DivisionSales(var divisions) {
+  css {</p>
+
+<pre><code>.division-item {
+  background-color: #bbb;
+  border-top: 2px solid white;
+  line-height: 20pt;
+  padding-left: 5px;
+}
+.product-item {
+  background-color: lightgray;
+  margin-left: 10px;
+  border-top: 2px solid white;
+  line-height: 20pt;
+}
+.product-title {
+  position: absolute;
+  left: 45px;
+}
+.product-name {
+  font-weight: bold;
+  position: absolute;
+  left: 100px;
+}
+.product-users {
+  position: absolute;
+  right: 150px;
+  font-style: italic;
+  color: gray;
+  width: 110px;
+}
+.expand-collapse {
+  margin-left: 5px;
+  margin-right: 5px;
+  vertical-align: top;
+  cursor: pointer;
+}
+.expand {
+  font-size: 9pt;
+}
+.collapse {
+  font-size: 8pt;
+}
+.show-sales {
+  display: inherit;
+}
+.hide-sales {
+  display: none;
+}
+.sales-item {
+  font-family: arial;
+  background-color: lightgray;
+  margin-left: 10px;
+  border-top: 1px solid white;
+  line-height: 18pt;
+  padding-left: 5px;
+}
+.ytd-sales {
+  position: absolute;
+  left: 100px;
+}
+</code></pre>
+
+<p>  }
+  &lt;div&gt;</p>
+
+<pre><code>${#each divisions}
+  &amp;lt;div class=&amp;quot;division-item&amp;quot;&amp;gt;
+    &amp;lt;span&amp;gt;${name}&amp;lt;/span&amp;gt;
+    &amp;lt;span&amp;gt;&amp;amp;nbsp;-&amp;amp;nbsp;&amp;lt;/span&amp;gt;
+    &amp;lt;span&amp;gt;${id}&amp;lt;/span&amp;gt;
+  &amp;lt;/div&amp;gt;
+  &amp;lt;div&amp;gt;
+    ${#each divisions.products}
+      &amp;lt;div class=&amp;quot;product-item&amp;quot;&amp;gt;
+        &amp;lt;span var=productZippy class=&amp;quot;expand-collapse expand&amp;quot;&amp;gt;&amp;#9660;&amp;lt;/span&amp;gt;
+        &amp;lt;span class='product-title'&amp;gt;Product&amp;lt;/span&amp;gt;
+        &amp;lt;span class=&amp;quot;product-name&amp;quot;&amp;gt;${name}&amp;lt;/span&amp;gt;
+        &amp;lt;span class=&amp;quot;product-users&amp;quot;&amp;gt;${users}&amp;amp;nbsp;&amp;lt;/span&amp;gt; 
+        &amp;lt;div class=&amp;quot;show-sales&amp;quot;&amp;gt;
+          ${#each products.sales}
+            &amp;lt;div class=&amp;quot;sales-item&amp;quot;&amp;gt;
+              &amp;lt;span&amp;gt;${country}&amp;lt;/span&amp;gt;
+              &amp;lt;span class=&amp;quot;ytd-sales&amp;quot;&amp;gt;${yearly}&amp;lt;/span&amp;gt;
+            &amp;lt;/div&amp;gt;
+          ${/each}
+        &amp;lt;/div&amp;gt;
+      &amp;lt;/div&amp;gt;
+    ${/each}
+  &amp;lt;/div&amp;gt;
+${/each}
+</code></pre>
+
+<p>  &lt;/div&gt;
+}</p>
+
+<p>template Header(String company, Date date) {
+  css {</p>
+
+<pre><code>.header {
+  background-color: slateGray;
+  font-family: arial;
+  color: lightgray;
+  font-weight: bold;
+  padding-top: 20px;
+}
+</code></pre>
+
+<p>  }
+  &lt;div class='header' align=center&gt;</p>
+
+<pre><code>&amp;lt;h2&amp;gt;${company}&amp;lt;/h2&amp;gt;
+&amp;lt;div align=right&amp;gt;${date}&amp;lt;/div&amp;gt;
+</code></pre>
+
+<p>  &lt;/div&gt;
+}
+[/code]
+The scripting is very basic at the moment. Looking at the <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/utils/template/tokenkind.dart#L44" target="_blank">tokenkind.dart</a> one can get an idea of what is supported.
+[code lang="java"]
+[...]
+  // Synthesized tokens:</p>
+
+<p>  static final int END_NO_SCOPE_TAG = 50;       // /&gt;
+  static final int START_EXPRESSION = 51;       // ${
+  static final int START_COMMAND = 52;          // ${#
+  static final int END_COMMAND = 53;            // ${/
+  static final int EACH_COMMAND = 53;           // ${#each list}
+  static final int WITH_COMMAND = 54;           // ${#with object}
+  static final int IF_COMMAND = 55;             // ${#if (expression)}
+  static final int ELSE_COMMAND = 56;           // ${#else}
+[...]
+[/code]
+<a href="https://github.com/financeCoding/DartTemplateExample/blob/master/buildTemplates.sh" target="_blank">buildTemplates.sh</a> script will loop over all <em>.tmpl files in the current working directory and generate </em>.dart files for each one.
+[code lang="shell"]
+22:57:41-adam@Adams-MacBook-Air:~/dart/DartTemplateExample
+$ ./buildTemplates.sh</p>
+
+<p>Building dart templates</p>
+
+<p>Parsed /Users/adam/dart/DartTemplateExample/DivisionSales.tmpl in 3134 msec.
+Codegen /Users/adam/dart/DartTemplateExample/DivisionSales.tmpl in 215 msec.
+Wrote file /Users/adam/dart/DartTemplateExample/DivisionSales.dart in 215 msec.</p>
+
+<p>Copy &amp; Paste import statements</p>
+
+<h1>source('DivisionSales.dart');</h1>
+
+<p>[/code]
+After the dart <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DivisionSales.dart" target="_blank">code</a> is generated the following source statements can be copied into the <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DartTemplateExample.dart" target="_blank">main</a>/lib.
+[code lang="javascript"]</p>
+
+<h1>import('dart:html');</h1>
+
+<h1>source('DivisionSales.dart');</h1>
+
+<p>class Sales {
+  String country;
+  String yearly;
+  Sales(this.country, this.yearly);
+}</p>
+
+<p>class Products {
+  List&lt;Sales&gt; sales;
+  String name;
+  String users;
+  Products(this.name, this.users, this.sales);
+}</p>
+
+<p>class Divisions {
+  List&lt;Products&gt; products;
+  String id;
+  String name;
+  Divisions(this.id, this.name, this.products);
+}</p>
+
+<p>class DartTemplateExample {</p>
+
+<p>  DartTemplateExample() {
+  }</p>
+
+<p>  void run() {</p>
+
+<pre><code>document.body.elements.add(new Header(&amp;quot;Dollar Shave Club&amp;quot;, new Date.now().toString()).root);
+
+List&amp;lt;Sales&amp;gt; sales = [new Sales(&amp;quot;USA&amp;quot;, &amp;quot;3500&amp;quot;), new Sales(&amp;quot;USA&amp;quot;, &amp;quot;4500&amp;quot;)];
+List&amp;lt;Products&amp;gt; products = [new Products(&amp;quot;Razor&amp;quot;, &amp;quot;Sammy&amp;quot;, sales)];
+List&amp;lt;Divisions&amp;gt; divisions = [new Divisions(&amp;quot;South West&amp;quot;, &amp;quot;A-Team&amp;quot;, products), new Divisions(&amp;quot;North East&amp;quot;, &amp;quot;B-Team&amp;quot;, products),];
+
+DivisionSales divisionSales = new DivisionSales(divisions);
+document.body.elements.add(divisionSales.root);
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>void main() {
+  new DartTemplateExample().run();
+}
+[/code]
+This example is deployed on <a href="http://financecoding.github.com/DartTemplateExample/DartTemplateExample.html" target="_blank">github</a>. You can also experiment with the template system to see what code gets generated on a <a href="http://financecoding.github.com/DartTemplateExample/utils/template/template.html">live page</a>. At first glance the template system is simple enough to use, I would assume things would change in the future. For now the Dart team has provided enough for people to start banging away and provide feedback.</p>
+]]></content>
+  </entry>
+  
+</feed>

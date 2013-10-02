@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Software | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/software/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dart Templates]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/03/19/dart-templates/"/>
+    <updated>2012-03-19T00:00:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/03/19/dart-templates</id>
+    <content type="html"><![CDATA[<p>As <a href="http://blog.sethladd.com/2012/03/first-look-at-darts-html-template.html" target="_blank">mentioned</a> by <a href="https://plus.google.com/118397406534237711570/posts" title="Seth Ladd" target="_blank">Seth Ladd</a>, Dart now has a template system in the <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge" title="dart bleeding_edge" target="_blank">bleeding_edge</a> branch. One way to learn what is offered, is to look at the <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/template/uitest.dart" target="_blank">uitest.dart</a> unit test. Since the template code is in flux I've created some scripts to help init and build templates. A sample <a href="https://github.com/financeCoding/DartTemplateExample" target="_blank">Dart Template Example</a> is provided to follow along with this post. <em>Please keep in mind this is currently subject to change by the Dart team, provide feedback to help the project along.</em></p>
+
+<p><a href="https://github.com/financeCoding/DartTemplateExample/blob/master/exportTemplateUtils.sh" target="_blank">exportTemplateUtils.sh</a> script is used for exporting all the dependent code from the dartlang code base. The <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/utils/template/template">template</a> build script depends on <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/lib">lib</a>, <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/css">css</a>, and <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/template">template</a> folders from the <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils">utils</a> directory.
+[code lang="shell"]
+22:54:59-adam@Adams-MacBook-Air:~/dart/DartTemplateExample
+$ ./exportTemplateUtils.sh
+A    lib
+[...]
+Exported revision 5635.
+A    css
+[...]
+Exported revision 5635.
+A    template
+[...]
+Exported revision 5635.
+[/code]
+The <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DivisionSales.tmpl" target="_blank">DivisionSales.tmpl</a> was ripped from the unit test and adjusted for the project. The <em><strong>template</strong></em> keyword is used for defining the template name. Inside the template you can have css, html and scripting. Dart team is currently experimenting with the following.
+[code lang="html"]
+template DivisionSales(var divisions) {
+  css {</p>
+
+<pre><code>.division-item {
+  background-color: #bbb;
+  border-top: 2px solid white;
+  line-height: 20pt;
+  padding-left: 5px;
+}
+.product-item {
+  background-color: lightgray;
+  margin-left: 10px;
+  border-top: 2px solid white;
+  line-height: 20pt;
+}
+.product-title {
+  position: absolute;
+  left: 45px;
+}
+.product-name {
+  font-weight: bold;
+  position: absolute;
+  left: 100px;
+}
+.product-users {
+  position: absolute;
+  right: 150px;
+  font-style: italic;
+  color: gray;
+  width: 110px;
+}
+.expand-collapse {
+  margin-left: 5px;
+  margin-right: 5px;
+  vertical-align: top;
+  cursor: pointer;
+}
+.expand {
+  font-size: 9pt;
+}
+.collapse {
+  font-size: 8pt;
+}
+.show-sales {
+  display: inherit;
+}
+.hide-sales {
+  display: none;
+}
+.sales-item {
+  font-family: arial;
+  background-color: lightgray;
+  margin-left: 10px;
+  border-top: 1px solid white;
+  line-height: 18pt;
+  padding-left: 5px;
+}
+.ytd-sales {
+  position: absolute;
+  left: 100px;
+}
+</code></pre>
+
+<p>  }
+  &lt;div&gt;</p>
+
+<pre><code>${#each divisions}
+  &amp;lt;div class=&amp;quot;division-item&amp;quot;&amp;gt;
+    &amp;lt;span&amp;gt;${name}&amp;lt;/span&amp;gt;
+    &amp;lt;span&amp;gt;&amp;amp;nbsp;-&amp;amp;nbsp;&amp;lt;/span&amp;gt;
+    &amp;lt;span&amp;gt;${id}&amp;lt;/span&amp;gt;
+  &amp;lt;/div&amp;gt;
+  &amp;lt;div&amp;gt;
+    ${#each divisions.products}
+      &amp;lt;div class=&amp;quot;product-item&amp;quot;&amp;gt;
+        &amp;lt;span var=productZippy class=&amp;quot;expand-collapse expand&amp;quot;&amp;gt;&amp;#9660;&amp;lt;/span&amp;gt;
+        &amp;lt;span class='product-title'&amp;gt;Product&amp;lt;/span&amp;gt;
+        &amp;lt;span class=&amp;quot;product-name&amp;quot;&amp;gt;${name}&amp;lt;/span&amp;gt;
+        &amp;lt;span class=&amp;quot;product-users&amp;quot;&amp;gt;${users}&amp;amp;nbsp;&amp;lt;/span&amp;gt; 
+        &amp;lt;div class=&amp;quot;show-sales&amp;quot;&amp;gt;
+          ${#each products.sales}
+            &amp;lt;div class=&amp;quot;sales-item&amp;quot;&amp;gt;
+              &amp;lt;span&amp;gt;${country}&amp;lt;/span&amp;gt;
+              &amp;lt;span class=&amp;quot;ytd-sales&amp;quot;&amp;gt;${yearly}&amp;lt;/span&amp;gt;
+            &amp;lt;/div&amp;gt;
+          ${/each}
+        &amp;lt;/div&amp;gt;
+      &amp;lt;/div&amp;gt;
+    ${/each}
+  &amp;lt;/div&amp;gt;
+${/each}
+</code></pre>
+
+<p>  &lt;/div&gt;
+}</p>
+
+<p>template Header(String company, Date date) {
+  css {</p>
+
+<pre><code>.header {
+  background-color: slateGray;
+  font-family: arial;
+  color: lightgray;
+  font-weight: bold;
+  padding-top: 20px;
+}
+</code></pre>
+
+<p>  }
+  &lt;div class='header' align=center&gt;</p>
+
+<pre><code>&amp;lt;h2&amp;gt;${company}&amp;lt;/h2&amp;gt;
+&amp;lt;div align=right&amp;gt;${date}&amp;lt;/div&amp;gt;
+</code></pre>
+
+<p>  &lt;/div&gt;
+}
+[/code]
+The scripting is very basic at the moment. Looking at the <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/utils/template/tokenkind.dart#L44" target="_blank">tokenkind.dart</a> one can get an idea of what is supported.
+[code lang="java"]
+[...]
+  // Synthesized tokens:</p>
+
+<p>  static final int END_NO_SCOPE_TAG = 50;       // /&gt;
+  static final int START_EXPRESSION = 51;       // ${
+  static final int START_COMMAND = 52;          // ${#
+  static final int END_COMMAND = 53;            // ${/
+  static final int EACH_COMMAND = 53;           // ${#each list}
+  static final int WITH_COMMAND = 54;           // ${#with object}
+  static final int IF_COMMAND = 55;             // ${#if (expression)}
+  static final int ELSE_COMMAND = 56;           // ${#else}
+[...]
+[/code]
+<a href="https://github.com/financeCoding/DartTemplateExample/blob/master/buildTemplates.sh" target="_blank">buildTemplates.sh</a> script will loop over all <em>.tmpl files in the current working directory and generate </em>.dart files for each one.
+[code lang="shell"]
+22:57:41-adam@Adams-MacBook-Air:~/dart/DartTemplateExample
+$ ./buildTemplates.sh</p>
+
+<p>Building dart templates</p>
+
+<p>Parsed /Users/adam/dart/DartTemplateExample/DivisionSales.tmpl in 3134 msec.
+Codegen /Users/adam/dart/DartTemplateExample/DivisionSales.tmpl in 215 msec.
+Wrote file /Users/adam/dart/DartTemplateExample/DivisionSales.dart in 215 msec.</p>
+
+<p>Copy &amp; Paste import statements</p>
+
+<h1>source('DivisionSales.dart');</h1>
+
+<p>[/code]
+After the dart <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DivisionSales.dart" target="_blank">code</a> is generated the following source statements can be copied into the <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DartTemplateExample.dart" target="_blank">main</a>/lib.
+[code lang="javascript"]</p>
+
+<h1>import('dart:html');</h1>
+
+<h1>source('DivisionSales.dart');</h1>
+
+<p>class Sales {
+  String country;
+  String yearly;
+  Sales(this.country, this.yearly);
+}</p>
+
+<p>class Products {
+  List&lt;Sales&gt; sales;
+  String name;
+  String users;
+  Products(this.name, this.users, this.sales);
+}</p>
+
+<p>class Divisions {
+  List&lt;Products&gt; products;
+  String id;
+  String name;
+  Divisions(this.id, this.name, this.products);
+}</p>
+
+<p>class DartTemplateExample {</p>
+
+<p>  DartTemplateExample() {
+  }</p>
+
+<p>  void run() {</p>
+
+<pre><code>document.body.elements.add(new Header(&amp;quot;Dollar Shave Club&amp;quot;, new Date.now().toString()).root);
+
+List&amp;lt;Sales&amp;gt; sales = [new Sales(&amp;quot;USA&amp;quot;, &amp;quot;3500&amp;quot;), new Sales(&amp;quot;USA&amp;quot;, &amp;quot;4500&amp;quot;)];
+List&amp;lt;Products&amp;gt; products = [new Products(&amp;quot;Razor&amp;quot;, &amp;quot;Sammy&amp;quot;, sales)];
+List&amp;lt;Divisions&amp;gt; divisions = [new Divisions(&amp;quot;South West&amp;quot;, &amp;quot;A-Team&amp;quot;, products), new Divisions(&amp;quot;North East&amp;quot;, &amp;quot;B-Team&amp;quot;, products),];
+
+DivisionSales divisionSales = new DivisionSales(divisions);
+document.body.elements.add(divisionSales.root);
+</code></pre>
+
+<p>  }
+}</p>
+
+<p>void main() {
+  new DartTemplateExample().run();
+}
+[/code]
+This example is deployed on <a href="http://financecoding.github.com/DartTemplateExample/DartTemplateExample.html" target="_blank">github</a>. You can also experiment with the template system to see what code gets generated on a <a href="http://financecoding.github.com/DartTemplateExample/utils/template/template.html">live page</a>. At first glance the template system is simple enough to use, I would assume things would change in the future. For now the Dart team has provided enough for people to start banging away and provide feedback.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dart classify markup example]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/02/09/dart-classify-markup-example/"/>
+    <updated>2012-02-09T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/02/09/dart-classify-markup-example</id>
+    <content type="html"><![CDATA[<p>I was looking for a simple way to create some markup dynamically of syntax highlighted dart code, in dart! A big thanks to <a href="https://plus.google.com/100798142896685420545/posts">Bob Nystrom</a> from the Dart team for suggesting the simplest solution. Use <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/dartdoc/classify.dart">classify</a> from <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/dartdoc/">dartdoc</a>.</p>
+
+<p>A live example of this can be found <a href="http://financecoding.github.com/dart-classify-example/index.html">here</a> along with the <a href="https://github.com/financeCoding/dart-classify-example">source code</a>.</p>
+
+<p><strong>Example of how to use dartdoc/classify.dart</strong>
+<a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/dartdoc/">dartdoc</a> is used for generating static HTML for the <a href="http://api.dartlang.org">api.dartlang.org</a> site. This example shows how importing <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/dartdoc/classify.dart">dartdoc/classify.dart</a> one could generate syntax highlighted dart code at runtime.</p>
+
+<p><strong>Patching</strong>
+Currently you need to modify the import statement to reference the location of classify.dart.
+[code lang="java"]</p>
+
+<h1>import('../../dart_bleeding/dart/utils/dartdoc/classify.dart', prefix:&quot;classify&quot;);</h1>
+
+<p>[/code]</p>
+
+<p><strong>Building</strong>
+Build with minfrog for best results. At the moment dart editor does not seem happy with me on importing dartdoc/classify.dart. So compiling with minfrog worked best.
+[code lang="bash"]
+minfrog --compile-only --out=ClassifyExample.dart.js ClassifyExample.dart
+[/code]</p>
+
+<p><strong>Using classify</strong>
+This is the easiest part! Create a <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/frog/source.dart">SourceFile</a> and add pass it along to <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/dartdoc/classify.dart">classifySource</a> which will return a properly formatted string of span elements that has class attributes set. From that point you can add a css style to the span elements.
+[code lang="java"]</p>
+
+<pre><code>String code = &amp;quot;main() { print('hello world'); }&amp;quot;;
+classify.SourceFile sf = new classify.SourceFile(&amp;quot;sf.dart&amp;quot;, code);
+String c = classify.classifySource(sf);
+</code></pre>
+
+<p>[/code]
+[code lang="html"]
+   &lt;span class=&quot;i &quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p &quot;&gt;(&lt;/span&gt;&lt;span class=&quot;p &quot;&gt;)&lt;/span&gt;&lt;span&gt;
+   &lt;/span&gt;&lt;span class=&quot;p &quot;&gt;{&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span class=&quot;i &quot;&gt;print&lt;/span&gt;
+   &lt;span class=&quot;p &quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s si&quot;&gt;'hello world'&lt;/span&gt;
+   &lt;span class=&quot;p &quot;&gt;)&lt;/span&gt;&lt;span class=&quot;p &quot;&gt;;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span class=&quot;p &quot;&gt;}&lt;/span&gt;
+[/code]</p>
+
+<p>Example css style
+[code lang="css"]
+/<em> Syntax highlighting. </em>/
+/<em> Note: these correspond to the constants in classify.dart. </em>/
+.e { color: hsl(  0, 100%, 70%); } /<em> Error </em>/
+.c { color: hsl(220,  20%, 65%); } /<em> Comment </em>/
+.i { color: hsl(220,  20%, 20%); } /<em> Identifier </em>/
+.k { color: hsl(220, 100%, 50%); } /<em> Keyword </em>/
+.p { color: hsl(220,  20%, 50%); } /<em> Punctuation </em>/
+.o { color: hsl(220,  40%, 50%); } /<em> Operator </em>/
+.s { color: hsl( 40,  90%, 40%); } /<em> String </em>/
+.n { color: hsl( 30,  70%, 50%); } /<em> Number </em>/
+.t { color: hsl(180,  40%, 40%); } /<em> Type Name </em>/
+.r { color: hsl(200, 100%, 50%); } /<em> Special Identifier </em>/
+.a { color: hsl(220, 100%, 45%); } /<em> Arrow </em>/</p>
+
+<p>/<em> Interpolated expressions within strings. </em>/
+.si {
+  background: hsl(40, 100%, 90%);
+}</p>
+
+<p>.s.si { background: hsl(40, 80%, 95%); }
+.i.si { color: hsl(40, 30%, 30%); }
+.p.si { color: hsl(40, 60%, 40%); }
+[/code]</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dart: A short introduction to dart.]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/01/29/dart-a-short-introduction-to-dart/"/>
+    <updated>2012-01-29T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/01/29/dart-a-short-introduction-to-dart</id>
+    <content type="html"><![CDATA[<p>On 1/28/2012 I was fortunate to give an <a href="http://financecoding.github.com/dart-html5-slides/IntroToDart/">introduction to dart</a> at a <a href="http://www.gtugsf.com/">GTUGsf</a> <a href="http://www.gtugsf.com/events/47556102/">Mobile HTML5 Codelab</a> event. <a href="https://plus.google.com/104245214374914659147">Conrad Wade</a> did a spectacular job of arranging the event and promoting the <a href="http://www.meetup.com/DartSF">DartSF</a> meetup group. I truly enjoy the GTUGsf events! 
+<a href="http://financecoding.github.com/dart-html5-slides/IntroToDart/"><img src="http://financecoding.files.wordpress.com/2012/01/dartpresentation.png" alt="" title="dartpresentation" width="630" height="498" class="alignnone size-full wp-image-529" /></a>
+</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dart: Updated Dartium builds with breakpoint support for Linux and Mac]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/01/25/dart-updated-dartium-builds-with-breakpoint-support-for-linux-and-mac/"/>
+    <updated>2012-01-25T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/01/25/dart-updated-dartium-builds-with-breakpoint-support-for-linux-and-mac</id>
+    <content type="html"><![CDATA[<p>As <a href="https://plus.google.com/118397406534237711570/posts">Seth Ladd</a> has commented on <a href="https://plus.google.com/118397406534237711570/posts/M6FCHkixfuL">google plus</a>, <a href="http://code.google.com/p/dart/wiki/BuildingDartium">Dartium</a> now has breakpoint support. Big win in such an early stage of the project. Providing Release builds for Mac and Linux below. While I was trying breakpoints out, one thing noticed was to getting scripts to show up properly in inspector you need to hit an extra refresh on the page. My public is can be found on <a href="http://pgp.mit.edu:11371/pks/lookup?op=get&amp;search=0x66ED7ACDB02CE8A1">pgp.mit.edu</a>.</p>
+
+<p>[sourcecode lang="bash"]
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/Chromium.app.tar.gz
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/Chromium.app.tar.gz.sig
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/Chromium.app.tar.gz.md5
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/README.txt
+gpg --verify Chromium.app.tar.gz.sig Chromium.app.tar.gz
+md5sum -c Chromium.app.tar.gz.md5
+[/sourcecode]
+[sourcecode lang="bash"]
+wget http://gsdview.appspot.com/dart-editor-archive-continuous/latest/DartBuild-linux.gtk.x86.zip
+wget http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz
+wget http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz.sig
+wget http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz.md5
+wget http://dl.dropbox.com/u/33138127/dartium/README.txt
+gpg --verify dartium-linux-32bit-Release.tar.gz.sig dartium-linux-32bit-Release.tar.gz
+md5sum -c dartium-linux-32bit-Release.tar.gz.md5
+[/sourcecode]</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dart: Example of WebGL on Dart]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/01/23/dart-the-status-of-webgl/"/>
+    <updated>2012-01-23T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/01/23/dart-the-status-of-webgl</id>
+    <content type="html"><![CDATA[<p>My hacking attempts with <a href="http://en.wikipedia.org/wiki/WebGL">webgl</a> on <a href="http://api.dartlang.org/html/WebGLRenderingContext.html">dart</a> has made me revert to using <a href="http://api.dartlang.org/dom.html">'dart:dom'</a>. While I really enjoy <a href="http://api.dartlang.org/html.html">'dart:html'</a>, one might not be able to use some of the more important <a href="http://api.dartlang.org/html/WebGLRenderingContext.html#bufferData">webgl</a> methods. The reason would be the missing constructors on <a href="http://api.dartlang.org/html/Float32Array.html">Float32Array</a>, an <a href="https://code.google.com/p/dart/issues/detail?id=560">issue</a> has been filed. For now the following <a href="http://financecoding.github.com/dart-webgl-example/">sample</a> with <a href="https://github.com/financeCoding/dart-webgl-example">code</a> could help guide those excited to play with webgl on dart. Thank you <a href="http://learningwebgl.com/blog/?page_id=2">Learning WebGL</a> for the sample <a href="http://learningwebgl.com/blog/?p=28">code</a> work with.</p>
+
+<p><a href="http://financecoding.files.wordpress.com/2012/01/webglscreenshot.png"><img src="http://financecoding.files.wordpress.com/2012/01/webglscreenshot.png" alt="" title="webglscreenshot" width="536" height="676" class="alignnone size-full wp-image-500" /></a></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: .NET | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/-net/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Netduino Plus with RelayShield as networked light switches]]></title>
+    <link href="http://financeCoding.github.com/blog/2011/07/31/netduino-plus-with-relayshield-as-networked-light-switches/"/>
+    <updated>2011-07-31T00:00:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2011/07/31/netduino-plus-with-relayshield-as-networked-light-switches</id>
+    <content type="html"><![CDATA[<p>Picked up a fun <a href="http://garden.seeedstudio.com/index.php?title=Relay_Shield">relay shield</a> from the <a href="http://www.seeedstudio.com/depot/">seeedstudio</a> people. My goal was to be able to control lights over the network. After grabbing some webserver code from this <a href="http://forums.netduino.com/index.php?/topic/1345-pachube-client-for-netduinoplus/">post</a>, I was able to get a simple <a href="https://bitbucket.org/financecoding/relaywebserver/overview">basic web server and light controller</a> up in no time. One stumbling block I had was the MAC configuration with <a href="http://msdn.microsoft.com/en-us/library/cc544593.aspx">MFDeploy</a>. If you don't use the proper MAC that was assigned to the Ethernet controller you could have potential DHCP or router ARP table issues. When setting up the <a href="http://www.netduino.com/netduinoplus/specs.htm">netduino</a> network I was lazy and put in a bogus MAC, that caused a few hours of debugging. Once deployed and networking is configured hit the root address from the network and a simple page with links get displayed</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu1.png" alt="" /></p>
+
+<p>Quick photo and diagram of the setup</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu2.jpg" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+<img src="http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Pick up the <a href="https://bitbucket.org/financecoding/relaywebserver/overview">code</a> hack around and have fun. Suggestions and comments welcome.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Byte Client/Server for SpringFramework.NET]]></title>
+    <link href="http://financeCoding.github.com/blog/2011/04/02/byte-clientserver-for-springframework-net/"/>
+    <updated>2011-04-02T00:00:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2011/04/02/byte-clientserver-for-springframework-net</id>
+    <content type="html"><![CDATA[<p><a href="https://docs.google.com/leaf?id=0B29MR2FlgtejYmYzZTQ5NzktOTRlZi00M2I4LTk1N2EtOTg0ZWZmY2ZjZTI4&amp;hl=en">Investigating</a> using <a href="http://www.springframework.net">springframework.net</a> for a project, I decided to create a quick sample of how to pass byte arrays around in a client server model. Reviewing the <a href="http://www.springframework.net/doc-latest/reference/html/nms-quickstart.html">Spring.NmsQuickStart</a> helped me create a sample that just passes byte arrays from a client to the server. One starting point was to get <a href="http://activemq.apache.org/">ActiveMQ</a> running on the system, downloading the latest at the time <a href="http://activemq.apache.org/activemq-550-release.html">ActiveMQ 5.5.0 Release</a>. Unpack and launch the activemq service</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients1.png" alt="" /></p>
+
+<p>The administration console can be viewed from a web url <a href="http://localhost:8161/admin">http://localhost:8161/admin</a></p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients2.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>The project's layout has a server, client, and shared data component.</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>The objects that get passed between the client and server are located in ByteServer.Common. This is a very simply defined byte array object.</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients4.png" alt="" /></p>
+
+<p>A bat file located in the Data folder called generate-classes.bat is used to create the C# code from DataBlob.xsd.</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>The Converters folder holds some general utility classes that help with converting and resolving type objects from xml.</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>For the server component the sample is laid out as follows. Config data containing the configuration data for the spring framework. Handlers for handling and routing messages to the correct locations within the application. Services for defining the service interfaces. Gateways for sending service data out.</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients7.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>A good general start is to define and implement the service interfaces before moving onto anything else. The sample defines a single call that the client can make that returns a response.</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients8.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>Actual implementation of this interface is bind by the spring framework configuration data in ServiceStubs.xml</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients9.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p><span style="color:#595959;font-size:9pt;">Screen clipping taken: 4/2/2011 10:06 PM
+</span></p>
+
+<p>Handlers.xml is the configuration data that binds the service object to a handler object which then gets configured as a MesssageListenerAdapter in the Messaging.xml configuration.</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients10.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients11.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>The MessageListenerAdapter is then assigned a destination "APP.DATA.BLOB.REQUEST" to consume messages that are passed on that pipe.</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>The client application is very similar except we need a Gateway to get our messages from the client to the server and receive the return objects from the server. Config folder contains the spring framework configurations. Handlers contains the functions that handle returns from the server. Gateways contain the object that can communicate directly with the message broker for sending messages. Controller would be the objects that could be used in a MVC fashion in application development.</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients13.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>The trickiest thing I found about using spring framework for .net was getting the configuration data correct. Besides that the data transferred is great, very fast and persistence works great in AciveMQ. Here is <a href="https://docs.google.com/leaf?id=0B29MR2FlgtejYmYzZTQ5NzktOTRlZi00M2I4LTk1N2EtOTg0ZWZmY2ZjZTI4&amp;hl=en">ByteServer.zip</a> project, the springframework.net project need to be included or referenced.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to Flash New Boot Loader and Firmware netduino mini]]></title>
+    <link href="http://financeCoding.github.com/blog/2010/12/24/how-to-flash-new-boot-loader-and-firmware-netduino-mini/"/>
+    <updated>2010-12-24T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2010/12/24/how-to-flash-new-boot-loader-and-firmware-netduino-mini</id>
+    <content type="html"><![CDATA[<h5>I got my netduino in the mail and whatever was flashed on it was toast, so after a few posts on the forum I got great advice on how to flash the Boot Loader (TinyBooter) and firmware (ER_CONFIG and ER_FLASH)</h5>
+
+
+<h5><span style="color:#366092;font-size:13pt;"><strong>Erase Chip</strong>
+</span></h5>
+
+
+<h5>Erase the chip by applying +5v to the gold pad located by pin 12</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5><span style="color:#366092;font-size:13pt;"><strong>Download the TinyBooter</strong>
+</span></h5>
+
+
+<h5><a href="http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/">http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/</a></h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn2.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5><span style="color:#366092;font-size:13pt;"><strong>Run SAM-BA</strong>
+</span></h5>
+
+
+<h5>Run the SAM-BA application from ATMEL (Note if your on windows 7 Ultimate stick with an older version of SAM-BA, do not use 2.10.)</h5>
+
+
+<h5>The current package I have installed is from: Install_AT91-ISP_v1.13.exe</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5><span style="color:#366092;font-size:13pt;"><strong>Power Up</strong>
+</span></h5>
+
+
+<h5>Power up the netdruino by connecting the power and serial TX/RX on pin 1 &amp; 2 (Note: make sure you have completely removed power after sending +5v to the gold pad)</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn4.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>Chose serial port and board</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>If the first time does not succeed power down and try again. And if it still does not succeed try hitting the gold pad for a second time.</h5>
+
+
+<h5>If SAM-BA can communicate and get a valid id on the chip you should be presented with the following screen</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>Choose a file to send while in the "Flash" tab.</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn7.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>Click Send File. The SAM-BA application isn't that great and locks up while sending data over the serial port. If possible just wait. This part of the process will take a while, even if you don't see data being sent over the serial port stuff is going on.</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn8.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>SAM-BA will ask you if you want to "lock involved lock region(s) (0 to 2)", I choose "No" on this.</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn9.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>At this point you should have succeefully flashed the Boot Loader onto the netduino mini. Click on "Compare sent file with memory" to ensure the Boot Loader did not get corrupted in the process. If everything is fine you should be presented with something similar to  the following screen.</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn10.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>While still in the "Flash" tab execute the script "Boot from Flash (GPNVM2)" by clicking on the "Execute" button. The terminal on the bottom of the app should display "-I- GPNVM2 set"</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn11.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5><span style="color:#366092;font-size:13pt;"><strong>Download and extract the firmware</strong>
+</span></h5>
+
+
+<h5><a href="http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/">http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/</a></h5>
+
+
+<h5><span style="color:#366092;font-size:13pt;"><strong>Run MFDeploy.exe</strong>
+</span></h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>Remove power from the netduino before trying to pin the device.</h5>
+
+
+<h5>If you open a putty terminal and repower the device you should see the following</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn13.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>This should help you determine if the Boot Loader that has been flash is working.</h5>
+
+
+<h5>Choose the proper COM port the netduino is on.</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn14.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>Try and ping</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn15.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>Erase</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn16.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5><span style="color:#366092;font-size:13pt;"><strong>Deploy Firmware</strong>
+</span></h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn17.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>A successful flash should look something like this</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn18.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5>Try sending some debug commands</h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn19.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+
+<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn20.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></h5>
+
+]]></content>
+  </entry>
+  
+</feed>

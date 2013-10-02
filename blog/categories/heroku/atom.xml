@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Heroku | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/heroku/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[rikulo stream on heroku]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/03/09/rikulo-stream-on-heroku/"/>
+    <updated>2013-03-09T07:16:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/03/09/rikulo-stream-on-heroku</id>
+    <content type="html"><![CDATA[<p>Tonights hacking was with <a href="https://github.com/rikulo/stream">stream</a> and <a href="http://www.heroku.com/">heroku</a>. <em>Stream is a Dart web server supporting request routing, filtering, template technology, file-based static resources and MVC design pattern.</em> I just planned on serving static content from <a href="http://www.heroku.com/">heroku</a> using full dart based web server.</p>
+
+<p>First setup the dart build pack</p>
+
+<p>```bash shell
+adam@Adams-MacBook-Air:~/dart
+$ mkdir stream_todomvc</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ cd stream_todomvc</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ heroku create stream-todomvc</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ heroku config:add BUILDPACK_URL=https://github.com/igrigorik/heroku-buildpack-dart.git</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ git init</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ git remote add heroku git@heroku.com:stream-todomvc.git
+```</p>
+
+<p>Creating a new project called <code>stream-todomvc</code>. Going to use the <a href="https://github.com/dart-lang/web-ui/tree/master/example/todomvc">todomvc</a> from the <a href="https://github.com/dart-lang/web-ui">web-ui</a> project as our content for the <a href="https://github.com/rikulo/stream">stream</a> server. First thing that should be done is adding the dependencies to the <code>pubspec.yaml</code> file.</p>
+
+<p><code>yaml pubspec.yaml
+name: stream_todomvc
+description: A sample WebUI application
+dependencies:
+  browser: any
+  js: any
+  web_ui: 0.4.1+7
+  stream: 0.5.5+1
+</code></p>
+
+<p>Next I simply compied the existing <a href="https://github.com/dart-lang/web-ui/tree/master/example/todomvc">todomvc</a> project out into my <a href="http://stream-todomvc.herokuapp.com/out/index.html">stream-todomvc</a> project.</p>
+
+<p><code>bash shell
+adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ cp ~/dart/web-ui/example/todomvc/* ./web/
+</code></p>
+
+<p><a href="http://docs.rikulo.org/stream/latest/Getting_Started/Introduction.html">stream intro</a> documentation goes over some basic configurations and settings. I'm just going to use them for now to get something running right away. The key to note when serving code from the <code>web/</code> folder in dart projects is having the <a href="https://github.com/rikulo/stream">stream</a> server code in <code>web/webapp/</code>. That way <a href="https://github.com/rikulo/stream">stream</a> can find all your resources with little configuration. With very little dart code we can have static web server going.</p>
+
+<p>```dart web/webapp/server.dart
+library server;</p>
+
+<p>import 'dart:io';
+import "package:stream/stream.dart";</p>
+
+<p>void main() {
+  var port = Platform.environment.containsKey('PORT') ? int.parse(Platform.environment['PORT']) : 8080;
+  var host = '0.0.0.0';
+  var streamServer = new StreamServer();
+  streamServer
+  ..port = port
+  ..host = host
+  ..start();
+}
+```</p>
+
+<p>Since this was a <a href="https://github.com/dart-lang/web-ui">web-ui</a> project we need to have a <code>build.dart</code> file help us with transforming the polyfill web components.</p>
+
+<p>```dart build.dart
+import 'dart:io';
+import 'package:web_ui/component_build.dart';</p>
+
+<p>main() => build(new Options().arguments, ['web/index.html']);
+```</p>
+
+<p>The <a href="http://www.heroku.com/">heroku</a> environment requires a <a href="https://devcenter.heroku.com/articles/procfile">procfile</a> configuration to let the service know the type of commands to run.</p>
+
+<p><code>text Procfile
+web: ./dart-sdk/bin/dart --package-root=./packages/ web/webapp/server.dart
+</code></p>
+
+<p>Next we build all the static data for our webapp to function. This will include calling <code>build.dart</code> and <code>dart2js</code>. The second step of calling <code>dart2js</code> helps with clients that do not have the <code>dartvm</code> built in.</p>
+
+<p>```bash shell
+adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ pub install
+Resolving dependencies...
+Dependencies installed!</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ dart build.dart
+Total time spent on web/index.html                           -- 839 ms
+Total time                                                   -- 863 ms</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ dart2js -oweb/out/index.html_bootstrap.dart.js web/out/index.html_bootstrap.dart
+Using snapshot /Users/adam/Documents/DartEditor/dart/dart-sdk/lib/_internal/compiler/implementation/dart2js.dart.snapshot
+```</p>
+
+<p>Now everything should be ready for deployment.</p>
+
+<p>```bash shell
+adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ git add -a -m "ready for deploy"</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ git push -v --set-upstream heroku master:master
+Pushing to git@heroku.com:stream-todomvc.git
+Counting objects: 5, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 283 bytes, done.
+Total 3 (delta 2), reused 0 (delta 0)</p>
+
+<p>-----> Fetching custom git buildpack... done
+-----> Dart app detected
+-----> Installing Dart VM, build: latest
+-----> Copy Dart binaries to app root
+-----> Install packages
+*** Found pubspec.yaml in .
+Resolving dependencies...
+Dependencies installed!
+Fixed web symlink
+-----> Discovering process types</p>
+
+<pre><code>   Procfile declares types -&gt; web
+</code></pre>
+
+<p>-----> Compiled slug size: 8.9MB
+-----> Launching... done, v7</p>
+
+<pre><code>   http://stream-todomvc.herokuapp.com deployed to Heroku
+</code></pre>
+
+<p>To git@heroku.com:stream-todomvc.git
+   042f1f4..b35984b  master -> master
+updating local tracking ref 'refs/remotes/heroku/master'
+```</p>
+
+<p>Deploying to <a href="http://www.heroku.com/">heroku</a> in this style is just a good starting point. <a href="https://github.com/dart-lang/web-ui">web-ui</a> and <a href="http://www.dartlang.org">dart</a> in general is still working on a deployment story. The URL for the <a href="http://stream-todomvc.herokuapp.com/out/index.html">stream-todomvc</a> will contain <code>out</code> in its location, not very desirable. In the future a <a href="https://github.com/dart-lang/buildtool">buildtool</a> will aid the deployment story for <a href="http://www.dartlang.org">dart</a>.</p>
+
+<p>Check out the live version of <a href="http://stream-todomvc.herokuapp.com/out/index.html">stream-todomvc</a> with full source code available at the <a href="https://github.com/financeCoding/stream-todomvc">stream-todomvc github project</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

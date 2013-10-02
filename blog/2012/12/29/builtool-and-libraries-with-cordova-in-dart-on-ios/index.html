@@ -1,0 +1,492 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>builtool and libraries with cordova in dart on ios - Random posts about coding</title>
+  <meta name="author" content="Adam Singer">
+
+  <meta property="og:title" content="builtool and libraries with cordova in dart on ios - Random posts about coding" />
+  <meta property="og:image" content="/me.png" />
+  <meta property="og:description" content="" />
+
+  
+  <meta name="description" content="Continuing on the chain of phonegap_from_scratch, this post goes over buildtool and libraries. Took an afternoon to look into using buildtool for &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://financeCoding.github.com/blog/2012/12/29/builtool-and-libraries-with-cordova-in-dart-on-ios/">
+  <link href="/me_favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Random posts about coding" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36566996-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="https://plus.google.com/s2/photos/profile/104569492481999771226?sz=100"></a><span> </span><a href="/">Random posts about coding</a></h1>
+  
+    <h2>Mostly blogging about dart.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:financeCoding.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/aboutme">AboutMe</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Builtool and Libraries With Cordova in Dart on Ios</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-29T21:36:00-08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Continuing on the chain of <a href="/blog/categories/phonegap-from-scratch/">phonegap_from_scratch</a>, this post goes over <a href="https://github.com/dart-lang/buildtool">buildtool</a> and libraries.</p>
+
+<p>Took an afternoon to look into using <a href="https://github.com/dart-lang/buildtool">buildtool</a> for helping call dart2js on save within the DartEditor. Minor <a href="https://github.com/financeCoding/buildtool/commit/0692911befaa5705a2928ffaa532c295191d1155">modifications</a> was needed to redirect the generated javascript code to the cordova <code>www</code> directory in the project. This tool is still in the works and future versions will be more robust.</p>
+
+<p>The trend with dart currently is to use <code>pub</code> with github or to publish on <a href="http://pub.dartlang.org/">pub.dartlang.org</a>. A great feature with <code>pub</code> is if you want to make modifications to an existing project on github, <code>fork+branch</code> is an easy way to get hacking with modifications to an existing package. <code>buildtool</code>&#8217;s quick hack was added to the pubspec.yaml file as follows.</p>
+
+<figure class='code'><figcaption><span>pubspec.yaml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">dartdova</span>
+</span><span class='line'><span class="l-Scalar-Plain">description</span><span class="p-Indicator">:</span>  <span class="l-Scalar-Plain">A sample dart cordova integration</span>
+</span><span class='line'><span class="l-Scalar-Plain">dependencies</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">js</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">any</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">unittest</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0.2.9+7</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0.2.9+7</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">buildtool</span><span class="p-Indicator">:</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">git</span><span class="p-Indicator">:</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">git://github.com/financeCoding/buildtool.git</span>
+</span><span class='line'>      <span class="l-Scalar-Plain">ref</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">diroverride</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This pubspec.yaml pulls in the branch <code>diroverride</code> from a cloned version of <code>buildtool</code> from my github. Awesome solution for modifications that might not be upstreamed and needed quickly for testing.</p>
+
+<p>Moving along, the DartEditor will look for a <code>build.dart</code> file in the root directory of a projects folder. When that file is found it will execute on file changes within the project. <code>buildtool</code> currently provides a client/server architecture for building or transforming dart projects. The particular task I was interested in is <code>Dart2JSTask</code> which calls the dart2js compiler on modified dart files. With my modifications it now outputs the generated javascript code into the directory specified in the <code>Dart2JSTask.withOutDir</code> constructor.</p>
+
+<figure class='code'><figcaption><span>build.dart</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="cp">#!/usr/bin/env dart</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">import</span> <span class="s1">&#39;dart:io&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="n">import</span> <span class="s1">&#39;package:buildtool/buildtool.dart&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="n">import</span> <span class="s1">&#39;package:buildtool/dart2js_task.dart&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="kt">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">config</span> <span class="o">=</span> <span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="n">dart2jstask</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Dart2JSTask</span><span class="p">.</span><span class="n">withOutDir</span><span class="p">(</span><span class="s2">&quot;dart2js&quot;</span><span class="p">,</span> <span class="k">new</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">));</span>
+</span><span class='line'>    <span class="n">addTask</span><span class="p">([</span><span class="s2">&quot;app.dart&quot;</span><span class="p">],</span> <span class="n">dart2jstask</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">configure</span><span class="p">(</span><span class="n">config</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The way that I&#8217;ve approached running the server side of the <code>buildtool</code> was to launch a <code>./build.dart --server</code> process before opening the project in the DartEditor.</p>
+
+<figure class='code'><figcaption><span>output</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/dart/phonegap_from_scratch/phonegap_from_scratch/www
+</span><span class='line'><span class="nv">$ </span>./build.dart --server
+</span><span class='line'>2012-12-29 23:06:49.732 INFO adding task Instance of <span class="s1">&#39;Dart2JSTask&#39;</span> <span class="k">for </span>files <span class="o">[</span>app.dart<span class="o">]</span>
+</span><span class='line'>2012-12-29 23:06:49.757 INFO startServer
+</span><span class='line'>2012-12-29 23:06:49.757 INFO listening on localhost:52746
+</span><span class='line'>buildtool server ready
+</span><span class='line'>port: 52746
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>On each save in the project the server side will generate javascript code via <code>Dart2JSTask</code>.</p>
+
+<figure class='code'><figcaption><span>output</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>2012-12-29 23:07:51.897 INFO starting build
+</span><span class='line'>2012-12-29 23:07:51.903 INFO cwd: /Users/adam/dart/phonegap_from_scratch/phonegap_from_scratch/www build_out/out
+</span><span class='line'>2012-12-29 23:07:51.909 FINE _runTasks: <span class="o">[</span>_source:app.dart<span class="o">]</span>
+</span><span class='line'>2012-12-29 23:07:51.911 INFO cwd: /Users/adam/dart/phonegap_from_scratch/phonegap_from_scratch/www build_out/_dart2js
+</span><span class='line'>2012-12-29 23:07:51.915 INFO dart2js task starting. files: <span class="o">[</span>_source:app.dart<span class="o">]</span>
+</span><span class='line'>2012-12-29 23:07:51.918 FINE running dart2js args: <span class="o">[</span>--out<span class="o">=</span>./app.dart.js, --verbose, app.dart<span class="o">]</span>
+</span><span class='line'>2012-12-29 23:08:00.778 FINE dart2js exitCode: 0
+</span><span class='line'>2012-12-29 23:08:00.779 INFO dartjs tasks <span class="nb">complete</span>
+</span><span class='line'>2012-12-29 23:08:00.784 FINE tasks at depth 0 <span class="nb">complete</span>
+</span><span class='line'>2012-12-29 23:08:01.288 INFO starting build
+</span><span class='line'>2012-12-29 23:08:01.289 INFO cwd: /Users/adam/dart/phonegap_from_scratch/phonegap_from_scratch/www build_out/out
+</span><span class='line'>2012-12-29 23:08:01.291 FINE _runTasks: <span class="o">[</span>_source:app.dart.js, _source:app.dart.js.deps, _source:app.dart.js.map<span class="o">]</span>
+</span><span class='line'>2012-12-29 23:08:01.291 FINE tasks at depth 0 <span class="nb">complete</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This solution saves me having to run the <code>./build.sh</code> from command line and launching the iOS simulator on each launch.</p>
+
+<p>The other changes to this project was to refactor the single <code>app.dart</code> into a collection of dart library  files. Seems that each of the API categories have been implemented as singletons. At some point I may make this similar to <a href="https://github.com/rikulo/gap">gap</a> where each category of API is a singleton and instantiated at the top level of a dart library.</p>
+
+<figure class='code'><figcaption><span>output</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>~/dart/phonegap_from_scratch/phonegap_from_scratch/www
+</span><span class='line'><span class="nv">$ </span>tree
+</span><span class='line'>.
+</span><span class='line'>├── app.dart
+</span><span class='line'>├── app.dart.js
+</span><span class='line'>├── app.dart.js.deps
+</span><span class='line'>├── app.dart.js.map
+</span><span class='line'>├── build.dart
+</span><span class='line'>├── build.sh
+</span><span class='line'>├── cordova.js
+</span><span class='line'>├── dart.js
+</span><span class='line'>├── dart_interop.js
+</span><span class='line'>├── index.html
+</span><span class='line'>├── lib
+</span><span class='line'>│   └── src
+</span><span class='line'>│       ├── connection.dart
+</span><span class='line'>│       ├── cordova_events.dart
+</span><span class='line'>│       ├── device.dart
+</span><span class='line'>│       ├── globalization.dart
+</span><span class='line'>│       ├── notification.dart
+</span><span class='line'>│       └── splashscreen.dart
+</span><span class='line'>└── pubspec.yaml
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>New classes added <code>Connection</code>, <code>CordovaEvents</code>, <code>Notification</code>, <code>Splashscreen</code> and <code>Globalization</code>. <code>Globalization</code> is presenting a problem with knowing the proper ways to parse date strings within the javascript implementation dependent scenarios. For now I might just skip them, different javascript engines parse <code>Date</code> strings different ways and my goal was not to cover all of them. <code>app.dart</code> is now importing the libraries directly at some point a single <code>lib/cordova.dart</code> library should be provided.</p>
+
+<p>This is where my journey for tonight has ended, <code>Contacts</code> might be the next exciting class of API to cover.</p>
+
+<p>The code for <a href="/blog/categories/phonegap-from-scratch/">phonegap_from_scratch</a> can be found on <a href="https://github.com/financeCoding/phonegap_from_scratch">github</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Adam Singer</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-29T21:36:00-08:00" pubdate data-updated="true">Dec 29<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/cordova/'>Cordova</a>, <a class='category' href='/blog/categories/dart/'>Dart</a>, <a class='category' href='/blog/categories/example/'>Example</a>, <a class='category' href='/blog/categories/phonegap/'>Phonegap</a>, <a class='category' href='/blog/categories/phonegap-from-scratch/'>phonegap-from-scratch</a>, <a class='category' href='/blog/categories/unittest/'>unittest</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://financeCoding.github.com/blog/2012/12/29/builtool-and-libraries-with-cordova-in-dart-on-ios/" data-via="" data-counturl="http://financeCoding.github.com/blog/2012/12/29/builtool-and-libraries-with-cordova-in-dart-on-ios/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/12/27/event-handling-and-logging-with-cordova-in-dart-on-ios/" title="Previous Post: event handling and logging with cordova in dart on iOS">&laquo; event handling and logging with cordova in dart on iOS</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/12/30/getting-started-with-dart-and-google-drive/" title="Next Post: Getting started with Dart and Google Drive">Getting started with Dart and Google Drive &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.6734693877551%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.22448979591837%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.22448979591837%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.22448979591837%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.22448979591837%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.22448979591837%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.6734693877551%'>API(3)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.44897959183673%'>BeagleBoard(2)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.44897959183673%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.22448979591837%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.22448979591837%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.22448979591837%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.22448979591837%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.89795918367346%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.44897959183673%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.22448979591837%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.22448979591837%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.22448979591837%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.6734693877551%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.22448979591837%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 101.22448979591837%'>Client(1)</a> <a href='/blog/categories/cloud' style='font-size: 102.44897959183673%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.44897959183673%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.22448979591837%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.89795918367346%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.22448979591837%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(49)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.44897959183673%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.22448979591837%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.6734693877551%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.22448979591837%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.44897959183673%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.6734693877551%'>DartVM(3)</a> <a href='/blog/categories/debugging' style='font-size: 101.22448979591837%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.89795918367346%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.22448979591837%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.89795918367346%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.6938775510204%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.22448979591837%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.22448979591837%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.22448979591837%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.22448979591837%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.22448979591837%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 129.3877551020408%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 102.44897959183673%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleAPI(1)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.22448979591837%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 106.12244897959184%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.22448979591837%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.22448979591837%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.22448979591837%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.22448979591837%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.44897959183673%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.6734693877551%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.44897959183673%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 106.12244897959184%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.22448979591837%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.22448979591837%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.44897959183673%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.22448979591837%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.22448979591837%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.22448979591837%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.44897959183673%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.22448979591837%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.89795918367346%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.89795918367346%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 101.22448979591837%'>Pub(1)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.22448979591837%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.22448979591837%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.44897959183673%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.22448979591837%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 130.6122448979592%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.44897959183673%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.22448979591837%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.22448979591837%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.22448979591837%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.44897959183673%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.22448979591837%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.22448979591837%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.44897959183673%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.44897959183673%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.6734693877551%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.22448979591837%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.22448979591837%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.44897959183673%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.22448979591837%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.22448979591837%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.22448979591837%'>WebGL(1)</a> </span>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/">Dart Multi Touch Canvas With Realtime APIs</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/09/rikulo-stream-on-heroku/">rikulo stream on heroku</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/08/google-client-apis-now-available-on-pub/">Dart Google Client Apis Now Available On Pub</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/financeCoding">@financeCoding</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'financeCoding',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Adam Singer -
+  <a href='https://plus.google.com/u/0/104569492481999771226/posts' rel='me'>Adam Singer</a>
+  - <a href='https://github.com/financeCoding' rel='me'>Adam Singer @ Github</a>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'financecoding';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://financeCoding.github.com/blog/2012/12/29/builtool-and-libraries-with-cordova-in-dart-on-ios/';
+        var disqus_url = 'http://financeCoding.github.com/blog/2012/12/29/builtool-and-libraries-with-cordova-in-dart-on-ios/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

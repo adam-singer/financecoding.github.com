@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Canvas | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/canvas/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using Canvas 2d to create pattern in Dart]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/11/26/using-canvas-2d-to-create-pattern-in-dart/"/>
+    <updated>2012-11-26T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/11/26/using-canvas-2d-to-create-pattern-in-dart</id>
+    <content type="html"><![CDATA[<p>This simple example displays how to use a <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/CanvasPattern.html">CanvasPattern</a> in Dart.</p>
+
+<script src="https://gist.github.com/4150722.js"><!-- gist --></script>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using Canvas 2d to create gradient in Dart]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/11/26/using-canvas-2d-to-create-gradient-in-dart/"/>
+    <updated>2012-11-26T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/11/26/using-canvas-2d-to-create-gradient-in-dart</id>
+    <content type="html"><![CDATA[<p>This simple example displays how to use a <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/CanvasGradient.html">CanvasGradient</a> in Dart.</p>
+
+<script src="https://gist.github.com/4150001.js"><!-- gist --></script>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[How to use CanvasElement.toDataURL in Dart]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/11/26/how-to-use-canvaselementtodataurl/"/>
+    <updated>2012-11-26T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/11/26/how-to-use-canvaselementtodataurl</id>
+    <content type="html"><![CDATA[<p>When looking to create an <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/ImageElement.html">ImageElement</a> from a <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/CanvasElement.html">CanvasElement</a>'s context, <a href="https://developer.mozilla.org/en-US/docs/DOM/HTMLCanvasElement">toDataURL</a> is your friend. An example use case of this would be creating screen shots of a canvas after some routine has ended. Another could be taking a screen shot when a playing a game that was developed with context <a href="http://www.w3.org/TR/2010/WD-2dcontext-20100304/">2d</a> or <a href="http://www.khronos.org/webgl/">webgl</a>. <code>toDataURL</code> returns a <code>data:</code> URL containing a representation of the image in the format specified by <code>type</code> (defaults to PNG).</p>
+
+<p>The following example shows the use of canvas 2d for creating a <a href="http://en.wikipedia.org/wiki/JPEG">jpeg</a> image and inserting it into the body of a document. If you run this example you might notice the loss of the alpha channel, that would be a good reason to switch to <a href="">png</a> format when calling <code>toDataURL</code>.</p>
+
+<script src="https://gist.github.com/4148505.js"><!-- gist --></script>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dart: fillstyle on cavnas]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/01/22/dart-fillstyle-on-cavnas/"/>
+    <updated>2012-01-22T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/01/22/dart-fillstyle-on-cavnas</id>
+    <content type="html"><![CDATA[<p>To be able to draw on <a href="http://en.wikipedia.org/wiki/Canvas_element">canvas</a> in <a href="http://www.dartlang.org">Dart</a> you need two things. A canvas element defined and a canvas rendering context to draw on. In this example we use a <a href="http://api.dartlang.org/html/CanvasRenderingContext2D.html">CanvasRenderingContext2D</a> to <a href="http://api.dartlang.org/html/CanvasRenderingContext2D.html#fillStyle">fillstyle</a> a set of <a href="http://api.dartlang.org/html/CanvasRenderingContext2D.html#fillRect">rectangles</a> with rgb colors of size x and y. Modified for Dart, mozilla <a href="https://developer.mozilla.org/samples/canvas-tutorial/4_1_canvas_fillstyle.html">developer</a> example can be done the following way. Check a live example <a href="http://financecoding.github.com/dart-canvas-fillstyle/">here</a>.</p>
+
+<p>[sourcecode lang="html"]
+&lt;html&gt;
+  &lt;head&gt;</p>
+
+<pre><code>&amp;lt;title&amp;gt;CanvasFillstyleExample&amp;lt;/title&amp;gt;
+</code></pre>
+
+<p>  &lt;/head&gt;
+  &lt;body&gt;</p>
+
+<pre><code>&amp;lt;canvas id=&amp;quot;canvas&amp;quot; width=&amp;quot;600&amp;quot; height=&amp;quot;600&amp;quot;&amp;gt;&amp;lt;/canvas&amp;gt;
+&amp;lt;script type=&amp;quot;text/javascript&amp;quot; src=&amp;quot;CanvasFillstyleExample.dart.app.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
+</code></pre>
+
+<p>  &lt;/body&gt;
+&lt;/html&gt;
+[/sourcecode]</p>
+
+<p>[sourcecode lang="java"]
+  draw() {</p>
+
+<pre><code>var ctx = document.query('canvas').getContext('2d');
+for (var i=0;i&amp;lt;6;i++){
+  for (var j=0;j&amp;lt;6;j++){
+    ctx.fillStyle = 'rgb(' + (255-42.5*i).floor().toString() + ',' + 
+                     (255-42.5*j).floor().toString() + ',0)';
+    ctx.fillRect(j*25,i*25,25,25);
+  }
+}
+</code></pre>
+
+<p>  }
+[/sourcecode]</p>
+]]></content>
+  </entry>
+  
+</feed>

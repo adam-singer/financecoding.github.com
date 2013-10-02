@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: unittest | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/unittest/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[builtool and libraries with cordova in dart on ios]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/12/29/builtool-and-libraries-with-cordova-in-dart-on-ios/"/>
+    <updated>2012-12-29T21:36:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/12/29/builtool-and-libraries-with-cordova-in-dart-on-ios</id>
+    <content type="html"><![CDATA[<p>Continuing on the chain of <a href="/blog/categories/phonegap-from-scratch/">phonegap_from_scratch</a>, this post goes over <a href="https://github.com/dart-lang/buildtool">buildtool</a> and libraries.</p>
+
+<p>Took an afternoon to look into using <a href="https://github.com/dart-lang/buildtool">buildtool</a> for helping call dart2js on save within the DartEditor. Minor <a href="https://github.com/financeCoding/buildtool/commit/0692911befaa5705a2928ffaa532c295191d1155">modifications</a> was needed to redirect the generated javascript code to the cordova <code>www</code> directory in the project. This tool is still in the works and future versions will be more robust.</p>
+
+<p>The trend with dart currently is to use <code>pub</code> with github or to publish on <a href="http://pub.dartlang.org/">pub.dartlang.org</a>. A great feature with <code>pub</code> is if you want to make modifications to an existing project on github, <code>fork+branch</code> is an easy way to get hacking with modifications to an existing package. <code>buildtool</code>'s quick hack was added to the pubspec.yaml file as follows.</p>
+
+<p>``` yaml pubspec.yaml
+name:  dartdova
+description:  A sample dart cordova integration
+dependencies:
+  js: any
+  unittest: 0.2.9+7
+  logging: 0.2.9+7
+  buildtool:</p>
+
+<pre><code>git:
+  url: git://github.com/financeCoding/buildtool.git
+  ref: diroverride
+</code></pre>
+
+<p>```</p>
+
+<p>This pubspec.yaml pulls in the branch <code>diroverride</code> from a cloned version of <code>buildtool</code> from my github. Awesome solution for modifications that might not be upstreamed and needed quickly for testing.</p>
+
+<p>Moving along, the DartEditor will look for a <code>build.dart</code> file in the root directory of a projects folder. When that file is found it will execute on file changes within the project. <code>buildtool</code> currently provides a client/server architecture for building or transforming dart projects. The particular task I was interested in is <code>Dart2JSTask</code> which calls the dart2js compiler on modified dart files. With my modifications it now outputs the generated javascript code into the directory specified in the <code>Dart2JSTask.withOutDir</code> constructor.</p>
+
+<p>``` dart build.dart</p>
+
+<h1>!/usr/bin/env dart</h1>
+
+<p>import 'dart:io';
+import 'package:buildtool/buildtool.dart';
+import 'package:buildtool/dart2js_task.dart';
+void main() {
+  var config = () {</p>
+
+<pre><code>var dart2jstask = new Dart2JSTask.withOutDir("dart2js", new Path("."));
+addTask(["app.dart"], dart2jstask);
+</code></pre>
+
+<p>  };</p>
+
+<p>  configure(config);
+}
+```</p>
+
+<p>The way that I've approached running the server side of the <code>buildtool</code> was to launch a <code>./build.dart --server</code> process before opening the project in the DartEditor.</p>
+
+<p><code>bash output
+~/dart/phonegap_from_scratch/phonegap_from_scratch/www
+$ ./build.dart --server
+2012-12-29 23:06:49.732 INFO adding task Instance of 'Dart2JSTask' for files [app.dart]
+2012-12-29 23:06:49.757 INFO startServer
+2012-12-29 23:06:49.757 INFO listening on localhost:52746
+buildtool server ready
+port: 52746
+</code></p>
+
+<p>On each save in the project the server side will generate javascript code via <code>Dart2JSTask</code>.</p>
+
+<p><code>bash output
+2012-12-29 23:07:51.897 INFO starting build
+2012-12-29 23:07:51.903 INFO cwd: /Users/adam/dart/phonegap_from_scratch/phonegap_from_scratch/www build_out/out
+2012-12-29 23:07:51.909 FINE _runTasks: [_source:app.dart]
+2012-12-29 23:07:51.911 INFO cwd: /Users/adam/dart/phonegap_from_scratch/phonegap_from_scratch/www build_out/_dart2js
+2012-12-29 23:07:51.915 INFO dart2js task starting. files: [_source:app.dart]
+2012-12-29 23:07:51.918 FINE running dart2js args: [--out=./app.dart.js, --verbose, app.dart]
+2012-12-29 23:08:00.778 FINE dart2js exitCode: 0
+2012-12-29 23:08:00.779 INFO dartjs tasks complete
+2012-12-29 23:08:00.784 FINE tasks at depth 0 complete
+2012-12-29 23:08:01.288 INFO starting build
+2012-12-29 23:08:01.289 INFO cwd: /Users/adam/dart/phonegap_from_scratch/phonegap_from_scratch/www build_out/out
+2012-12-29 23:08:01.291 FINE _runTasks: [_source:app.dart.js, _source:app.dart.js.deps, _source:app.dart.js.map]
+2012-12-29 23:08:01.291 FINE tasks at depth 0 complete
+</code></p>
+
+<p>This solution saves me having to run the <code>./build.sh</code> from command line and launching the iOS simulator on each launch.</p>
+
+<p>The other changes to this project was to refactor the single <code>app.dart</code> into a collection of dart library  files. Seems that each of the API categories have been implemented as singletons. At some point I may make this similar to <a href="https://github.com/rikulo/gap">gap</a> where each category of API is a singleton and instantiated at the top level of a dart library.</p>
+
+<p><code>bash output
+~/dart/phonegap_from_scratch/phonegap_from_scratch/www
+$ tree
+.
+├── app.dart
+├── app.dart.js
+├── app.dart.js.deps
+├── app.dart.js.map
+├── build.dart
+├── build.sh
+├── cordova.js
+├── dart.js
+├── dart_interop.js
+├── index.html
+├── lib
+│   └── src
+│       ├── connection.dart
+│       ├── cordova_events.dart
+│       ├── device.dart
+│       ├── globalization.dart
+│       ├── notification.dart
+│       └── splashscreen.dart
+└── pubspec.yaml
+</code></p>
+
+<p>New classes added <code>Connection</code>, <code>CordovaEvents</code>, <code>Notification</code>, <code>Splashscreen</code> and <code>Globalization</code>. <code>Globalization</code> is presenting a problem with knowing the proper ways to parse date strings within the javascript implementation dependent scenarios. For now I might just skip them, different javascript engines parse <code>Date</code> strings different ways and my goal was not to cover all of them. <code>app.dart</code> is now importing the libraries directly at some point a single <code>lib/cordova.dart</code> library should be provided.</p>
+
+<p>This is where my journey for tonight has ended, <code>Contacts</code> might be the next exciting class of API to cover.</p>
+
+<p>The code for <a href="/blog/categories/phonegap-from-scratch/">phonegap_from_scratch</a> can be found on <a href="https://github.com/financeCoding/phonegap_from_scratch">github</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[event handling and logging with cordova in dart on iOS]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/12/27/event-handling-and-logging-with-cordova-in-dart-on-ios/"/>
+    <updated>2012-12-27T00:22:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/12/27/event-handling-and-logging-with-cordova-in-dart-on-ios</id>
+    <content type="html"><![CDATA[<p>Continuing on the chain of <a href="/blog/categories/phonegap-from-scratch/">phonegap_from_scratch</a> this post goes over event handlers and logging.</p>
+
+<p>Adding logging was trivial with the <a href="http://pub.dartlang.org/packages/logging"><code>logger</code></a> library on pub. Adding the following dependencies and setup configuration code was just enough to help with logging tests and code.</p>
+
+<p><code>yaml pubspec.yaml
+name:  dartdova
+description:  A sample dart cordova integration
+dependencies:
+  js: any
+  unittest: 0.2.9+7
+  logging: 0.2.9+7
+</code></p>
+
+<p>``` dart configureLogging
+void configureLogging() {
+  Logger.root.level = Level.ALL;
+  Logger.root.on.record.add((LogRecord r) {</p>
+
+<pre><code>// Print to console.log when compiled to javascript.
+print("${r.loggerName}:${r.level.name}:${r.sequenceNumber}:\n${r.message.toString()}");
+</code></pre>
+
+<p>  });
+}
+```</p>
+
+<p>Cordova ships with a list of custom <a href="http://docs.phonegap.com/en/2.2.0/cordova_events_events.md.html#Events">events</a> that can be fired off to the dom. The common pattern is to add event handlers to these events. Luckily we can receive the events without having to register handles with js-interop.</p>
+
+<pre><code>deviceready
+pause
+resume
+online
+offline
+backbutton
+batterycritical
+batterylow
+batterystatus
+menubutton
+searchbutton
+startcallbutton
+endcallbutton
+volumedownbutton
+volumeupbutton
+</code></pre>
+
+<p>I've noticed a few of them need to be hooked really early in the loading of a dart application. One <code>deviceready</code> being critical for knowing when the device is ready. If they are not hooked early in the application you could miss the event. At least I've noticed that with the iOS simulator.</p>
+
+<p><code>dart main
+void main() {
+  /**
+   * Cordova.js will fire off 'deviceready' event once fully loaded.
+   * listen for the event on js.context.document.
+   *
+   * This must be the first event wired up before creating Device.
+   */
+  document.on['deviceready'].add(deviceReady);
+}
+</code></p>
+
+<p><code>online</code>, <code>offline</code>, <code>battery*</code> are also events that one might want to catch early in <code>main()</code>. Later in the application after <code>deviceready</code> has been fired off you can remove the old handlers and add new ones that relate to the context created.</p>
+
+<p>The design pattern for <code>Device</code> is a singleton which left me with having event handlers registered whenever any newed references go out of scope. This works for now, another approach for event handling could of been to use <a href="https://github.com/prujohn/Reactive-Dart">Reactive-Dart</a> <code>Observable</code> object.</p>
+
+<p>```dart Device</p>
+
+<p>/<em>* The device: Singleton </em>/
+class Device {
+  static final Device <em>singleton = new Device.</em>internal();</p>
+
+<p>  Logger <em>logger;
+  js.Proxy </em>device;</p>
+
+<p>  factory Device() {</p>
+
+<pre><code>return _singleton;
+</code></pre>
+
+<p>  }</p>
+
+<p>  Device._internal() {</p>
+
+<pre><code>_logger = new Logger("Device");
+
+_registerHandlers();
+
+js.scoped(() {
+  _device = js.context.device;
+  js.retain(_device);
+});
+</code></pre>
+
+<p>  }</p>
+
+<p>  void _registerHandlers() {</p>
+
+<pre><code>_onOnlineHandlers = new List&lt;Function&gt;();
+document.on['online'].add(_onOnline);
+
+_onOfflineHandlers = new List&lt;Function&gt;();
+document.on['offline'].add(_onOffline);
+</code></pre>
+
+<p>  }</p>
+
+<p>  String get name => js.scoped(() => <em>device.name);
+  String get cordova => js.scoped(() => </em>device.cordova);
+  String get platform => js.scoped(() => <em>device.platform);
+  String get uuid => js.scoped(() => </em>device.uuid);
+  String get version => js.scoped(() => _device.version);</p>
+
+<p>  List<Function> <em>onOnlineHandlers;
+  List<Function> get onOnline => </em>onOnlineHandlers;
+  void <em>onOnline(Event event) => </em>onOnlineHandlers.forEach((handler)=>handler(event));</p>
+
+<p>  List<Function> <em>onOfflineHandlers;
+  List<Function> get onOffline => </em>onOfflineHandlers;
+  void <em>onOffline(Event event) => </em>onOfflineHandlers.forEach((handler)=>handler(event));
+}
+```</p>
+
+<p>Creating tests for this type of pluming was not too difficult using <a href="http://api.dartlang.org/docs/bleeding_edge/unittest.html#expectAsync1"><code>expectAsync1</code></a>. The most of time spent on figuring this out was creating <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/CustomEvent.html"><code>CustomEvent</code></a> and calling <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/EventListenerList.html#dispatch"><code>dispatch</code></a>. This is enough functionality to see that device was properly wired up with handlers. I found it important to cover lots of tests when working with Cordova, error handling and reporting is very minimal. At times something would stop working with no console output. So I move forward with code and test in tandem.</p>
+
+<p>``` dart runTests</p>
+
+<pre><code>test('Device Event online', () {
+  var eventName = 'online';
+  var asyncMethod = expectAsync1((Event event)=&gt;expect(event.type, equals('$eventName')));
+  var customEvent = new CustomEvent('$eventName', true, false, "custom event");
+  var device = new Device();
+  device.onOnline.add(asyncMethod);
+  document.on['$eventName'].dispatch(customEvent);
+});
+
+test('Device Event offline', () {
+  var eventName = 'offline';
+  var asyncMethod = expectAsync1((Event event)=&gt;expect(event.type, equals('$eventName')));
+  var customEvent = new CustomEvent('$eventName', true, false, "custom event");
+  var device = new Device();
+  device.onOffline.add(asyncMethod);
+  document.on['$eventName'].dispatch(customEvent);
+});
+</code></pre>
+
+<p>```</p>
+
+<p><a href="/images/2012-12-27-event-handling-and-logging-with-cordova-in-dart-on-ios/unittests_passing.png"><img src="/images/2012-12-27-event-handling-and-logging-with-cordova-in-dart-on-ios/unittests_passing.png" alt="unittest_pass" /></a></p>
+
+<p>So far this is a good enough to have a device class and event handlers for custom events. The single <a href="https://github.com/financeCoding/phonegap_from_scratch"><code>app.dart</code></a> is starting to get large, next it should be broken out. I integrated the event handling directly in the <code>Device</code> class, but the Cordova <a href="http://docs.phonegap.com/en/2.2.0/index.html">API Reference</a> keeps them at the top level of the application. So a singleton <code>Events</code> or <code>CordovaEvents</code> class might be useful to separate the implementation out.</p>
+
+<p>A project that is just starting to hit the <a href="https://github.com/dart-lang/">dart-lang</a> github repository is <a href="https://github.com/dart-lang/buildtool">buildtool</a>. <code>buildtool</code> might provide a better solution then having a custom build script that needs to be called before each launch of the simulator.</p>
+
+<p>The code for <a href="/blog/categories/phonegap-from-scratch/">phonegap_from_scratch</a> can be found on <a href="https://github.com/financeCoding/phonegap_from_scratch">github</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Unit Testing with Dart and Cordova on iOS]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/12/25/unit-testing-with-dart-and-cordova-on-ios/"/>
+    <updated>2012-12-25T23:37:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/12/25/unit-testing-with-dart-and-cordova-on-ios</id>
+    <content type="html"><![CDATA[<p>Continuing on from <a href="2012/12/23/getting-started-with-dart-and-cordova-from-scratch-on-ios">following</a> post, the next step forward for building stuff with Dart and Cordova was to get some unit testing. First class to test is <a href="http://docs.phonegap.com/en/2.2.0/cordova_device_device.md.html#Device">Device</a>. The tests created here are specific to the platform and simulator. Did not add any of the device events for testing until I can find a way to generate them from the simulator.</p>
+
+<p>First step is to add unit testing to the pub spec file.</p>
+
+<p><div>
+  <pre><code class='yaml'>name:  dartdova
+description:  A sample dart cordova integration
+dependencies:
+  js: any
+  unittest: 0.2.9+7</code></pre>
+</div>
+</p>
+
+<p>Going with <code>useHtmlEnhancedConfiguration()</code> from <code>unittest/html_enhanced_config.dart</code> did not work. Cordova or iPhone simulator seems to swallow up any exceptions or failures in rending, so resorting to the more stripped down version <code>useHtmlIndividualConfiguration()</code> from <code>package:unittest/html_individual_config.dart</code>.</p>
+
+<p>Using <a href="https://github.com/rikulo/gap">gap</a> as a reference it was easy enough to create a working <a href="http://stackoverflow.com/questions/12649573/how-do-you-build-a-singleton-in-dart">singleton</a> Device class.</p>
+
+<p><div><script src='https://gist.github.com/4381449.js'></script>
+<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/4381449&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+</p>
+
+<p>Now building the js code with <code>build.sh</code> and launching iPhone simulator in <code>Xcode.app</code>, the passing unit test should be displayed in the simplified version of the <a href="http://www.dartlang.org/articles/dart-unit-tests/">unittest</a> output.</p>
+
+<p><div><script src='https://gist.github.com/4381488.js'></script>
+<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/4381488&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
+</p>
+
+<p><a href="/images/2012-12-25-unit-testing-with-dart-and-cordova-on-ios/unittestpass.png"><img src="/images/2012-12-25-unit-testing-with-dart-and-cordova-on-ios/unittestpass.png" alt="unittest_pass" /></a></p>
+
+<p>The code for <a href="/blog/categories/phonegap-from-scratch/">phonegap_from_scratch</a> can be found on <a href="https://github.com/financeCoding/phonegap_from_scratch">github</a></p>
+]]></content>
+  </entry>
+  
+</feed>

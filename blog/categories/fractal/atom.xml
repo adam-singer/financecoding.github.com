@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Fractal | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/fractal/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dart: Animated H-Fractal]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/01/05/dart-animated-h-fractal/"/>
+    <updated>2012-01-05T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/01/05/dart-animated-h-fractal</id>
+    <content type="html"><![CDATA[<p><a href="http://financecoding.github.com/dart-animated-htree/"><img src="http://financecoding.files.wordpress.com/2012/01/010612_0351_dartanimate1.png" alt="" border="0" /></a>
+    </p>
+
+
+<p>A fun <a href="https://github.com/financeCoding/dart-animated-htree">example</a> using <a href="http://www.dartlang.org/">Dart</a> to draw on <a href="http://www.html5canvastutorials.com/">Canvas</a> an <a href="http://en.wikipedia.org/wiki/H_tree">H-Fractal</a>. <a href="http://en.wikipedia.org/wiki/Fractal">Fractals</a> are those beautiful geometric shapes that can be implemented with <a href="http://en.wikipedia.org/wiki/Recursion">recursion</a> in programming languages. In this example you can see that dart is capable of calculating an H-Fractal and storing the points before drawing to the canvas very fast. Above 10 iterations things start to slow down.
+</p>
+
+]]></content>
+  </entry>
+  
+</feed>

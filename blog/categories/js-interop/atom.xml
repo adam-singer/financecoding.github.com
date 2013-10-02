@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: js-interop | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/js-interop/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Listing files with Google Drive and Dart]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/01/06/listing-files-with-google-drive-and-dart/"/>
+    <updated>2013-01-06T18:23:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/01/06/listing-files-with-google-drive-and-dart</id>
+    <content type="html"><![CDATA[<p>Moving forward with my curiosity of Google <a href="/blog/categories/Drive/">drive</a> and <a href="/blog/categories/Dart/">Dart</a>, today was spent creating a small <a href="https://github.com/financeCoding/dart_drive_files_list">sample</a> that lists files. For the most part this is a continuation of the following post <a href="/blog/2012/12/30/getting-started-with-dart-and-google-drive/">getting-started-with-dart-and-google-drive</a>.</p>
+
+<p>Decided to move the loading of <a href="http://code.google.com/p/google-api-javascript-client/">client.js</a> into its own helper class for now. When dart has real support for Google client apis none of this will be needed. As of now this serves as good practice and examples of javascript/dart interop.</p>
+
+<p>``` dart dart_drive_files_list.dart
+/<em>*
+ * Sample google api client loader.
+ </em>/
+class GoogleApiClientLoader {
+  static const String <em>CLIENT_ID = '299615367852.apps.googleusercontent.com';
+  static const String </em>SCOPE = 'https://www.googleapis.com/auth/drive';
+  static const String _handleClientLoadName = "handleClientLoad";</p>
+
+<p>  static void _loadScript() {</p>
+
+<pre><code>/**
+ * Create and load script element.
+ */
+ScriptElement script = new ScriptElement();
+script.src = "http://apis.google.com/js/client.js?onload=$_handleClientLoadName";
+script.type = "text/javascript";
+document.body.children.add(script);
+</code></pre>
+
+<p>  }</p>
+
+<p>  static void _createScopedCallbacks(var completer) {</p>
+
+<pre><code>js.scoped((){
+  /**
+   * handleAuthResult is called from javascript when
+   * the function to call once the login process is complete.
+   */
+  js.context.handleAuthResult = new js.Callback.many((js.Proxy authResult) {
+    Map dartAuthResult = JSON.parse(js.context.JSON.stringify(authResult));
+    completer.complete(dartAuthResult);
+  });
+
+  /**
+   * This javascript method is called when the client.js script
+   * is loaded.
+   */
+  js.context.handleClientLoad =  new js.Callback.many(() {
+    js.context.window.setTimeout(js.context.checkAuth, 1);
+  });
+
+  /**
+   * Authorization check if the client allows this
+   * application to access its google drive.
+   */
+  js.context.checkAuth = new js.Callback.many(() {
+    js.context.gapi.auth.authorize(
+        js.map({
+          'client_id': _CLIENT_ID,
+          'scope': _SCOPE,
+          'immediate': true
+        }),
+        js.context.handleAuthResult);
+  });
+
+});
+</code></pre>
+
+<p>  }</p>
+
+<p>  /<em>*
+   * Load the google client api, future returns
+   * map results.
+   </em>/
+  static Future<Map> load() {</p>
+
+<pre><code>var completer = new Completer();
+_createScopedCallbacks(completer);
+_loadScript();
+return completer.future;
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>The calling of <code>load()</code> returns a future with our authentication results. Eases the process of having the google drive scope available to the client application.</p>
+
+<p>A simple dart <code>Drive</code> class created gives access to the list call from the javascript apis. The interesting point for me to learn is knowing that <code>client.js</code> has to load the drive api. In the <code>load()</code> future we call <code>js.context.gapi.client.load</code> which will take the api and version to be loaded for the client application.</p>
+
+<p>``` dart dart_drive_files_list.dart
+/<em>*
+ * Sample google drive class.
+ </em>/
+class Drive {
+  js.Proxy <em>drive;
+  bool get </em>isLoaded => _drive != null;</p>
+
+<p>  /<em>*
+   * Load the gapi.client.drive api.
+   </em>/
+  Future<bool> load() {</p>
+
+<pre><code>var completer = new Completer();
+js.scoped(() {
+  js.context.gapi.client.load('drive', 'v2', new js.Callback.once(() {
+    _drive = js.context.gapi.client.drive;
+    js.retain(_drive);
+    completer.complete(true);
+  }));
+});
+return completer.future;
+</code></pre>
+
+<p>  }</p>
+
+<p>  /<em>*
+   * Check if gapi.client.drive is loaded, if not
+   * load before executing.
+   </em>/
+  void _loadederExecute(Function function) {</p>
+
+<pre><code>if (_isLoaded) {
+  function();
+} else {
+  load().then((s) {
+    if (s == true) {
+      function();
+    } else {
+      throw "loadedExecute failed";
+    }
+  });
+}
+</code></pre>
+
+<p>  }</p>
+
+<p>  /<em>*
+   * List files with gapi.drive.files.list()
+   </em>/
+  Future<Map> list() {</p>
+
+<pre><code>var completer = new Completer();
+_loadederExecute(() {
+  js.scoped(() {
+    var request = _drive.files.list();
+    request.execute(new js.Callback.once((js.Proxy jsonResp, var rawResp) {
+      Map m = JSON.parse(js.context.JSON.stringify(jsonResp));
+      completer.complete(m);
+    }));
+  });
+});
+return completer.future;
+</code></pre>
+
+<p>  }
+}
+```</p>
+
+<p>With the following sugar classes it was easy to just list files from my google drive account.</p>
+
+<p>``` dart dart_drive_files_list.dart
+void main() {
+  Drive drive = new Drive();
+  GoogleApiClientLoader.load().then((result) {</p>
+
+<pre><code>drive.list().then((Map files) {
+  // https://developers.google.com/drive/v2/reference/files/list
+  files['items'].forEach((i) {
+    var li = new LIElement();
+    AnchorElement a = new AnchorElement();
+    a.href = i['alternateLink'];
+    a.target = '_blank';
+    a.text = i['title'];
+    li.children.add(a);
+    UListElement ul = query('#listmenu');
+    ul.children.add(li);
+  });
+});
+</code></pre>
+
+<p>  });
+}
+```</p>
+
+<p><a href="/images/2013-01-06-listing-files-with-google-drive-and-dart/listing_files_google_drive.png"><img src="/images/2013-01-06-listing-files-with-google-drive-and-dart/listing_files_google_drive.png" alt="listing-files-drive" /></a></p>
+
+<p>Hopefully this helps with developers interested in google drive &amp; dart! Sample can be found on github <a href="https://github.com/financeCoding/dart_drive_files_list">dart_drive_files_list</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Last Dart mashup for 2012 - Clock Chrome App Drives ADK2012]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/12/31/last-dart-mashup-for-2012-clock-chrome-app-drives-adk2012/"/>
+    <updated>2012-12-31T13:03:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/12/31/last-dart-mashup-for-2012-clock-chrome-app-drives-adk2012</id>
+    <content type="html"><![CDATA[<p>My last dart mashup for the year, excited to see what the community and dart team brings for 2013.</p>
+
+<iframe width="560" height="315" src="http://www.youtube.com/embed/-Z-cxc3OXpE" frameborder="0" allowfullscreen></iframe>
+
+
+<p>All source code can be found in the example directory of <a href="https://github.com/dart-gde/chrome.dart">chrome.dart</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Getting started with Dart and Google Drive]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/12/30/getting-started-with-dart-and-google-drive/"/>
+    <updated>2012-12-30T16:27:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/12/30/getting-started-with-dart-and-google-drive</id>
+    <content type="html"><![CDATA[<p>Following the example code from google drive <a href="https://developers.google.com/drive/quickstart-js">quickstart</a> I was able to recreate the sample in <a href="http://www.dartlang.org">Dart</a>. A lot of the heavy lifting is done by the <a href="https://github.com/dart-lang/js-interop">js-interop</a> cause of the dependency on <a href="http://code.google.com/p/google-api-javascript-client">google javascript client api</a>. This solution is fine for now, I'd take a good guess the dart team will provide client apis at some point.</p>
+
+<p>Started off by creating a new sample project <code>dart_drive_quickstart</code>, removed all default code and add js-interop.</p>
+
+<p><a href="/images/2012-12-30-getting-started-with-dart-and-google-drive/create-new-app.png"><img src="/images/2012-12-30-getting-started-with-dart-and-google-drive/create-new-app.png" alt="create-new-app" /></a></p>
+
+<p><a href="/images/2012-12-30-getting-started-with-dart-and-google-drive/remove-defaults.png"><img src="/images/2012-12-30-getting-started-with-dart-and-google-drive/remove-defaults.png" alt="remove-defaults" /></a></p>
+
+<p>Bring in the javascript client apis as <code>ScriptElement</code> and set a <code>onload</code> handler to a dart callback.</p>
+
+<p>``` dart dart_drive_quickstart.dart
+import 'dart:html';
+import 'dart:json';
+import 'package:js/js.dart' as js;</p>
+
+<p>final String CLIENT_ID = '<YOURCLIENTID>';
+final String SCOPE = 'https://www.googleapis.com/auth/drive';</p>
+
+<p>void main() {
+  js.scoped((){</p>
+
+<pre><code>js.context.handleAuthResult = new js.Callback.many((js.Proxy authResult) {
+  Map dartAuthResult = JSON.parse(js.context.JSON.stringify(authResult));
+  print("dartAuthResult = ${dartAuthResult}");
+});      
+
+js.context.handleClientLoad =  new js.Callback.many(() {
+  js.context.window.setTimeout(js.context.checkAuth, 1);
+});
+
+js.context.checkAuth = new js.Callback.many(() {
+  js.context.gapi.auth.authorize(
+      js.map({
+          'client_id': CLIENT_ID,
+          'scope': SCOPE,
+          'immediate': true
+        }),
+        js.context.handleAuthResult);
+});         
+</code></pre>
+
+<p>  });</p>
+
+<p>  ScriptElement script = new ScriptElement();
+  script.src = "http://apis.google.com/js/client.js?onload=handleClientLoad";
+  script.type = "text/javascript";
+  document.body.children.add(script);
+}
+```</p>
+
+<p>Manually adding the script code and hooking up a callback from javascript to dart seemed to work fine. I ran into issues with callbacks not being scoped when they should of been scoped. Another odd thing was the need for the call to <code>setTimeout</code>, the callback to <code>handleAuthResult</code> would not get fired if <code>checkAuth</code> was not called from <code>setTimeout</code>.</p>
+
+<p>The rest of the code included was for the most part a direct translation of the quickstart sample. Added some dart flavoring when appropriate.</p>
+
+<p>Here are some action shots and code. The full project can be found on github <a href="https://github.com/financeCoding/dart_drive_quickstart">dart_drive_quickstart</a></p>
+
+<p><a href="/images/2012-12-30-getting-started-with-dart-and-google-drive/app-launched.png"><img src="/images/2012-12-30-getting-started-with-dart-and-google-drive/app-launched.png" alt="app-launched" /></a></p>
+
+<p><a href="/images/2012-12-30-getting-started-with-dart-and-google-drive/file-choose.png"><img src="/images/2012-12-30-getting-started-with-dart-and-google-drive/file-choose.png" alt="file-choose" /></a></p>
+
+<p><a href="/images/2012-12-30-getting-started-with-dart-and-google-drive/file-uploaded.png"><img src="/images/2012-12-30-getting-started-with-dart-and-google-drive/file-uploaded.png" alt="file-uploaded" /></a></p>
+
+<p><a href="/images/2012-12-30-getting-started-with-dart-and-google-drive/file-opened-in-drive.png"><img src="/images/2012-12-30-getting-started-with-dart-and-google-drive/file-opened-in-drive.png" alt="file-opened-in-drive" /></a></p>
+
+<p>``` dart dart_drive_quickstart.dart
+import 'dart:html';
+import 'dart:json';
+import 'package:js/js.dart' as js;</p>
+
+<p>final String CLIENT_ID = '299615367852.apps.googleusercontent.com';
+final String SCOPE = 'https://www.googleapis.com/auth/drive';</p>
+
+<p>void main() {
+  js.scoped((){</p>
+
+<pre><code>void insertFile(File fileData, [callback = null]) {
+  String boundary = '-------314159265358979323846';
+  String delimiter = "\r\n--$boundary\r\n";
+  String close_delim = "\r\n--$boundary--";
+
+  var reader = new FileReader();
+  reader.readAsBinaryString(fileData);
+  reader.on.load.add((Event e) {
+    var contentType = fileData.type;
+    if (contentType.isEmpty) {
+      contentType = 'application/octet-stream';
+    }
+
+    var metadata = {
+      'title' : fileData.name,
+      'mimeType' : contentType
+    };
+
+    var base64Data = window.btoa(reader.result);
+    var sb = new StringBuffer();
+    sb
+    ..add(delimiter)
+    ..add('Content-Type: application/json\r\n\r\n')
+    ..add(JSON.stringify(metadata))
+    ..add(delimiter)
+    ..add('Content-Type: ')
+    ..add(contentType)
+    ..add('\r\n')
+    ..add('Content-Transfer-Encoding: base64\r\n')
+    ..add('\r\n')
+    ..add(base64Data)
+    ..add(close_delim);
+
+    var multipartRequestBody = sb.toString();
+
+    print("multipartRequestBody");
+    print(multipartRequestBody);
+
+    js.scoped(() {
+      var request = js.context.gapi.client.request(
+        js.map({
+          'path': '/upload/drive/v2/files',
+          'method': 'POST',
+          'params': {'uploadType': 'multipart'},
+          'headers': {
+            'Content-Type': 'multipart/mixed; boundary="$boundary"'
+          },
+          'body': multipartRequestBody
+        }));
+
+      if (callback == null) {
+        callback = new js.Callback.many((js.Proxy jsonResp, var rawResp) {
+          print(js.context.JSON.stringify(jsonResp));
+          print(rawResp);
+
+          Map r = JSON.parse(js.context.JSON.stringify(jsonResp));
+          StringBuffer sb = new StringBuffer();
+          if (r.containsKey('error')) {
+            sb.add(r.toString());
+          } else {
+            sb.add("${r["title"]} has been uploaded.");
+          }
+
+          query('#text').text = sb.toString();
+        });
+      }
+
+      request.execute(callback);
+    });
+
+  });
+};
+
+void uploadFile(Event evt) {
+  js.scoped( () {
+    js.context.gapi.client.load('drive', 'v2', new js.Callback.many(() {
+      var file = evt.target.files[0];
+      insertFile(file);
+    }));
+  });
+}
+
+js.context.handleAuthResult = new js.Callback.many((js.Proxy authResult) {
+  Map dartAuthResult = JSON.parse(js.context.JSON.stringify(authResult));
+  print("dartAuthResult = ${dartAuthResult}");
+
+  var authButton = query('#authorizeButton');
+  var filePicker = query('#filePicker');
+  authButton.style.display = 'none';
+  filePicker.style.display = 'none';
+
+  if (!dartAuthResult.containsKey('error')) {
+    // Access token has been successfully retrieved, requests can be sent to the API.
+    filePicker.style.display = 'block';
+    filePicker.on['change'].add(uploadFile);
+  } else {
+    authButton.style.display = 'block';
+    authButton.on.click.add((Event e) {
+      js.scoped(() {
+        js.context.gapi.auth.authorize(
+            js.map({
+                'client_id': CLIENT_ID,
+                'scope': SCOPE,
+                'immediate': true
+              }),
+              js.context.handleAuthResult);
+      });
+    });
+  }
+});
+
+js.context.handleClientLoad =  new js.Callback.many(() {
+  js.context.window.setTimeout(js.context.checkAuth, 1);
+});
+
+js.context.checkAuth = new js.Callback.many(() {
+  js.context.gapi.auth.authorize(
+      js.map({
+          'client_id': CLIENT_ID,
+          'scope': SCOPE,
+          'immediate': true
+        }),
+        js.context.handleAuthResult);
+});
+</code></pre>
+
+<p>  });</p>
+
+<p>  ScriptElement script = new ScriptElement();
+  script.src = "http://apis.google.com/js/client.js?onload=handleClientLoad";
+  script.type = "text/javascript";
+  document.body.children.add(script);
+}
+```</p>
+]]></content>
+  </entry>
+  
+</feed>

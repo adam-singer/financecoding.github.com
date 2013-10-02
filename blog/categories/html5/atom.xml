@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: HTML5 | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/html5/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dart: fillstyle on cavnas]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/01/22/dart-fillstyle-on-cavnas/"/>
+    <updated>2012-01-22T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/01/22/dart-fillstyle-on-cavnas</id>
+    <content type="html"><![CDATA[<p>To be able to draw on <a href="http://en.wikipedia.org/wiki/Canvas_element">canvas</a> in <a href="http://www.dartlang.org">Dart</a> you need two things. A canvas element defined and a canvas rendering context to draw on. In this example we use a <a href="http://api.dartlang.org/html/CanvasRenderingContext2D.html">CanvasRenderingContext2D</a> to <a href="http://api.dartlang.org/html/CanvasRenderingContext2D.html#fillStyle">fillstyle</a> a set of <a href="http://api.dartlang.org/html/CanvasRenderingContext2D.html#fillRect">rectangles</a> with rgb colors of size x and y. Modified for Dart, mozilla <a href="https://developer.mozilla.org/samples/canvas-tutorial/4_1_canvas_fillstyle.html">developer</a> example can be done the following way. Check a live example <a href="http://financecoding.github.com/dart-canvas-fillstyle/">here</a>.</p>
+
+<p>[sourcecode lang="html"]
+&lt;html&gt;
+  &lt;head&gt;</p>
+
+<pre><code>&amp;lt;title&amp;gt;CanvasFillstyleExample&amp;lt;/title&amp;gt;
+</code></pre>
+
+<p>  &lt;/head&gt;
+  &lt;body&gt;</p>
+
+<pre><code>&amp;lt;canvas id=&amp;quot;canvas&amp;quot; width=&amp;quot;600&amp;quot; height=&amp;quot;600&amp;quot;&amp;gt;&amp;lt;/canvas&amp;gt;
+&amp;lt;script type=&amp;quot;text/javascript&amp;quot; src=&amp;quot;CanvasFillstyleExample.dart.app.js&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;
+</code></pre>
+
+<p>  &lt;/body&gt;
+&lt;/html&gt;
+[/sourcecode]</p>
+
+<p>[sourcecode lang="java"]
+  draw() {</p>
+
+<pre><code>var ctx = document.query('canvas').getContext('2d');
+for (var i=0;i&amp;lt;6;i++){
+  for (var j=0;j&amp;lt;6;j++){
+    ctx.fillStyle = 'rgb(' + (255-42.5*i).floor().toString() + ',' + 
+                     (255-42.5*j).floor().toString() + ',0)';
+    ctx.fillRect(j*25,i*25,25,25);
+  }
+}
+</code></pre>
+
+<p>  }
+[/sourcecode]</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dart: Animated H-Fractal]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/01/05/dart-animated-h-fractal/"/>
+    <updated>2012-01-05T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/01/05/dart-animated-h-fractal</id>
+    <content type="html"><![CDATA[<p><a href="http://financecoding.github.com/dart-animated-htree/"><img src="http://financecoding.files.wordpress.com/2012/01/010612_0351_dartanimate1.png" alt="" border="0" /></a>
+    </p>
+
+
+<p>A fun <a href="https://github.com/financeCoding/dart-animated-htree">example</a> using <a href="http://www.dartlang.org/">Dart</a> to draw on <a href="http://www.html5canvastutorials.com/">Canvas</a> an <a href="http://en.wikipedia.org/wiki/H_tree">H-Fractal</a>. <a href="http://en.wikipedia.org/wiki/Fractal">Fractals</a> are those beautiful geometric shapes that can be implemented with <a href="http://en.wikipedia.org/wiki/Recursion">recursion</a> in programming languages. In this example you can see that dart is capable of calculating an H-Fractal and storing the points before drawing to the canvas very fast. Above 10 iterations things start to slow down.
+</p>
+
+]]></content>
+  </entry>
+  
+</feed>

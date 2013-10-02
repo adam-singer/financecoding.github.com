@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Realtime | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/realtime/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dart Multi Touch Canvas With Realtime APIs]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/"/>
+    <updated>2013-03-21T18:19:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis</id>
+    <content type="html"><![CDATA[<p><a href="https://developers.google.com/drive/">Google</a> has made the <a href="https://developers.google.com/drive/realtime/">realtime</a> api available for developers. Realtime api provides <a href="http://en.wikipedia.org/wiki/Operational_transformation">operational transformation</a> on <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeString">strings</a>, <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeList">lists</a>, <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeMap">maps</a> and custom <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeObject">objects</a>. The application data gets stored on Google Drive and is available from any supported browser. This is going to be the tooling of the future for collaborative applications.</p>
+
+<p>I took some time to see what it would take for implementing a sample realtime application in dart. Also wanted to make sure my sample could run on mobile chrome.</p>
+
+<p>Since realtime api is new, dart bindings don't really exist. Lucky for us we have <a href="http://pub.dartlang.org/packages/js">js-interop</a> library. The <a href="http://pub.dartlang.org/packages/js">js-interop</a> library provides communications to existing javascript code from dart. I consider this mostly a quick hack to get started with the realtime api until a more native interface exists.</p>
+
+<p>The sample <a href="http://financecoding.github.com/realtime_touch_canvas/web/index.html">realtime_touch_canvas</a> demonstrates a multi touch canvas surface that updates in realtime with all clients that have the application open.</p>
+
+<iframe width="560" height="315" src="http://www.youtube.com/embed/xArfJdOb55Q" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Most of the heavy lifting is done by <a href="https://github.com/financeCoding/realtime_touch_canvas"><code>rtclient.dart</code></a>. I ported the <a href="https://github.com/googledrive/realtime-playground/blob/master/js/realtime-client-utils.js">code</a> from the javascript version. Its enough code to get started right away but a more structured solution should be done. The main class is <code>RealTimeLoader</code> used for realtime loading.</p>
+
+<p>```dart
+  rtl = new RealTimeLoader(clientId: 'CLIENTID.apps.googleusercontent.com', apiKey: 'KEY');
+  rtl.start().then((bool isComplete) {</p>
+
+<pre><code>/* RealTimeLoader has authenticated the application and is ready to load a file */
+loadRealTimeFile(fileId, model.onFileLoaded, model.initializeModel);
+</code></pre>
+
+<p>  });
+```</p>
+
+<p><code>model.onFileLoaded</code> and <code>model.initializeModel</code> handle the creating of model data and loading of model data.</p>
+
+<p>In the <a href="http://financecoding.github.com/realtime_touch_canvas/web/index.html">realtime_touch_canvas</a>, model data was a simple list of json strings. The ticky part here is you need to remember that your working with the realtime api within the javascript vm. So an array needs to be allocated from <a href="http://pub.dartlang.org/packages/js">js-interop</a>.</p>
+
+<p>```dart
+  void _createNewModel(js.Proxy model) {</p>
+
+<pre><code>var list = model.createList(js.array(_defaultLines));
+model.getRoot().set(_linesName, list);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>After the model is created we then get called to load the file. Loading the file for our purposes is binding the collaborative objects. Some tricky things to note here is we are retaining the javascript objects so we can access them after exit of the callback. Also the callbacks have to be wrapped within <a href="http://pub.dartlang.org/packages/js">js-interop</a> <code>js.Callback.many</code> proxy object. The callbacks <code>_linesOnAddValuesChangedEvent</code> and <code>_linesOnRemovedValuesChangedEvent</code> are fired off when the collaborative list object has items added or removed.</p>
+
+<p>```dart
+  js.Proxy <em>doc;
+  String </em>linesName = "lines";
+  js.Proxy _lines;</p>
+
+<p>  void _bindModel(js.Proxy doc) {</p>
+
+<pre><code>_doc = doc;
+js.retain(_doc);
+_lines = doc.getModel().getRoot().get(_linesName);
+_lines.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, new js.Callback.many(_linesOnAddValuesChangedEvent));
+_lines.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, new js.Callback.many(_linesOnRemovedValuesChangedEvent));
+js.retain(_lines);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>When the callback is called the data would be in the javascript virtual machine so we can parse it and store in our native dart code. This is more of a convenience then a must do, that way we can expose plan old dart objects to our other parts of the dart application.</p>
+
+<p>```dart
+  void _linesOnAddValuesChangedEvent(addedValue) {</p>
+
+<pre><code>var insertedLine = _lines.get(addedValue.index);
+var line = new Line.fromJson(insertedLine);
+realtimeTouchCanvas.move(line, line.moveX, line.moveY);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>Now when we want to store a line in the application we simply convert it to json and push it into the collaborative list. The little tick here is to make sure we are <code>scoped</code> when accessing the <code>_lines</code> object since it lives in the javascript virtual machine.</p>
+
+<p>```dart
+  void addLine(Line line) {</p>
+
+<pre><code>js.scoped(() {
+  _lines.push(line.toJson());
+});
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>The <a href="http://financecoding.github.com/realtime_touch_canvas/web/index.html">realtime_touch_canvas</a> is live on github gh-pages and <a href="https://github.com/financeCoding/realtime_touch_canvas">realtime_touch_canvas source</a> is available.</p>
+]]></content>
+  </entry>
+  
+</feed>

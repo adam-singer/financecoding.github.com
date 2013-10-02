@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Dartiu | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/dartiu/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dart: Updated Dartium builds for Linux and Mac]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/01/20/dart-updated-dartium-builds-for-linux-and-mac/"/>
+    <updated>2012-01-20T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/01/20/dart-updated-dartium-builds-for-linux-and-mac</id>
+    <content type="html"><![CDATA[<p>Following the similar posts as before, you can get the latest Dartium builds for <a href="http://financecoding.wordpress.com/2012/01/16/dartium-mac-osx-build-rev-117836/" target="_blank">Mac OSX</a> and <a href="http://financecoding.wordpress.com/2012/01/11/dartium-build-rev-116980-in-4-easy-steps/" target="_blank">32bit Linux</a> here. My public is can be found on <a href="http://pgp.mit.edu:11371/pks/lookup?op=get&amp;search=0x66ED7ACDB02CE8A1" title="financeCoding@gmail.com public key" target="_blank">pgp.mit.edu</a>. Please contact me if you have any issues, only providing these until Dartium hits the prime time. Keep in mind that nothing is guaranteed to work at this point... but some stuff does.
+[sourcecode lang="bash"]
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/Chromium.app.tar.gz
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/Chromium.app.tar.gz.sig
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/Chromium.app.tar.gz.md5
+wget http://dl.dropbox.com/u/33138127/dartium_macosx/README.txt
+gpg --verify Chromium.app.tar.gz.sig Chromium.app.tar.gz
+md5sum -c Chromium.app.tar.gz.md5
+[/sourcecode]
+[sourcecode lang="bash"]
+wget http://gsdview.appspot.com/dart-editor-archive-continuous/latest/DartBuild-linux.gtk.x86.zip
+wget http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz
+wget http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz.sig
+wget http://dl.dropbox.com/u/33138127/dartium/dartium-linux-32bit-Release.tar.gz.md5
+wget http://dl.dropbox.com/u/33138127/dartium/README.txt
+gpg --verify dartium-linux-32bit-Release.tar.gz.sig dartium-linux-32bit-Release.tar.gz
+md5sum -c dartium-linux-32bit-Release.tar.gz.md5
+[/sourcecode]</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://financeCoding.github.com/sitemap.xml 

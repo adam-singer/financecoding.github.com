@@ -1,0 +1,730 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Darting A Full Stack - Random posts about coding</title>
+  <meta name="author" content="Adam Singer">
+
+  <meta property="og:title" content="Darting A Full Stack - Random posts about coding" />
+  <meta property="og:image" content="/me.png" />
+  <meta property="og:description" content="" />
+
+  
+  <meta name="description" content="tl;dr A common question that comes up is connecting all parts of dart together. Here I will show a simple example of connecting up web-ui and &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://financeCoding.github.com/blog/2013/01/16/darting-a-full-stack/">
+  <link href="/me_favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Random posts about coding" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36566996-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="https://plus.google.com/s2/photos/profile/104569492481999771226?sz=100"></a><span> </span><a href="/">Random posts about coding</a></h1>
+  
+    <h2>Mostly blogging about dart.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:financeCoding.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/aboutme">AboutMe</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Darting a Full Stack</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-16T16:47:00-08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><em>tl;dr</em> A common question that comes up is connecting all parts of dart together. Here I will show a simple example of connecting up <a href="https://github.com/dart-lang/web-ui">web-ui</a> and <a href="https://github.com/vadimtsushko/objectory">objectory</a>.</p>
+
+<p><a href="https://github.com/dart-lang/web-ui">web-ui</a> is a <a href="https://dvcs.w3.org/hg/webcomponents/raw-file/tip/explainer/index.html">WebComponents</a> framework provided by the <a href="https://github.com/dart-lang">dart-lang</a> team. <a href="https://github.com/vadimtsushko/objectory">objectory</a> is a data persistence layer for MongoDB that provides typed, checked environment for models, saving and queries. With these two components and a very simple web server we could have a nice full stack solution in <a href="http://www.dartlang.org">dart</a>.</p>
+
+<p>Initially <a href="https://github.com/vadimtsushko/">Vadim Tsushko</a> did some work to wire up <a href="https://github.com/dart-lang/web-ui/tree/master/example/todomvc">TodoMVC</a> from the <a href="https://github.com/dart-lang/web-ui">web-ui</a> examples with indexdb. Using the same code and updated version of TodoMVC I was able to connect it to <a href="http://www.mongodb.org/">mongodb</a> using the web socket connection provided with objectory.</p>
+
+<p><em>It would of been nice if this solution could possibly be deployed onto <a href="http://www.heroku.com/">heroku</a>, ended up not possible since heroku does not support native web socket connections with their internal routing. <a href="http://socket.io/">socket.io</a> does work on heroku but uses long polling instead of true web sockets.</em></p>
+
+<p>Another note, since dart is in a transitional phase right now for implementing streams, some of this code depends packages that have not yet been pushed to <a href="http://pub.dartlang.org/">pub.dartlang.org</a></p>
+
+<p>So lets get started with the basics, getting up and running with objectory. Install mongo if its not already and fire up a mongo database.</p>
+
+<figure class='code'><figcaption><span>mongo install</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>brew install mongo
+</span><span class='line'><span class="nb">cd</span> /tmp/
+</span><span class='line'>mkdir db
+</span><span class='line'>mongod -dbpath .
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The version of dart being used is the latest trunk build <a href="https://gsdview.appspot.com/dart-editor-archive-trunk/17072/">17072</a></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>cat ~/dart/dart-sdk/version
+</span><span class='line'>0.3.0.1_r17072
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>clone and test objectory as a sanity check</p>
+
+<figure class='code'><figcaption><span>objectory</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> /Users/adam/dart/
+</span><span class='line'><span class="nv">$ </span>git clone https://github.com/vadimtsushko/objectory.git
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>objectory
+</span><span class='line'><span class="nv">$ </span>pub install
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd </span>bin
+</span><span class='line'><span class="nv">$ </span>dart objectory_server.dart
+</span><span class='line'>listing on http://127.0.0.1:8080
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Open up another terminal and run the <code>example/blog_console.dart</code> application.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ~/dart/objectory/example
+</span><span class='line'><span class="nv">$ </span>dart blog_console.dart
+</span><span class='line'><span class="o">===================================================================================</span>
+</span><span class='line'>&gt;&gt; Adding <span class="nv">Authors</span>
+</span><span class='line'><span class="o">===================================================================================</span>
+</span><span class='line'>&gt;&gt; Authors ordered by age ascending
+</span><span class='line'><span class="o">[</span>Jorge Luis Borges<span class="o">]</span>:<span class="o">[</span>jorge@borges.com<span class="o">]</span>:<span class="o">[</span>123<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>William Shakespeare<span class="o">]</span>:<span class="o">[</span>william@shakespeare.com<span class="o">]</span>:<span class="o">[</span>587<span class="o">]</span>
+</span><span class='line'><span class="o">===================================================================================</span>
+</span><span class='line'>&gt;&gt; Adding <span class="nv">Users</span>
+</span><span class='line'><span class="o">===================================================================================</span>
+</span><span class='line'>&gt;&gt; &gt;&gt; Users ordered by login ascending
+</span><span class='line'><span class="o">[</span>jdoe<span class="o">]</span>:<span class="o">[</span>John Doe<span class="o">]</span>:<span class="o">[</span>john@doe.com<span class="o">]</span>
+</span><span class='line'><span class="o">[</span>lsmith<span class="o">]</span>:<span class="o">[</span>Lucy Smith<span class="o">]</span>:<span class="o">[</span>lucy@smith.com<span class="o">]</span>
+</span><span class='line'><span class="o">===================================================================================</span>
+</span><span class='line'>&gt;&gt; Adding <span class="nv">articles</span>
+</span><span class='line'><span class="o">===================================================================================</span>
+</span><span class='line'>&gt;&gt; Printing articles
+</span><span class='line'>Jorge Luis Borges:Caminando por Buenos Aires:Las callecitas de Buenos Aires tienen ese no se que...
+</span><span class='line'>     2013-01-07 16:21:26.437:Lucy Smith: Well, you may <span class="k">do </span>better...
+</span><span class='line'>     2013-01-15 16:01:26.445:John Doe: I love this article!
+</span><span class='line'>William Shakespeare:I must have seen thy face before:Thine eyes call me in a new way
+</span><span class='line'>     2013-01-16 11:28:06.453:John Doe: great article!
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now if we want to see the blog stored in mongo we need to remove the line in <a href="https://github.com/vadimtsushko/objectory/blob/master/example/blog_console.dart">blog_console.dart</a> that drops the database collection and rerun.</p>
+
+<figure class='code'><figcaption><span>blog_console.dart.diff</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='diff'><span class='line'><span class="gh">diff --git a/example/blog_console.dart b/example/blog_console.dart</span>
+</span><span class='line'><span class="gh">index 6775427..fd1d918 100644</span>
+</span><span class='line'><span class="gd">--- a/example/blog_console.dart</span>
+</span><span class='line'><span class="gi">+++ b/example/blog_console.dart</span>
+</span><span class='line'><span class="gu">@@ -84,7 +84,7 @@ main(){</span>
+</span><span class='line'>     print(&quot;&gt;&gt; Printing articles&quot;);
+</span><span class='line'>     return Future.wait(articles.mappedBy((article) =&gt; printArticle(article)));
+</span><span class='line'>   }).then((_) {
+</span><span class='line'><span class="gd">-    return objectory.dropCollections();</span>
+</span><span class='line'><span class="gi">+    return objectory;</span>
+</span><span class='line'>   }).then((_) {
+</span><span class='line'>    objectory.close();
+</span><span class='line'>   });
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Opening up mongo and peeking in side we see the following entries have been stored.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>mongo
+</span><span class='line'>MongoDB shell version: 2.2.2
+</span><span class='line'>connecting to: <span class="nb">test</span>
+</span><span class='line'>&gt; show dbs
+</span><span class='line'><span class="nb">local</span> <span class="o">(</span>empty<span class="o">)</span>
+</span><span class='line'>objectory_blog    0.203125GB
+</span><span class='line'>&gt; use objectory_blog
+</span><span class='line'>switched to db objectory_blog
+</span><span class='line'>&gt; show collections
+</span><span class='line'>Article
+</span><span class='line'>Author
+</span><span class='line'>User
+</span><span class='line'>system.indexes
+</span><span class='line'>&gt; db.Article.find<span class="o">()</span>
+</span><span class='line'><span class="o">{</span> <span class="s2">&quot;_id&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;50f751f09925f54002000008&quot;</span><span class="o">)</span>, <span class="s2">&quot;title&quot;</span> : <span class="s2">&quot;Caminando por Buenos Aires&quot;</span>, <span class="s2">&quot;body&quot;</span> : <span class="s2">&quot;Las callecitas de Buenos Aires tienen ese no se que...&quot;</span>, <span class="s2">&quot;author&quot;</span> : DBPointer<span class="o">(</span><span class="s2">&quot;Author&quot;</span>, ObjectId<span class="o">(</span><span class="s2">&quot;50f751f09925f54002000001&quot;</span><span class="o">))</span>, <span class="s2">&quot;comments&quot;</span> : <span class="o">[</span>  <span class="o">{</span><span class="s2">&quot;date&quot;</span> : ISODate<span class="o">(</span><span class="s2">&quot;2013-01-08T00:24:21.201Z&quot;</span><span class="o">)</span>,     <span class="s2">&quot;body&quot;</span> : <span class="s2">&quot;Well, you may do better...&quot;</span>,  <span class="s2">&quot;user&quot;</span> : DBPointer<span class="o">(</span><span class="s2">&quot;User&quot;</span>, ObjectId<span class="o">(</span><span class="s2">&quot;50f751f09925f54002000005&quot;</span><span class="o">))</span> <span class="o">}</span>,   <span class="o">{</span>    <span class="s2">&quot;date&quot;</span> : ISODate<span class="o">(</span><span class="s2">&quot;2013-01-16T00:04:21.206Z&quot;</span><span class="o">)</span>,     <span class="s2">&quot;body&quot;</span> : <span class="s2">&quot;I love this article!&quot;</span>,    <span class="s2">&quot;user&quot;</span> : DBPointer<span class="o">(</span><span class="s2">&quot;User&quot;</span>, ObjectId<span class="o">(</span><span class="s2">&quot;50f751f09925f54002000004&quot;</span><span class="o">))</span> <span class="o">}</span> <span class="o">]</span> <span class="o">}</span>
+</span><span class='line'><span class="o">{</span> <span class="s2">&quot;_id&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;50f751f09925f54002000009&quot;</span><span class="o">)</span>, <span class="s2">&quot;title&quot;</span> : <span class="s2">&quot;I must have seen thy face before&quot;</span>, <span class="s2">&quot;body&quot;</span> : <span class="s2">&quot;Thine eyes call me in a new way&quot;</span>, <span class="s2">&quot;author&quot;</span> : DBPointer<span class="o">(</span><span class="s2">&quot;Author&quot;</span>, ObjectId<span class="o">(</span><span class="s2">&quot;50f751f09925f54002000000&quot;</span><span class="o">))</span>, <span class="s2">&quot;comments&quot;</span> : <span class="o">[</span>   <span class="o">{</span>    <span class="s2">&quot;date&quot;</span> : ISODate<span class="o">(</span><span class="s2">&quot;2013-01-16T19:31:01.212Z&quot;</span><span class="o">)</span>,     <span class="s2">&quot;body&quot;</span> : <span class="s2">&quot;great article!&quot;</span>,  <span class="s2">&quot;user&quot;</span> : DBPointer<span class="o">(</span><span class="s2">&quot;User&quot;</span>, ObjectId<span class="o">(</span><span class="s2">&quot;50f751f09925f54002000004&quot;</span><span class="o">))</span> <span class="o">}</span> <span class="o">]</span> <span class="o">}</span>
+</span><span class='line'>&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now that we have done a sanity check we can start to move forward with TodoMVC side of things.</p>
+
+<p>I&#8217;ve provided a web-ui branch, the branch fixes up some of the pubspec inconsistencies between the projects on <a href="http://pub.dartlang.org/">pub.dartlang.org</a>. In the future this would not be needed.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>git clone -b objectory_example git://github.com/financeCoding/web-ui.git
+</span><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ~/dart/web-ui
+</span><span class='line'><span class="nv">$ </span>pub install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>objectory provides a very nice browser based web socket connector to the objectory server named <code>ObjectoryWebsocketBrowserImpl</code>. This allows us to register our models. The TodoMVC application model has a <code>Todo</code> object we&#8217;d like to persist.</p>
+
+<figure class='code'><figcaption><span>model.dart</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="kd">class</span> <span class="nc">Todo</span> <span class="kd">extends</span> <span class="n">PersistentObject</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">String</span> <span class="kd">get</span> <span class="n">task</span> <span class="o">=&gt;</span> <span class="n">getProperty</span><span class="p">(</span><span class="s1">&#39;task&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="kd">set</span> <span class="n">task</span><span class="p">(</span><span class="kt">String</span> <span class="n">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">setProperty</span><span class="p">(</span><span class="s1">&#39;task&#39;</span><span class="p">,</span><span class="n">value</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">bool</span> <span class="kd">get</span> <span class="n">done</span> <span class="o">=&gt;</span> <span class="n">getProperty</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="kd">set</span> <span class="n">done</span><span class="p">(</span><span class="kt">bool</span> <span class="n">value</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">setProperty</span><span class="p">(</span><span class="s1">&#39;done&#39;</span><span class="p">,</span><span class="n">value</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">Todo</span><span class="p">(</span><span class="kt">String</span> <span class="n">newTask</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">done</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">task</span> <span class="o">=</span> <span class="n">newTask</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">saveOnUpdate</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">String</span> <span class="n">toString</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="s2">&quot;</span><span class="si">$</span><span class="n">task</span><span class="s2"> </span><span class="si">${</span><span class="n">done</span> <span class="o">?</span> <span class="s1">&#39;(done)&#39;</span> <span class="o">:</span> <span class="s1">&#39;(not done)&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>By extending <code>PersistentObject</code> and adding the <code>getProperty</code> and <code>setProperty</code> methods to our getters and setters we have easily transformed this object to be persisted by objectory.</p>
+
+<p>To bind this up to objectory we <code>new</code> up a <code>ObjectoryWebsocketBrowserImpl</code>, when the application model is created, register the <code>Todo</code> class.</p>
+
+<figure class='code'><figcaption><span>model.dart</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="n">import</span> <span class="s1">&#39;package:objectory/objectory_browser.dart&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="kt">Object</span><span class="n">oryQueryBuilder</span> <span class="kd">get</span> <span class="n">$Todo</span> <span class="o">=&gt;</span> <span class="k">new</span> <span class="kt">Object</span><span class="n">oryQueryBuilder</span><span class="p">(</span><span class="s1">&#39;Todo&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="kd">const</span> <span class="n">DefaultUri</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1:8080&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="n">AppModel</span> <span class="n">_app</span><span class="p">;</span>
+</span><span class='line'><span class="n">AppModel</span> <span class="kd">get</span> <span class="n">app</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">_app</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">_app</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AppModel</span><span class="p">();</span>
+</span><span class='line'>     <span class="n">objectory</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">Object</span><span class="n">oryWebsocketBrowserImpl</span><span class="p">(</span><span class="n">DefaultUri</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span>
+</span><span class='line'>         <span class="n">objectory</span><span class="p">.</span><span class="n">registerClass</span><span class="p">(</span><span class="s1">&#39;Todo&#39;</span><span class="p">,()</span><span class="o">=&gt;</span><span class="k">new</span> <span class="n">Todo</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)),</span> <span class="kc">false</span><span class="p">);</span> <span class="c1">// set to true to drop models</span>
+</span><span class='line'>     <span class="n">objectory</span><span class="p">.</span><span class="n">initDomainModel</span><span class="p">().</span><span class="n">then</span><span class="p">((</span><span class="n">_</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>       <span class="n">objectory</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">$Todo</span><span class="p">).</span><span class="n">then</span><span class="p">((</span><span class="n">todos</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>         <span class="n">app</span><span class="p">.</span><span class="n">resetTodos</span><span class="p">(</span><span class="n">todos</span><span class="p">);</span>
+</span><span class='line'>       <span class="p">});</span>
+</span><span class='line'>     <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="n">_app</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The final step is when a todo is added we also save it in objectory by calling <code>objectory.save()</code>.</p>
+
+<figure class='code'><figcaption><span>main.dart</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="n">import</span> <span class="s1">&#39;package:objectory/objectory.dart&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="p">[...]</span>
+</span><span class='line'><span class="kt">void</span> <span class="n">addTodo</span><span class="p">(</span><span class="n">Event</span> <span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">e</span><span class="p">.</span><span class="n">preventDefault</span><span class="p">();</span> <span class="c1">// don&#39;t submit the form</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">input</span> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><span class="s1">&#39;#new-todo&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">todo</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Todo</span><span class="p">(</span><span class="n">input</span><span class="p">.</span><span class="n">value</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">app</span><span class="p">.</span><span class="n">todos</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">todo</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">objectory</span><span class="p">.</span><span class="n">save</span><span class="p">(</span><span class="n">todo</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">input</span><span class="p">.</span><span class="n">value</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In the custom branch provided, I renamed the standard <code>build.dart</code> to <code>x_build.dart</code> in hope to save my poor laptop from needlessly building. On a faster system this is not needed. Now we can launch the <code>x_build.dart</code> to generate the output build from the web components sample.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span>dart x_build.dart
+</span><span class='line'>Total <span class="nb">time </span>spent on example/todomvc/main.html                -- 276 ms
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>From the dart editor we can now launch the output folder main.html.</p>
+
+<p><a href="/images/2013-01-16-darting-a-full-stack/launch_dartium.png"><img src="/images/2013-01-16-darting-a-full-stack/launch_dartium.png" alt="launch-dartium" /></a></p>
+
+<p><a href="/images/2013-01-16-darting-a-full-stack/todo_entered.png"><img src="/images/2013-01-16-darting-a-full-stack/todo_entered.png" alt="todo_entered" /></a></p>
+
+<p>This is a nice start, we can launch a web-ui application from dartium and connect up mongo. The issues now&#8230; how do we get the kind of application live and not launched on localhost?</p>
+
+<ul>
+<li>Create a http server</li>
+<li>Add objectory to it</li>
+<li>Compile todomvc application to javascript</li>
+</ul>
+
+
+<p>Why are the steps above needed? First the objectory <code>ObjectoryServerImpl</code> used in <a href="https://github.com/vadimtsushko/objectory/blob/master/bin/objectory_server.dart">objectory_server.dart</a> hides <code>HttpServer</code> which doesn&#8217;t really work for us if we need to serve up static content. Good thing that the class is relativity simple to modify. Compiling todomvc to javascript is an additional step also, but helps us greatly the server logic, only a few files will need to be matched. When a complete and updated web server framework comes to town for dart this would also not be needed.</p>
+
+<p>Modifying the <code>DefaultUri</code> for <code>ObjectoryWebsocketBrowserImpl</code> so it looks at the host&#8217;s location will help for deploying it on a server. The web socket location can then be resolved dynamically.</p>
+
+<figure class='code'><figcaption><span>model.dart</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="n">import</span> <span class="s1">&#39;dart:html&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="p">[...]</span>
+</span><span class='line'><span class="kd">var</span> <span class="n">DefaultUri</span> <span class="o">=</span> <span class="n">window</span><span class="p">.</span><span class="n">location</span><span class="p">.</span><span class="n">host</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Compile the web component and update the <code>base.css</code> and <code>dart.js</code>.</p>
+
+<figure class='code'><figcaption><span>main.html</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'>[...]
+</span><span class='line'>  <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;base.css&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>[...]
+</span><span class='line'>  <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;dart.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then compile down to javascript after modifying the html.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ~/dart/web-ui/example/todomvc/out
+</span><span class='line'><span class="nv">$ </span>dart2js -omain.html_bootstrap.dart.js main.html_bootstrap.dart
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> ~/dart/web-ui/example/todomvc/out
+</span><span class='line'><span class="nv">$ </span>cp ../base.css main.html main.html_bootstrap.dart.js dart.js ~/dart/dart-full-stack-example/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>*The <a href="https://github.com/financeCoding/dart-full-stack-example">dart_full_stack_example</a> can be found on github, it contains the server code *</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nv">$ </span><span class="nb">cd</span> ~/dart/
+</span><span class='line'><span class="nv">$ </span>git clone https://github.com/financeCoding/dart-full-stack-example.git
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Moving onto <a href="https://github.com/financeCoding/dart-full-stack-example">dart_full_stack_example</a>, this project will contain the compiled js and html code along with a server. The server will handle delivering the static content also provide the interfaces for the web socket connection.</p>
+
+<figure class='code'><figcaption><span>server.dart</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="kd">final</span> <span class="n">IP</span> <span class="o">=</span> <span class="s1">&#39;0.0.0.0&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="kd">final</span> <span class="n">PORT</span> <span class="o">=</span> <span class="s1">&#39;8080&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="kd">final</span> <span class="n">URI</span> <span class="o">=</span> <span class="s1">&#39;mongodb://127.0.0.1/objectory_server_test&#39;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The server only handles a few requests as shown. Setting IP to <code>0.0.0.0</code> will listen on all IP addresses.</p>
+
+<figure class='code'><figcaption><span>server.dart</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'>  <span class="n">server</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HttpServer</span><span class="p">();</span>
+</span><span class='line'>  <span class="n">WebSocketHandler</span> <span class="n">wsHandler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WebSocketHandler</span><span class="p">();</span>
+</span><span class='line'>  <span class="n">server</span><span class="p">.</span><span class="n">addRequestHandler</span><span class="p">((</span><span class="n">req</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">req</span><span class="p">.</span><span class="n">path</span> <span class="o">==</span> <span class="s1">&#39;/ws&#39;</span><span class="p">,</span> <span class="n">wsHandler</span><span class="p">.</span><span class="n">onRequest</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">server</span><span class="p">.</span><span class="n">defaultRequestHandler</span> <span class="o">=</span> <span class="n">_loadIndex</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">server</span><span class="p">.</span><span class="n">addRequestHandler</span><span class="p">((</span><span class="n">req</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">req</span><span class="p">.</span><span class="n">path</span> <span class="o">==</span> <span class="s1">&#39;/main.html&#39;</span><span class="p">,</span> <span class="n">_loadFile</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">server</span><span class="p">.</span><span class="n">addRequestHandler</span><span class="p">((</span><span class="n">req</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">req</span><span class="p">.</span><span class="n">path</span> <span class="o">==</span> <span class="s1">&#39;/main.html_bootstrap.dart.js&#39;</span><span class="p">,</span> <span class="n">_loadFile</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">server</span><span class="p">.</span><span class="n">addRequestHandler</span><span class="p">((</span><span class="n">req</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">req</span><span class="p">.</span><span class="n">path</span> <span class="o">==</span> <span class="s1">&#39;/base.css&#39;</span><span class="p">,</span> <span class="n">_loadFile</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">server</span><span class="p">.</span><span class="n">addRequestHandler</span><span class="p">((</span><span class="n">req</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">req</span><span class="p">.</span><span class="n">path</span> <span class="o">==</span> <span class="s1">&#39;/dart.js&#39;</span><span class="p">,</span> <span class="n">_loadFile</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Looking at the <a href="https://github.com/financeCoding/dart-full-stack-example/blob/master/server.dart">server.dart</a> source code will give you a fuller example, all that is needed now is to run <code>dart server.dart</code> and you&#8217;ll have server running.</p>
+
+<p><em>This is a more complicated process then it has to be, at some point it will get easier when a true deployment and configuration story happen.</em></p>
+
+<p>Happy Dart Hacking!!!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Adam Singer</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-16T16:47:00-08:00" pubdate data-updated="true">Jan 16<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/dart/'>Dart</a>, <a class='category' href='/blog/categories/fullstack/'>FullStack</a>, <a class='category' href='/blog/categories/mongo/'>Mongo</a>, <a class='category' href='/blog/categories/mongodb/'>Mongodb</a>, <a class='category' href='/blog/categories/webcomponents/'>WebComponents</a>, <a class='category' href='/blog/categories/objectory/'>objectory</a>, <a class='category' href='/blog/categories/web-ui/'>web-ui</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://financeCoding.github.com/blog/2013/01/16/darting-a-full-stack/" data-via="" data-counturl="http://financeCoding.github.com/blog/2013/01/16/darting-a-full-stack/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/01/11/dart-generating-and-executing-snapshots/" title="Previous Post: Dart generating and executing snapshots">&laquo; Dart generating and executing snapshots</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/01/27/using-dart-for-website-publishing-on-google-drive/" title="Next Post: Using Dart for Website Publishing on Google Drive">Using Dart for Website Publishing on Google Drive &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.6734693877551%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.22448979591837%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.22448979591837%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.22448979591837%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.22448979591837%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.22448979591837%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.6734693877551%'>API(3)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.44897959183673%'>BeagleBoard(2)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.44897959183673%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.22448979591837%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.22448979591837%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.22448979591837%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.22448979591837%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.89795918367346%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.44897959183673%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.22448979591837%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.22448979591837%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.22448979591837%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.6734693877551%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.22448979591837%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 101.22448979591837%'>Client(1)</a> <a href='/blog/categories/cloud' style='font-size: 102.44897959183673%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.44897959183673%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.22448979591837%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.89795918367346%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.22448979591837%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(49)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.44897959183673%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.22448979591837%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.6734693877551%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.22448979591837%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.44897959183673%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.6734693877551%'>DartVM(3)</a> <a href='/blog/categories/debugging' style='font-size: 101.22448979591837%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.89795918367346%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.22448979591837%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.89795918367346%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.6938775510204%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.22448979591837%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.22448979591837%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.22448979591837%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.22448979591837%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.22448979591837%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 129.3877551020408%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 102.44897959183673%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleAPI(1)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.22448979591837%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 106.12244897959184%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.22448979591837%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.22448979591837%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.22448979591837%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.22448979591837%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.44897959183673%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.6734693877551%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.44897959183673%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 106.12244897959184%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.22448979591837%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.22448979591837%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.44897959183673%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.22448979591837%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.22448979591837%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.22448979591837%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.44897959183673%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.22448979591837%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.89795918367346%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.89795918367346%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 101.22448979591837%'>Pub(1)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.22448979591837%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.22448979591837%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.44897959183673%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.22448979591837%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 130.6122448979592%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.44897959183673%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.22448979591837%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.22448979591837%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.22448979591837%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.44897959183673%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.22448979591837%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.22448979591837%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.44897959183673%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.44897959183673%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.6734693877551%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.22448979591837%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.22448979591837%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.44897959183673%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.22448979591837%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.22448979591837%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.22448979591837%'>WebGL(1)</a> </span>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/">Dart Multi Touch Canvas With Realtime APIs</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/09/rikulo-stream-on-heroku/">rikulo stream on heroku</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/08/google-client-apis-now-available-on-pub/">Dart Google Client Apis Now Available On Pub</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/financeCoding">@financeCoding</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'financeCoding',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Adam Singer -
+  <a href='https://plus.google.com/u/0/104569492481999771226/posts' rel='me'>Adam Singer</a>
+  - <a href='https://github.com/financeCoding' rel='me'>Adam Singer @ Github</a>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'financecoding';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://financeCoding.github.com/blog/2013/01/16/darting-a-full-stack/';
+        var disqus_url = 'http://financeCoding.github.com/blog/2013/01/16/darting-a-full-stack/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

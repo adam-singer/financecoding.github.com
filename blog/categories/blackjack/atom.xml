@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Blackjack | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/blackjack/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[High-Low Card Counting Strategy]]></title>
+    <link href="http://financeCoding.github.com/blog/2011/03/20/high-low-card-counting-strategy/"/>
+    <updated>2011-03-20T00:00:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2011/03/20/high-low-card-counting-strategy</id>
+    <content type="html"><![CDATA[<p>Took a ride over to <a href="http://www.nashcoding.com/">Wesley Tansey's blog</a> and checked out the blackjack simulator project there. Decided on adding card counting strategy <a href="http://wizardofodds.com/blackjack/count/highlow1.html">High-Low</a>. I used <a href="http://en.wikipedia.org/wiki/Stanford_Wong">Standford Wong</a>'s book <a href="http://www.amazon.com/Professional-Blackjack-Stanford-Wong/dp/0935926216">Professional Blackjack</a> as a reference.  Did not have great success with it, some tweaks need to be done on the betting strategies. Was only able to get a approx -4.10 to -3.07 return on 500,000 hands played. Either way, packing up the code <a href="https://docs.google.com/leaf?id=0B29MR2FlgtejZmIzODI3MjItOTE0MC00NjVlLWJiYWQtYWRhZTAzNTAzNjdi&amp;sort=name&amp;layout=list&amp;num=50">here</a> as a zip file that includes HighLowStrategy object or you can get the original code <a href="http://www.nashcoding.com/2010/10/03/a-csharp-blackjack-simulation-framework/">here</a>.
+<a href="https://docs.google.com/leaf?id=0B29MR2FlgtejZmIzODI3MjItOTE0MC00NjVlLWJiYWQtYWRhZTAzNTAzNjdi&amp;sort=name&amp;layout=list&amp;num=50">Blackjack.zip</a></p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/03/032011_0320_highlowcard1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/03/032011_0320_highlowcard2.png" alt="" /></p>
+]]></content>
+  </entry>
+  
+</feed>

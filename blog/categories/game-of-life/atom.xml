@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Game Of Life | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/game-of-life/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dart: Game of Life]]></title>
+    <link href="http://financeCoding.github.com/blog/2011/12/10/173/"/>
+    <updated>2011-12-10T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2011/12/10/173</id>
+    <content type="html"><![CDATA[<p>After a fun SF coderetreat I wanted to publish a dart example of Conway's game of life to google gadgets.</p>
+
+<p><a href="https://sites.google.com/site/dartgameoflife/"><img class="alignnone size-full wp-image-174" title="Screen Shot 2011-12-10 at 3.02.55 AM" src="http://financecoding.files.wordpress.com/2011/12/screen-shot-2011-12-10-at-3-02-55-am.png" alt="" width="630" height="578" /></a></p>
+
+<p><a title="dartgameoflife" href="https://sites.google.com/site/dartgameoflife/" target="_blank">https://sites.google.com/site/dartgameoflife/</a>
+<a title="dart game of life code" href="https://github.com/financeCoding/DartGameOfLife" target="_blank">https://github.com/financeCoding/DartGameOfLife</a></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Dart Native Access | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/dart-native-access/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dart: dart:builtin]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/01/17/dart-dartbuiltin/"/>
+    <updated>2012-01-17T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/01/17/dart-dartbuiltin</id>
+    <content type="html"><![CDATA[<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/builtin_runtime.dart">dart:builtin</a> are the runtime libraries available to the DartVM. They provide some of the more system level API you would expect such as streams I/O, filesystem I/O, basic TCP socket I/O, platform information, native process invocation.  Most of these class implementations do call "native", which from the point of view of the DartVM means invoking native VM <a href="http://dart.googlecode.com/svn/branches/bleeding_edge/dart/runtime/bin/builtin_natives.cc">code</a>. "native" tells the VM to look up in a list for the entry that maps to the following argument after "native".</p>
+
+<p><img title="_DirectoryNative.png" src="http://financecoding.files.wordpress.com/2012/01/dartbuiltin_directorynative.png" alt="_DirectoryNative" width="552" height="174" border="0" /></p>
+
+<p><img title="nativedirectory.png" src="http://financecoding.files.wordpress.com/2012/01/dartbuiltinnativedirectory.png" alt="nativedirectory.png" width="481" height="257" border="0" /></p>
+
+<p>While Dart is still Alpha these builtin may not be written in stone, so try not to depend on them too much. They can and do provide you with some neat access to native functionality you would commonly need when written shell/system applications.</p>
+
+<p>By including #import('dart:builtin'); you can view the builtin dart files from DartEditor. Currently the DartEditor might show  warnings when including this module but runtime should not be affected. The truth of the matter is, if you explicitly include 'dart:builtin' or not, it is still available to you from implicit inclusion in the DartVM.</p>
+
+<p><img title="dartbuiltin.png" src="http://financecoding.files.wordpress.com/2012/01/dartbuiltindartbuiltin.png" alt="dartbuiltin" width="194" height="425" border="0" /></p>
+
+<p>The following should give an idea of what built in objects are accessible and how they may be used. The examples should not be considered best practices, just an idea of how you could use them and that they exist. The code is taken from a sample that can be found on <a href="https://github.com/financeCoding/dart-builtins-example">Github</a></p>
+
+<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/directory.dart#L5">Directory</a>
+[sourcecode lang="java"]</p>
+
+<pre><code>Directory d;
+if (l.length &amp;gt;= 2) {
+  d = new Directory(l[1]);
+} else {
+  d = new Directory(&amp;quot;.&amp;quot;);
+}
+d.dirHandler = (var dir) {
+  print(&amp;quot;${dir}&amp;quot;);
+};
+d.fileHandler = (var file) {
+  print(&amp;quot;${file}&amp;quot;);
+};
+d.list(true);
+</code></pre>
+
+<p>[/sourcecode]</p>
+
+<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/file.dart#L17">File</a>
+[sourcecode lang="java"]</p>
+
+<pre><code>File f = new File(l[0]);
+if (!f.existsSync()) {
+  print(&amp;quot;Error: file does not exist&amp;quot;);
+  return;
+}
+RandomAccessFile r = f.openSync(FileMode.READ);
+int length = r.lengthSync();
+List buffer = new List(length);
+int readLength = r.readListSync(buffer, 0, length);
+r.close();
+String s = new String.fromCharCodes(buffer);
+print(s);
+</code></pre>
+
+<p>[/sourcecode]</p>
+
+<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/input_stream.dart#L171">ChunkedInputStream</a>
+[sourcecode lang="java"]</p>
+
+<pre><code>ChunkedInputStream chunkedInputStream = new ChunkedInputStream(f.openInputStream(), 16);
+List c = chunkedInputStream.read();
+while(c!=null) {
+  StringBuffer sb = new StringBuffer();
+  c.forEach((int b) {
+    sb.add(&amp;quot;0x&amp;quot;);
+    if (b.toRadixString(16).length == 1) {
+      sb.add(&amp;quot;0&amp;quot;);
+    }
+    sb.add(b.toRadixString(16));
+    sb.add(&amp;quot; &amp;quot;);
+  });
+  print(sb.toString());
+  c = chunkedInputStream.read();
+}
+</code></pre>
+
+<p>[/sourcecode]</p>
+
+<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/input_stream.dart#L37">InputStream</a>
+<a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/output_stream.dart#L16">OutputStream</a>
+[sourcecode lang="java"]</p>
+
+<pre><code>File src = new File(arg[1]);
+File dest = new File(arg[2]);
+var srcStream = src.openInputStream();
+var destStream = dest.openOutputStream();
+destStream.write(srcStream.read());
+srcStream.close();
+destStream.close();
+</code></pre>
+
+<p>[/sourcecode]</p>
+
+<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/input_stream.dart#L108">StringInputStream</a>
+<a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/list_stream.dart#L38">DynamicListInputStream</a>
+<a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/list_stream.dart#L5">ListInputStream</a>
+<a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/list_stream.dart#L76">ListOutputStream</a></p>
+
+<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/platform.dart#L9">Platform</a>
+[sourcecode lang="java"]
+ Platform p = new Platform();
+ print('{&quot;operatingSystem&quot;:${p.operatingSystem()},&quot;numberOfProcessors&quot;:${p.numberOfProcessors()},&quot;pathSeparator&quot;:${p.pathSeparator()}}');
+[/sourcecode]</p>
+
+<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/process.dart#L5">Process</a>
+[sourcecode lang="java"]</p>
+
+<pre><code>Process ps = new Process.start('ps', []);
+StringBuffer messages = new StringBuffer();
+ps.exitHandler = (int status) {
+  ps.close();
+  print(messages.toString());
+};
+ps.stdout.dataHandler = () =&amp;gt; _readAll(ps.stdout, messages);
+ps.stderr.dataHandler = () =&amp;gt; _readAll(ps.stderr, messages);
+</code></pre>
+
+<p>[/sourcecode]</p>
+
+<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/socket.dart#L5">ServerSocket</a>
+[sourcecode lang="java"]</p>
+
+<pre><code>// initialize the server
+serverSocket = new ServerSocket(host, 0, 5);
+if (serverSocket == null) {
+  throw &amp;quot;can't get server socket&amp;quot;;
+}
+serverSocket.connectionHandler = onConnect;
+print(&amp;quot;accepting connections on ${host}:${serverSocket.port}&amp;quot;);
+</code></pre>
+
+<p>[/sourcecode]</p>
+
+<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/socket.dart#L35">Socket</a>
+[sourcecode lang="java"]</p>
+
+<pre><code>sendSocket = new Socket(host, serverSocket.port);
+if (sendSocket == null) {
+  throw &amp;quot;can't get send socket&amp;quot;;
+}
+// send first 4 bytes immediately
+for (int i = 0; i &amp;lt; 4; i++) {
+  sendByte();
+}
+// send next 4 bytes slowly
+new Timer.repeating((Timer t) {
+  sendByte();
+  if (bytesSent == bytesTotal) {
+    sendSocket.close();
+    t.cancel();
+    print(&amp;quot;finished sending&amp;quot;);
+  }
+}, 500);
+</code></pre>
+
+<p>[/sourcecode]</p>
+
+<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/socket_stream.dart#L5">SocketInputStream</a>
+<a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/socket_stream.dart#L78">SocketOutputStream</a></p>
+
+<p><a href="https://github.com/financeCoding/dart-builtins-example/blob/master/builtin/runtime/timer.dart#L5">Timer</a>
+[sourcecode lang="java"]
+&lt;pre&gt;    if (l.length &gt;= 2) {</p>
+
+<pre><code>  try {
+    milliSeconds = (Math.parseInt(l[1]).abs()*milliSeconds);
+  } catch (BadNumberFormatException ex) {}
+}
+timer = new Timer((var t) {
+  print(&amp;quot;\nTime elapsed on Timer&amp;quot;);
+}, milliSeconds);
+</code></pre>
+
+<p>[/sourcecode]</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Creating dart class with native access]]></title>
+    <link href="http://financeCoding.github.com/blog/2011/12/10/creating-dart-class-with-native-access/"/>
+    <updated>2011-12-10T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2011/12/10/creating-dart-class-with-native-access</id>
+    <content type="html"><![CDATA[<p>This document provides a simple example how one could implement a native type in dart type system.</p>
+
+<p><a title="Creating dart class with native access" href="https://docs.google.com/document/pub?id=1zGU2wTXPP4REwCQ-nLmXc_Cqe32RBRxGVL7HNI7F2jk" target="_blank">https://docs.google.com/document/pub?id=1zGU2wTXPP4REwCQ-nLmXc_Cqe32RBRxGVL7HNI7F2jk</a></p>
+
+<p>[googleapps domain="docs" dir="document/pub" query="id=1zGU2wTXPP4REwCQ-nLmXc_Cqe32RBRxGVL7HNI7F2jk&amp;embedded=true" /]</p>
+]]></content>
+  </entry>
+  
+</feed>

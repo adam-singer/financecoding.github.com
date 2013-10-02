@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Canvas2d | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/canvas2d/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using Canvas 2d to create pattern in Dart]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/11/26/using-canvas-2d-to-create-pattern-in-dart/"/>
+    <updated>2012-11-26T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/11/26/using-canvas-2d-to-create-pattern-in-dart</id>
+    <content type="html"><![CDATA[<p>This simple example displays how to use a <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/CanvasPattern.html">CanvasPattern</a> in Dart.</p>
+
+<script src="https://gist.github.com/4150722.js"><!-- gist --></script>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using Canvas 2d to create gradient in Dart]]></title>
+    <link href="http://financeCoding.github.com/blog/2012/11/26/using-canvas-2d-to-create-gradient-in-dart/"/>
+    <updated>2012-11-26T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2012/11/26/using-canvas-2d-to-create-gradient-in-dart</id>
+    <content type="html"><![CDATA[<p>This simple example displays how to use a <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/CanvasGradient.html">CanvasGradient</a> in Dart.</p>
+
+<script src="https://gist.github.com/4150001.js"><!-- gist --></script>
+
+]]></content>
+  </entry>
+  
+</feed>

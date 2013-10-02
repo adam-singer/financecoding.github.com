@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: TI DevKit | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/ti-devkit/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Building and Editing Linux Kernel in Eclipse for Android Rowboat]]></title>
+    <link href="http://financeCoding.github.com/blog/2011/03/17/building-and-editing-linux-kernel-in-eclipse-for-android-rowboat/"/>
+    <updated>2011-03-17T00:00:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2011/03/17/building-and-editing-linux-kernel-in-eclipse-for-android-rowboat</id>
+    <content type="html"><![CDATA[<p>First off some references I used to complete this task. This was possibly the best so far
+<a href="http://issaris.blogspot.com/2007/12/download-linux-kernel-sourcecode-from.html">http://issaris.blogspot.com/2007/12/download-linux-kernel-sourcecode-from.html</a>
+Some other references also helped <a title="Eclipse Wiki" href="http://wiki.eclipse.org/HowTo_use_the_CDT_to_navigate_Linux_kernel_source" target="_blank">Ref1</a>, <a title="linuxtopia" href="http://www.linuxtopia.org/online_books/eclipse_documentation/eclipse_c_c++_guide/topic/org.eclipse.cdt.doc.user/getting_started/eclipse_c_c++_guide_cdt_w_existing_code.htm" target="_blank">Ref2</a>, <a title="devkit8000" href="http://devkit8000.wikispaces.com/CPP+development+with+Eclipse" target="_blank">Ref3</a>, <a title="bigresource" href="http://android.bigresource.com/Android-run-android-source-code-in-linux-eclipse-bQKNaH320.html" target="_blank">Ref4
+</a>I had following file system layout when dealing with <a href="http://processors.wiki.ti.com/index.php/TI-Android-FroYo-DevKit-V2.2_UserGuide">TI_DevKit V2.2</a></p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>After you have everything imported per directions the next big step is getting the .config setup. Follow the directions on the <a href="http://code.google.com/p/rowboat/wiki/ConfigureAndBuild">android rowboat</a> site for doing a first build of the linux kernel in commandline before trying to build from eclipse. This helps generate the .config file. Some additional settings needed was PATH and Build Command</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand2.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p><em>/home/adam/BeagleBoard/rowboat-prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games</em></p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand4.png" alt="" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[BeagleTouch on TI_Android_Froyo_DevKit-V2.2]]></title>
+    <link href="http://financeCoding.github.com/blog/2011/03/06/beagletouch-on-ti_android_froyo_devkit-v2-2/"/>
+    <updated>2011-03-06T00:00:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2011/03/06/beagletouch-on-ti_android_froyo_devkit-v2-2</id>
+    <content type="html"><![CDATA[<p>Liquidware's <a href="http://www.liquidware.com/shop/show/BB-BT/BeagleTouch">BeagleTouch</a> provides a nice display device for <a href="http://beagleboard.org/">BeagleBoard</a> developer. They provide non android <a href="https://github.com/liquidware/liquidware_beagleboard_linux/tree/liquidware">linux</a> kernel source code to jump in right away to use it. <a href="http://antipastohw.pbworks.com/w/page/27129517/BeagleTouch">BeagleTouch blog</a> post by will on <a href="http://antipastohw.pbworks.com/w/page/26554120/FrontPage">antipastohw</a>. Here is some crude patches to get started with it on <a href="http://code.google.com/p/rowboat/">rowboat</a> / <a href="http://processors.wiki.ti.com/index.php/TI-Android-FroYo-DevKit-V2.2_UserGuide">TI DevKit</a>. I have my patches located on google docs:</p>
+
+<p><a href="https://docs.google.com/leaf?id=0B29MR2FlgtejMjFjOWVhOGYtOThiNC00NGJkLTk5NTktMDE3ZTBiZjhhYTY0&amp;hl=en"><span style="font-family:Arial;font-size:10pt;">BeagleTouch.TI_Android_Froyo_DevKit-V2.2.config</span></a><span style="color:black;font-family:Arial;font-size:10pt;">
+</span></p>
+
+<p><a href="https://docs.google.com/leaf?id=0B29MR2FlgtejODdjZDBhNzQtZmYyNC00MWVmLWI4YzYtN2Y2ODNhZjlhZmRk&amp;hl=en"><span style="font-family:Arial;font-size:10pt;">BeagleTouch.TI_Android_Froyo_DevKit-V2.2.patch</span></a><span style="color:black;font-family:Arial;font-size:10pt;">
+</span></p>
+
+<p>Apply the patch accordingly and copy over the config into the kernel source tree.</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>One issue that was noticeable from a direct patch of code was the y-axis being inverted. I corrected it with a hard coded reference value for now.</p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch22.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p><img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch32.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span></p>
+
+<p>This patch doesn't help when offset loss happens in the touch screen. Looking info using <a href="https://github.com/kergoth/tslib">tslib</a> to capture better data settings and a linear formula for pointer <a href="http://wcyan.spaces.live.com/blog/cns!69F0ECE1192E739!381.entry">calculations</a>.  Some good instructions for compiling tslib on android can be found on <a href="http://www.eefocus.com/wenes1/blog/10-05/190293_09ed8.html">wenes1's blog</a>. A different direction to fix this issue would be to use <a href="http://androidzaurus.seesaa.net/article/90045743.html">Y_AXIS_MAX constant</a>.</p>
+
+<p>[youtube=http://www.youtube.com/watch?v=8594I2NDPsM]</p>
+
+<p>It was hard for me to find any direct documentation on how touch screen drivers should be designed and configured in Android. If you know of any please ping <a href="mailto:financecoding@gmail.com">me</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>

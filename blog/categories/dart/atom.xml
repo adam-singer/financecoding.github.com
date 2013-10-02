@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Dart | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/dart/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-10-01T23:06:24-07:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Started with Dart on Compute Engine]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/09/30/getting-started-with-dart-on-compute-engine/"/>
+    <updated>2013-09-30T20:41:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/09/30/getting-started-with-dart-on-compute-engine</id>
+    <content type="html"><![CDATA[<p>Quick how-to on using <a href="http://www.dartlang.org">dart</a> with <a href="https://cloud.google.com/products/compute-engine">Compute Engine</a>. If not aware, right now is a great time to dive into Compute Engine cause google is giving away $2,000 worth of <a href="https://plus.google.com/111783114889748547827/posts/Bou747dCfNb">credits</a> to individuals interested in trying it out. I've been using it for about 2-3 months now and totally love it.</p>
+
+<p>What peeked my interest is it was flexable enough to run the dartvm as a server with minimal configuration. The one configuration hurdle was dependency of <code>GLIBC &gt;= 2.15</code> in the dartvm binaries. The good news is with a simple startup script the compute engine instance can be provisioned to support the latest linux <a href="https://storage.googleapis.com/dart-editor-archive-integration/latest/dartsdk-linux-64.tar.gz">dart-sdk</a>.</p>
+
+<p>The main tool we will use to provision a compute engine instance is <a href="https://developers.google.com/compute/docs/gcutil/">gcutil</a>. We could of used dartvm and <a href="http://pub.dartlang.org/packages/google_compute_v1beta15_api">google_compute_v1beta15_api</a> but will save that for a later post.</p>
+
+<p>After signing up for <a href="https://cloud.google.com/products/compute-engine">Compute Engine</a> the next step should be to download and configure <code>gcutil</code>.</p>
+
+<p><code>bash
+$ wget https://google-compute-engine-tools.googlecode.com/files/gcutil-1.8.4.tar.gz
+$ tar xzvpf gcutil-1.8.4.tar.gz -C $HOME
+$ export PATH=./gcutil-1.8.4:$PATH
+$ gcutil version
+1.8.4
+</code></p>
+
+<p>Next we want to create a <code>startup.sh</code> script that will be deployed to the compute engine instance. The script is a simple way to run additional commands to provision the instance. For dart we need to add a new <code>deb</code> source, update sources, install dependencies, fetch &amp; unpack dart-sdk, and then execute our dart server. In the final line of the <code>startup.sh</code> script the command will create a dart server from the user account tied to this compute instance. Simply we clone a public git repo, install pub dependencies and screen a detached session that runs the dart server. This is not a very fancy way to deploy dart but a simple and quick way to get something running with no troubles. A real life deployment might include some trendy fab/chef/puppet combo.</p>
+
+<p>```bash startup.sh</p>
+
+<h1>!/usr/bin/env bash</h1>
+
+<h1>Add an addtional source for the latest glibc</h1>
+
+<p>sudo sed -i '1i deb http://ftp.us.debian.org/debian/ jessie main' /etc/apt/sources.list</p>
+
+<h1>Update sources</h1>
+
+<p>sudo apt-get update</p>
+
+<h1>Download latest glibc</h1>
+
+<p>sudo DEBIAN_FRONTEND=noninteractive apt-get -t jessie install -y libc6 libc6-dev libc6-dbg git screen</p>
+
+<h1>Download the latest dart sdk</h1>
+
+<p>wget https://storage.googleapis.com/dart-editor-archive-integration/latest/dartsdk-linux-64.tar.gz -O /dartsdk-linux-64.tar.gz</p>
+
+<h1>Unpack the dart sdk</h1>
+
+<p>tar -zxvf /dartsdk-linux-64.tar.gz -C /</p>
+
+<p>su - financeCoding -c 'ls -al &amp;&amp; cd ~ &amp;&amp; pwd &amp;&amp; git clone https://github.com/rikulo/stream.git &amp;&amp; /dart-sdk/bin/dart --version &amp;&amp; cd stream &amp;&amp; /dart-sdk/bin/dart --version &amp;&amp; /dart-sdk/bin/pub install &amp;&amp; cd example/hello-static &amp;&amp; screen -d -m /dart-sdk/bin/dart webapp/main.dart'
+```</p>
+
+<p>After we have the <code>startup.sh</code> script we then create another deployment script. The following script will be the gcutil commands needed to actually create and provision the compute instance. The last part of our script includes a firewall rule for the port that the <a href="https://github.com/rikulo/stream">stream</a> sample is running on. Without proper firewall rules no access from the outside is possible.</p>
+
+<p>```bash deploy-dart-compute.sh</p>
+
+<h1>!/usr/bin/env bash</h1>
+
+<p>set +o xtrace</p>
+
+<p>USER=financeCoding
+PROJECT=dart-compute-project
+INSTANCE_NAME=dart-compute
+TAGS=dart
+MACHINE_TYPE=g1-small
+NETWORK=default
+IP=ephemeral
+IMAGE=https://www.googleapis.com/compute/v1beta15/projects/debian-cloud/global/images/debian-7-wheezy-v20130816
+SCOPES=https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/compute,https://www.googleapis.com/auth/devstorage.full_control
+PERSISTENT_BOOT_DISK=true
+ZONE=us-central1-b
+STARTUP_SCRIPT=startup.sh
+GCUTIL="gcutil --service_version=v1beta15 --project=$PROJECT"</p>
+
+<p>$GCUTIL addinstance $INSTANCE_NAME --tags=$TAGS --zone=$ZONE --machine_type=$MACHINE_TYPE --network=$NETWORK --external_ip_address=$IP --service_account_scopes=$SCOPES --image=$IMAGE --persistent_boot_disk=$PERSISTENT_BOOT_DISK --metadata_from_file=startup-script:$STARTUP_SCRIPT</p>
+
+<p>rc=$?
+if [[ $rc != 0 ]] ; then</p>
+
+<pre><code>echo "Not able to add instance"
+exit $rc
+</code></pre>
+
+<p>fi</p>
+
+<p>$GCUTIL addfirewall $INSTANCE_NAME --allowed "tcp:8080"</p>
+
+<p>rc=$?
+if [[ $rc != 0 ]] ; then</p>
+
+<pre><code>echo "Not able to provision firewall or has already been provisioned"
+exit $rc
+</code></pre>
+
+<p>fi</p>
+
+<p>exit $rc
+```</p>
+
+<p><a href="/images/2013-09-30-getting-started-with-dart-on-compute-engine/compute-engine-console.png"><img src="/images/2013-09-30-getting-started-with-dart-on-compute-engine/compute-engine-console.png" alt="compute-engine-console" /></a></p>
+
+<p><a href="/images/2013-09-30-getting-started-with-dart-on-compute-engine/stream-client.png"><img src="/images/2013-09-30-getting-started-with-dart-on-compute-engine/stream-client.png" alt="stream-client" /></a></p>
+
+<p>And thats all that is needed to get dart on compute engine in two easy steps. The code can be found here <a href="https://gist.github.com/financeCoding/6789537">gist</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[gplus quickstart with dart]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/04/02/gplus-quickstart-with-dart/"/>
+    <updated>2013-04-02T19:25:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/04/02/gplus-quickstart-with-dart</id>
+    <content type="html"><![CDATA[<p>Tonights mash-up was taking the <a href="https://github.com/Scarygami/gplus-quickstart-dart">gplus-quickstart-dart</a> and wiring it up for server side support. Similar to the <a href="https://github.com/googleplus/gplus-quickstart-java">gplus-quickstart-java</a>, the client will use the <a href="https://developers.google.com/+/web/+1button/">gplus login button</a> to do the <a href="https://developers.google.com/accounts/docs/OAuth2WebServer">OAuth2WebServer</a> flow and send the code over to the server. The server can then verify and make calls on behalf of the client since an 'offline' token was requested. This demo just features the server side and what was used to put it together. <a href="https://plus.google.com/u/0/109130932502535286138/">Yulian Kuncheff</a> has been the primary developer behind <a href="https://github.com/Daegalus/fukiya">fukiya</a> which is an express like framework for dart. The thing I liked most about <a href="https://github.com/Daegalus/fukiya">fukiya</a> was how simple and easy it was to setup URL handlers.</p>
+
+<p>First off, setting up some dependencies.</p>
+
+<p><code>
+dependencies:
+  google_plus_v1_api: any
+  browser: any
+  fukiya: '&gt;=0.0.11'
+  html5lib: "&gt;=0.4.1 &lt;0.4.2"
+  logging: "&gt;=0.4.3+5"
+</code></p>
+
+<p>A quick outline of what URLs fukiya handles. Dead simple to setup!</p>
+
+<p><code>dart
+void main() {
+  new Fukiya()
+  ..get('/', getIndexHandler)
+  ..get('/index.html', getIndexHandler)
+  ..get('/index', getIndexHandler)
+  ..post('/connect', postConnectDataHandler)
+  ..get('/people', getPeopleHandler)
+  ..post('/disconnect', postDisconnectHandler)
+  ..staticFiles('./web')
+  ..use(new FukiyaJsonParser())
+  ..listen('127.0.0.1', 3333);
+}
+</code></p>
+
+<p>The index handler is special cause we needed to inject a state token into the page and HTTP session. The state token is then verified on the <code>/connect</code> post. The one-time token helps avoid any <a href="http://en.wikipedia.org/wiki/Confused_deputy_problem">Confused_deputy_problem</a>s.</p>
+
+<p>```dart
+void getIndexHandler(FukiyaContext context) {
+  // Create a state token.
+  context.request.session["state_token"] = _createStateToken();</p>
+
+<p>  // Readin the index file and add state token into the meta element.
+  var file = new File(INDEX_HTML);
+  file.exists().then((bool exists) {</p>
+
+<pre><code>if (exists) {
+  file.readAsString().then((String indexDocument) {
+    Document doc = new Document.html(indexDocument);
+    Element metaState = new Element.html('&lt;meta name="state_token" content="${context.request.session["state_token"]}"&gt;');
+    doc.head.children.add(metaState);
+    context.response.writeBytes(doc.outerHtml.codeUnits);
+    context.response.done.catchError((e) =&gt; serverLogger.fine("File Response error: ${e}"));
+    context.response.close();
+  }, onError: (error) =&gt; serverLogger.fine("error = $error"));
+} else {
+  context.response.statusCode = 404;
+  context.response.close();
+}
+</code></pre>
+
+<p>  });
+}
+```</p>
+
+<p>On the <code>/connect</code> post we will expect a gplus id to be passed to the query parameters and some token data posted. We can then verify the state token and use the token data for accessing the Google APIs.</p>
+
+<p>```dart
+void postConnectDataHandler(FukiyaContext context) {
+  serverLogger.fine("postConnectDataHandler");
+  String tokenData = context.request.session.containsKey("access_token") ? context.request.session["access_token"] : null; // TODO: handle missing token
+  String stateToken = context.request.session.containsKey("state_token") ? context.request.session["state_token"] : null;
+  String queryStateToken = context.request.queryParameters.containsKey("state_token") ? context.request.queryParameters["state_token"] : null;</p>
+
+<p>  // Check if the token already exists for this session.
+  if (tokenData != null) {</p>
+
+<pre><code>context.send("Current user is already connected.");
+return;
+</code></pre>
+
+<p>  }</p>
+
+<p>  // Check if any of the needed token values are null or mismatched.
+  if (stateToken == null || queryStateToken == null || stateToken != queryStateToken) {</p>
+
+<pre><code>context.response.statusCode = 401;
+context.send("Invalid state parameter."); 
+return;
+</code></pre>
+
+<p>  }</p>
+
+<p>  // Normally the state would be a one-time use token, however in our
+  // simple case, we want a user to be able to connect and disconnect
+  // without reloading the page.  Thus, for demonstration, we don't
+  // implement this best practice.
+  context.request.session.remove("state_token");</p>
+
+<p>  String gPlusId = context.request.queryParameters["gplus_id"];
+  StringBuffer sb = new StringBuffer();
+  // Read data from request.
+  context.request
+  .transform(new StringDecoder())
+  .listen((data) => sb.write(data), onDone: () {</p>
+
+<pre><code>serverLogger.fine("context.request.listen.onDone = ${sb.toString()}");
+Map requestData = JSON.parse(sb.toString());
+
+Map fields = {
+          "grant_type": "authorization_code",
+          "code": requestData["code"],
+          // http://www.riskcompletefailure.com/2013/03/postmessage-oauth-20.html
+          "redirect_uri": "postmessage",
+          "client_id": CLIENT_ID,
+          "client_secret": CLIENT_SECRET
+};
+
+http.Client _httpClient = new http.Client();
+_httpClient.post(TOKEN_ENDPOINT, fields: fields).then((http.Response response) {
+  // At this point we have the token and refresh token.
+  var credentials = JSON.parse(response.body);
+  _httpClient.close();
+
+  var verifyTokenUrl = '${TOKENINFO_URL}?access_token=${credentials["access_token"]}';
+  new http.Client()
+  ..get(verifyTokenUrl).then((http.Response response)  {
+    serverLogger.fine("response = ${response.body}");
+
+    var verifyResponse = JSON.parse(response.body);
+    String userId = verifyResponse.containsKey("user_id") ? verifyResponse["user_id"] : null;
+    String accessToken = credentials.containsKey("access_token") ? credentials["access_token"] : null;
+    if (userId != null &amp;&amp; userId == gPlusId &amp;&amp; accessToken != null) {
+      context.request.session["access_token"] = accessToken;
+      context.send("POST OK");
+    } else {
+      context.response.statusCode = 401;
+      context.send("POST FAILED ${userId} != ${gPlusId}"); 
+    }
+  });
+});
+</code></pre>
+
+<p>  });
+}
+```</p>
+
+<p>Now the HTTP session has the full ability to make calls on behalf of the user. The <code>/people</code> method will be called from the client to retrieve the list of visible friends of that user.</p>
+
+<p>```dart
+void getPeopleHandler(FukiyaContext context) {
+  String accessToken = context.request.session.containsKey("access_token") ? context.request.session["access_token"] : null;
+  SimpleOAuth2 simpleOAuth2 = new SimpleOAuth2()..credentials = new console_auth.Credentials(accessToken);
+  plus.Plus plusclient = new plus.Plus(simpleOAuth2);
+  plusclient.makeAuthRequests = true;
+  plusclient.people.list("me", "visible").then((plus.PeopleFeed people) {</p>
+
+<pre><code>serverLogger.fine("/people = $people");
+context.send(people.toString());
+</code></pre>
+
+<p>  });
+}
+```</p>
+
+<p>The final responsibility we can bestow upon the server is allowing the client to disconnect by revoking OAuth access.</p>
+
+<p>```dart
+void postDisconnectHandler(FukiyaContext context) {
+  String tokenData = context.request.session.containsKey("access_token") ? context.request.session["access_token"] : null;
+  if (tokenData == null) {</p>
+
+<pre><code>context.response.statusCode = 401;
+context.send("Current user not connected.");
+return;
+</code></pre>
+
+<p>  }</p>
+
+<p>  final String revokeTokenUrl = "${TOKEN_REVOKE_ENDPOINT}?token=${tokenData}";
+  context.request.session.remove("access_token");</p>
+
+<p>  new http.Client()..get(revokeTokenUrl).then((http.Response response) {</p>
+
+<pre><code>context.request.session["state_token"] = _createStateToken();
+Map data = {
+            "state_token": context.request.session["state_token"],
+            "message" : "Successfully disconnected."
+            };
+context.send(JSON.stringify(data));
+</code></pre>
+
+<p>  });
+}
+```</p>
+
+<p>Thats about it, Happy Dart Hacking! Special thanks to <a href="https://plus.google.com/112336147904981294875">Gerwin Sturm</a> for putting together the original example for client side. Full source code can be found at <a href="https://github.com/Scarygami/gplus-quickstart-dart">gplus-quickstart-dart</a> in the server folder. Please replace your own keys cause mine will be removed at some point.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dart Multi Touch Canvas With Realtime APIs]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/"/>
+    <updated>2013-03-21T18:19:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis</id>
+    <content type="html"><![CDATA[<p><a href="https://developers.google.com/drive/">Google</a> has made the <a href="https://developers.google.com/drive/realtime/">realtime</a> api available for developers. Realtime api provides <a href="http://en.wikipedia.org/wiki/Operational_transformation">operational transformation</a> on <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeString">strings</a>, <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeList">lists</a>, <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeMap">maps</a> and custom <a href="https://developers.google.com/drive/realtime/reference/gapi.drive.realtime.CollaborativeObject">objects</a>. The application data gets stored on Google Drive and is available from any supported browser. This is going to be the tooling of the future for collaborative applications.</p>
+
+<p>I took some time to see what it would take for implementing a sample realtime application in dart. Also wanted to make sure my sample could run on mobile chrome.</p>
+
+<p>Since realtime api is new, dart bindings don't really exist. Lucky for us we have <a href="http://pub.dartlang.org/packages/js">js-interop</a> library. The <a href="http://pub.dartlang.org/packages/js">js-interop</a> library provides communications to existing javascript code from dart. I consider this mostly a quick hack to get started with the realtime api until a more native interface exists.</p>
+
+<p>The sample <a href="http://financecoding.github.com/realtime_touch_canvas/web/index.html">realtime_touch_canvas</a> demonstrates a multi touch canvas surface that updates in realtime with all clients that have the application open.</p>
+
+<iframe width="560" height="315" src="http://www.youtube.com/embed/xArfJdOb55Q" frameborder="0" allowfullscreen></iframe>
+
+
+<p>Most of the heavy lifting is done by <a href="https://github.com/financeCoding/realtime_touch_canvas"><code>rtclient.dart</code></a>. I ported the <a href="https://github.com/googledrive/realtime-playground/blob/master/js/realtime-client-utils.js">code</a> from the javascript version. Its enough code to get started right away but a more structured solution should be done. The main class is <code>RealTimeLoader</code> used for realtime loading.</p>
+
+<p>```dart
+  rtl = new RealTimeLoader(clientId: 'CLIENTID.apps.googleusercontent.com', apiKey: 'KEY');
+  rtl.start().then((bool isComplete) {</p>
+
+<pre><code>/* RealTimeLoader has authenticated the application and is ready to load a file */
+loadRealTimeFile(fileId, model.onFileLoaded, model.initializeModel);
+</code></pre>
+
+<p>  });
+```</p>
+
+<p><code>model.onFileLoaded</code> and <code>model.initializeModel</code> handle the creating of model data and loading of model data.</p>
+
+<p>In the <a href="http://financecoding.github.com/realtime_touch_canvas/web/index.html">realtime_touch_canvas</a>, model data was a simple list of json strings. The ticky part here is you need to remember that your working with the realtime api within the javascript vm. So an array needs to be allocated from <a href="http://pub.dartlang.org/packages/js">js-interop</a>.</p>
+
+<p>```dart
+  void _createNewModel(js.Proxy model) {</p>
+
+<pre><code>var list = model.createList(js.array(_defaultLines));
+model.getRoot().set(_linesName, list);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>After the model is created we then get called to load the file. Loading the file for our purposes is binding the collaborative objects. Some tricky things to note here is we are retaining the javascript objects so we can access them after exit of the callback. Also the callbacks have to be wrapped within <a href="http://pub.dartlang.org/packages/js">js-interop</a> <code>js.Callback.many</code> proxy object. The callbacks <code>_linesOnAddValuesChangedEvent</code> and <code>_linesOnRemovedValuesChangedEvent</code> are fired off when the collaborative list object has items added or removed.</p>
+
+<p>```dart
+  js.Proxy <em>doc;
+  String </em>linesName = "lines";
+  js.Proxy _lines;</p>
+
+<p>  void _bindModel(js.Proxy doc) {</p>
+
+<pre><code>_doc = doc;
+js.retain(_doc);
+_lines = doc.getModel().getRoot().get(_linesName);
+_lines.addEventListener(gapi.drive.realtime.EventType.VALUES_ADDED, new js.Callback.many(_linesOnAddValuesChangedEvent));
+_lines.addEventListener(gapi.drive.realtime.EventType.VALUES_REMOVED, new js.Callback.many(_linesOnRemovedValuesChangedEvent));
+js.retain(_lines);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>When the callback is called the data would be in the javascript virtual machine so we can parse it and store in our native dart code. This is more of a convenience then a must do, that way we can expose plan old dart objects to our other parts of the dart application.</p>
+
+<p>```dart
+  void _linesOnAddValuesChangedEvent(addedValue) {</p>
+
+<pre><code>var insertedLine = _lines.get(addedValue.index);
+var line = new Line.fromJson(insertedLine);
+realtimeTouchCanvas.move(line, line.moveX, line.moveY);
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>Now when we want to store a line in the application we simply convert it to json and push it into the collaborative list. The little tick here is to make sure we are <code>scoped</code> when accessing the <code>_lines</code> object since it lives in the javascript virtual machine.</p>
+
+<p>```dart
+  void addLine(Line line) {</p>
+
+<pre><code>js.scoped(() {
+  _lines.push(line.toJson());
+});
+</code></pre>
+
+<p>  }
+```</p>
+
+<p>The <a href="http://financecoding.github.com/realtime_touch_canvas/web/index.html">realtime_touch_canvas</a> is live on github gh-pages and <a href="https://github.com/financeCoding/realtime_touch_canvas">realtime_touch_canvas source</a> is available.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[rikulo stream on heroku]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/03/09/rikulo-stream-on-heroku/"/>
+    <updated>2013-03-09T07:16:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/03/09/rikulo-stream-on-heroku</id>
+    <content type="html"><![CDATA[<p>Tonights hacking was with <a href="https://github.com/rikulo/stream">stream</a> and <a href="http://www.heroku.com/">heroku</a>. <em>Stream is a Dart web server supporting request routing, filtering, template technology, file-based static resources and MVC design pattern.</em> I just planned on serving static content from <a href="http://www.heroku.com/">heroku</a> using full dart based web server.</p>
+
+<p>First setup the dart build pack</p>
+
+<p>```bash shell
+adam@Adams-MacBook-Air:~/dart
+$ mkdir stream_todomvc</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ cd stream_todomvc</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ heroku create stream-todomvc</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ heroku config:add BUILDPACK_URL=https://github.com/igrigorik/heroku-buildpack-dart.git</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ git init</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ git remote add heroku git@heroku.com:stream-todomvc.git
+```</p>
+
+<p>Creating a new project called <code>stream-todomvc</code>. Going to use the <a href="https://github.com/dart-lang/web-ui/tree/master/example/todomvc">todomvc</a> from the <a href="https://github.com/dart-lang/web-ui">web-ui</a> project as our content for the <a href="https://github.com/rikulo/stream">stream</a> server. First thing that should be done is adding the dependencies to the <code>pubspec.yaml</code> file.</p>
+
+<p><code>yaml pubspec.yaml
+name: stream_todomvc
+description: A sample WebUI application
+dependencies:
+  browser: any
+  js: any
+  web_ui: 0.4.1+7
+  stream: 0.5.5+1
+</code></p>
+
+<p>Next I simply compied the existing <a href="https://github.com/dart-lang/web-ui/tree/master/example/todomvc">todomvc</a> project out into my <a href="http://stream-todomvc.herokuapp.com/out/index.html">stream-todomvc</a> project.</p>
+
+<p><code>bash shell
+adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ cp ~/dart/web-ui/example/todomvc/* ./web/
+</code></p>
+
+<p><a href="http://docs.rikulo.org/stream/latest/Getting_Started/Introduction.html">stream intro</a> documentation goes over some basic configurations and settings. I'm just going to use them for now to get something running right away. The key to note when serving code from the <code>web/</code> folder in dart projects is having the <a href="https://github.com/rikulo/stream">stream</a> server code in <code>web/webapp/</code>. That way <a href="https://github.com/rikulo/stream">stream</a> can find all your resources with little configuration. With very little dart code we can have static web server going.</p>
+
+<p>```dart web/webapp/server.dart
+library server;</p>
+
+<p>import 'dart:io';
+import "package:stream/stream.dart";</p>
+
+<p>void main() {
+  var port = Platform.environment.containsKey('PORT') ? int.parse(Platform.environment['PORT']) : 8080;
+  var host = '0.0.0.0';
+  var streamServer = new StreamServer();
+  streamServer
+  ..port = port
+  ..host = host
+  ..start();
+}
+```</p>
+
+<p>Since this was a <a href="https://github.com/dart-lang/web-ui">web-ui</a> project we need to have a <code>build.dart</code> file help us with transforming the polyfill web components.</p>
+
+<p>```dart build.dart
+import 'dart:io';
+import 'package:web_ui/component_build.dart';</p>
+
+<p>main() => build(new Options().arguments, ['web/index.html']);
+```</p>
+
+<p>The <a href="http://www.heroku.com/">heroku</a> environment requires a <a href="https://devcenter.heroku.com/articles/procfile">procfile</a> configuration to let the service know the type of commands to run.</p>
+
+<p><code>text Procfile
+web: ./dart-sdk/bin/dart --package-root=./packages/ web/webapp/server.dart
+</code></p>
+
+<p>Next we build all the static data for our webapp to function. This will include calling <code>build.dart</code> and <code>dart2js</code>. The second step of calling <code>dart2js</code> helps with clients that do not have the <code>dartvm</code> built in.</p>
+
+<p>```bash shell
+adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ pub install
+Resolving dependencies...
+Dependencies installed!</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ dart build.dart
+Total time spent on web/index.html                           -- 839 ms
+Total time                                                   -- 863 ms</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ dart2js -oweb/out/index.html_bootstrap.dart.js web/out/index.html_bootstrap.dart
+Using snapshot /Users/adam/Documents/DartEditor/dart/dart-sdk/lib/_internal/compiler/implementation/dart2js.dart.snapshot
+```</p>
+
+<p>Now everything should be ready for deployment.</p>
+
+<p>```bash shell
+adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ git add -a -m "ready for deploy"</p>
+
+<p>adam@Adams-MacBook-Air:~/dart/stream_todomvc
+$ git push -v --set-upstream heroku master:master
+Pushing to git@heroku.com:stream-todomvc.git
+Counting objects: 5, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 283 bytes, done.
+Total 3 (delta 2), reused 0 (delta 0)</p>
+
+<p>-----> Fetching custom git buildpack... done
+-----> Dart app detected
+-----> Installing Dart VM, build: latest
+-----> Copy Dart binaries to app root
+-----> Install packages
+*** Found pubspec.yaml in .
+Resolving dependencies...
+Dependencies installed!
+Fixed web symlink
+-----> Discovering process types</p>
+
+<pre><code>   Procfile declares types -&gt; web
+</code></pre>
+
+<p>-----> Compiled slug size: 8.9MB
+-----> Launching... done, v7</p>
+
+<pre><code>   http://stream-todomvc.herokuapp.com deployed to Heroku
+</code></pre>
+
+<p>To git@heroku.com:stream-todomvc.git
+   042f1f4..b35984b  master -> master
+updating local tracking ref 'refs/remotes/heroku/master'
+```</p>
+
+<p>Deploying to <a href="http://www.heroku.com/">heroku</a> in this style is just a good starting point. <a href="https://github.com/dart-lang/web-ui">web-ui</a> and <a href="http://www.dartlang.org">dart</a> in general is still working on a deployment story. The URL for the <a href="http://stream-todomvc.herokuapp.com/out/index.html">stream-todomvc</a> will contain <code>out</code> in its location, not very desirable. In the future a <a href="https://github.com/dart-lang/buildtool">buildtool</a> will aid the deployment story for <a href="http://www.dartlang.org">dart</a>.</p>
+
+<p>Check out the live version of <a href="http://stream-todomvc.herokuapp.com/out/index.html">stream-todomvc</a> with full source code available at the <a href="https://github.com/financeCoding/stream-todomvc">stream-todomvc github project</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dart Google Client Apis Now Available On Pub]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/02/08/google-client-apis-now-available-on-pub/"/>
+    <updated>2013-02-08T14:18:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/02/08/google-client-apis-now-available-on-pub</id>
+    <content type="html"><![CDATA[<p>The <a href="https://github.com/dart-gde?tab=members">dart-gde</a> team now brings you not only a generator to create google client apis but also <a href="http://pub.dartlang.org">pub.dartlang.org</a> hosted packages. Lot of thanks goes to <a href="https://profiles.google.com/scarygami">Gerwin Sturm</a> for all of his hard work over the last few weeks developing <a href="https://github.com/dart-gde/discovery_api_dart_client_generator">discovery_api_dart_client_generator</a> and <a href="https://github.com/dart-gde/dart-google-oauth2-library">dart-google-oauth2-library</a>.</p>
+
+<p>We plan to keep the client libraries up to date with <a href="https://github.com/dart-gde/discovery_api_dart_client_generator/blob/master/tool/update.dart">uploader.dart</a> script. Still somewhat a manual process, future automation could happen when/if we have the ability to get notified about google api changes. For now we will push updates when appropriate. This will ensure that we can push the latest versions of the apis to pub and still have previous revisions available. Some of the more intricate parts of this script include auto version incrementing pubspec files and syncing to github, then pushing to pub.</p>
+
+<p>Would you want to contribute to this project? Please feel free to ping us <a href="https://profiles.google.com/financeCoding">Adam Singer</a>/<a href="https://profiles.google.com/scarygami">Gerwin Sturm</a> on <a href="https://plus.google.com">g+</a>, we're definitely looking to refactor some parts and test others. Our main focus for this release was to get something out the door that is pleasantly usable.</p>
+
+<p>Many hours of testing and development was done to have a simple and easy way to use the google client apis in dart! We hope you enjoy and look forward to seeing what you build.
+To get started with client api examples check out <a href="https://github.com/dart-gde/dart_api_client_examples">dart_api_client_examples</a>. The <a href="http://www.github.com">github</a> hosted source code can be found at <a href="https://github.com/dart-google-apis">dart-google-apis</a></p>
+
+<h3>Full list of available Google client apis on <a href="http://pub.dartlang.org">pub.dartlang.org</a></h3>
+
+<ul>
+<li><a href="http://pub.dartlang.org/packages/google_adexchangebuyer_v1_api">google_adexchangebuyer_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_adexchangebuyer_v1_1_api">google_adexchangebuyer_v1_1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_adexchangeseller_v1_api">google_adexchangeseller_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_adsense_v1_api">google_adsense_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_adsense_v1_1_api">google_adsense_v1_1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_adsense_v1_2_api">google_adsense_v1_2_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_adsensehost_v4_1_api">google_adsensehost_v4_1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_analytics_v2_4_api">google_analytics_v2_4_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_analytics_v3_api">google_analytics_v3_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_androidpublisher_v1_api">google_androidpublisher_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_audit_v1_api">google_audit_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_bigquery_v2_api">google_bigquery_v2_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_blogger_v2_api">google_blogger_v2_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_blogger_v3_api">google_blogger_v3_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_books_v1_api">google_books_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_calendar_v3_api">google_calendar_v3_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_civicinfo_us_v1_api">google_civicinfo_us_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_compute_v1beta12_api">google_compute_v1beta12_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_compute_v1beta13_api">google_compute_v1beta13_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_compute_v1beta14_api">google_compute_v1beta14_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_coordinate_v1_api">google_coordinate_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_customsearch_v1_api">google_customsearch_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_dfareporting_v1_api">google_dfareporting_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_dfareporting_v1_1_api">google_dfareporting_v1_1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_discovery_v1_api">google_discovery_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_drive_v1_api">google_drive_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_drive_v2_api">google_drive_v2_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_freebase_v1sandbox_api">google_freebase_v1sandbox_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_freebase_v1_api">google_freebase_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_fusiontables_v1_api">google_fusiontables_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_gan_v1beta1_api">google_gan_v1beta1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_groupsmigration_v1_api">google_groupsmigration_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_groupssettings_v1_api">google_groupssettings_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_latitude_v1_api">google_latitude_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_licensing_v1_api">google_licensing_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_oauth2_v1_api">google_oauth2_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_oauth2_v2_api">google_oauth2_v2_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_orkut_v2_api">google_orkut_v2_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_pagespeedonline_v1_api">google_pagespeedonline_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_plus_v1moments_api">google_plus_v1moments_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_plus_v1_api">google_plus_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_prediction_v1_2_api">google_prediction_v1_2_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_prediction_v1_3_api">google_prediction_v1_3_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_prediction_v1_4_api">google_prediction_v1_4_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_prediction_v1_5_api">google_prediction_v1_5_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_reseller_v1sandbox_api">google_reseller_v1sandbox_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_reseller_v1_api">google_reseller_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_shopping_v1_api">google_shopping_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_siteverification_v1_api">google_siteverification_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_storage_v1beta1_api">google_storage_v1beta1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_taskqueue_v1beta1_api">google_taskqueue_v1beta1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_taskqueue_v1beta2_api">google_taskqueue_v1beta2_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_tasks_v1_api">google_tasks_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_translate_v2_api">google_translate_v2_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_urlshortener_v1_api">google_urlshortener_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_webfonts_v1_api">google_webfonts_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_youtube_v3_api">google_youtube_v3_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_youtubeanalytics_v1_api">google_youtubeanalytics_v1_api</a></li>
+<li><a href="http://pub.dartlang.org/packages/google_youtubeanalytics_v1beta1_api">google_youtubeanalytics_v1beta1_api</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
