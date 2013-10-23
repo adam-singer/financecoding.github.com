@@ -13,7 +13,7 @@
   <meta property="og:description" content="" />
 
   
-  <meta name="description" content="My last dart mashup for the year, excited to see what the community and dart team brings for 2013. All source code can be found in the example &hellip;">
+  <meta name="description" content="Moving forward with my curiosity of Google drive and Dart, today was spent creating a small sample that lists files. For the most part this is a &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -82,6 +82,345 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/01/06/listing-files-with-google-drive-and-dart/">Listing Files With Google Drive and Dart</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-06T18:23:00-08:00" pubdate data-updated="true">Jan 6<span>th</span>, 2013</time>
+        
+         | <a href="/blog/2013/01/06/listing-files-with-google-drive-and-dart/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Moving forward with my curiosity of Google <a href="/blog/categories/Drive/">drive</a> and <a href="/blog/categories/Dart/">Dart</a>, today was spent creating a small <a href="https://github.com/financeCoding/dart_drive_files_list">sample</a> that lists files. For the most part this is a continuation of the following post <a href="/blog/2012/12/30/getting-started-with-dart-and-google-drive/">getting-started-with-dart-and-google-drive</a>.</p>
+
+<p>Decided to move the loading of <a href="http://code.google.com/p/google-api-javascript-client/">client.js</a> into its own helper class for now. When dart has real support for Google client apis none of this will be needed. As of now this serves as good practice and examples of javascript/dart interop.</p>
+
+<figure class='code'><figcaption><span>dart_drive_files_list.dart</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Sample google api client loader.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">class</span> <span class="nc">GoogleApiClientLoader</span> <span class="p">{</span>
+</span><span class='line'>  <span class="kd">static</span> <span class="kd">const</span> <span class="kt">String</span> <span class="n">_CLIENT_ID</span> <span class="o">=</span> <span class="s1">&#39;299615367852.apps.googleusercontent.com&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">static</span> <span class="kd">const</span> <span class="kt">String</span> <span class="n">_SCOPE</span> <span class="o">=</span> <span class="s1">&#39;https://www.googleapis.com/auth/drive&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kd">static</span> <span class="kd">const</span> <span class="kt">String</span> <span class="n">_handleClientLoadName</span> <span class="o">=</span> <span class="s2">&quot;handleClientLoad&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">static</span> <span class="kt">void</span> <span class="n">_loadScript</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="cm">/**</span>
+</span><span class='line'><span class="cm">     * Create and load script element.</span>
+</span><span class='line'><span class="cm">     */</span>
+</span><span class='line'>    <span class="n">ScriptElement</span> <span class="n">script</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ScriptElement</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">script</span><span class="p">.</span><span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;http://apis.google.com/js/client.js?onload=</span><span class="si">$</span><span class="n">_handleClientLoadName</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">script</span><span class="p">.</span><span class="n">type</span> <span class="o">=</span> <span class="s2">&quot;text/javascript&quot;</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">document</span><span class="p">.</span><span class="n">body</span><span class="p">.</span><span class="n">children</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">script</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kd">static</span> <span class="kt">void</span> <span class="n">_createScopedCallbacks</span><span class="p">(</span><span class="kd">var</span> <span class="n">completer</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">js</span><span class="p">.</span><span class="n">scoped</span><span class="p">((){</span>
+</span><span class='line'>      <span class="cm">/**</span>
+</span><span class='line'><span class="cm">       * handleAuthResult is called from javascript when</span>
+</span><span class='line'><span class="cm">       * the function to call once the login process is complete.</span>
+</span><span class='line'><span class="cm">       */</span>
+</span><span class='line'>      <span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">handleAuthResult</span> <span class="o">=</span> <span class="k">new</span> <span class="n">js</span><span class="p">.</span><span class="n">Callback</span><span class="p">.</span><span class="n">many</span><span class="p">((</span><span class="n">js</span><span class="p">.</span><span class="n">Proxy</span> <span class="n">authResult</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">Map</span> <span class="n">dartAuthResult</span> <span class="o">=</span> <span class="n">JSON</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">JSON</span><span class="p">.</span><span class="n">stringify</span><span class="p">(</span><span class="n">authResult</span><span class="p">));</span>
+</span><span class='line'>        <span class="n">completer</span><span class="p">.</span><span class="n">complete</span><span class="p">(</span><span class="n">dartAuthResult</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="cm">/**</span>
+</span><span class='line'><span class="cm">       * This javascript method is called when the client.js script</span>
+</span><span class='line'><span class="cm">       * is loaded.</span>
+</span><span class='line'><span class="cm">       */</span>
+</span><span class='line'>      <span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">handleClientLoad</span> <span class="o">=</span>  <span class="k">new</span> <span class="n">js</span><span class="p">.</span><span class="n">Callback</span><span class="p">.</span><span class="n">many</span><span class="p">(()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">window</span><span class="p">.</span><span class="n">setTimeout</span><span class="p">(</span><span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">checkAuth</span><span class="p">,</span> <span class="m">1</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="cm">/**</span>
+</span><span class='line'><span class="cm">       * Authorization check if the client allows this</span>
+</span><span class='line'><span class="cm">       * application to access its google drive.</span>
+</span><span class='line'><span class="cm">       */</span>
+</span><span class='line'>      <span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">checkAuth</span> <span class="o">=</span> <span class="k">new</span> <span class="n">js</span><span class="p">.</span><span class="n">Callback</span><span class="p">.</span><span class="n">many</span><span class="p">(()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">gapi</span><span class="p">.</span><span class="n">auth</span><span class="p">.</span><span class="n">authorize</span><span class="p">(</span>
+</span><span class='line'>            <span class="n">js</span><span class="p">.</span><span class="n">map</span><span class="p">({</span>
+</span><span class='line'>              <span class="s1">&#39;client_id&#39;</span><span class="o">:</span> <span class="n">_CLIENT_ID</span><span class="p">,</span>
+</span><span class='line'>              <span class="s1">&#39;scope&#39;</span><span class="o">:</span> <span class="n">_SCOPE</span><span class="p">,</span>
+</span><span class='line'>              <span class="s1">&#39;immediate&#39;</span><span class="o">:</span> <span class="kc">true</span>
+</span><span class='line'>            <span class="p">}),</span>
+</span><span class='line'>            <span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">handleAuthResult</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">   * Load the google client api, future returns</span>
+</span><span class='line'><span class="cm">   * map results.</span>
+</span><span class='line'><span class="cm">   */</span>
+</span><span class='line'>  <span class="kd">static</span> <span class="n">Future</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">&gt;</span> <span class="n">load</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="n">completer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Completer</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">_createScopedCallbacks</span><span class="p">(</span><span class="n">completer</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">_loadScript</span><span class="p">();</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">completer</span><span class="p">.</span><span class="n">future</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The calling of <code>load()</code> returns a future with our authentication results. Eases the process of having the google drive scope available to the client application.</p>
+
+<p>A simple dart <code>Drive</code> class created gives access to the list call from the javascript apis. The interesting point for me to learn is knowing that <code>client.js</code> has to load the drive api. In the <code>load()</code> future we call <code>js.context.gapi.client.load</code> which will take the api and version to be loaded for the client application.</p>
+
+<figure class='code'><figcaption><span>dart_drive_files_list.dart</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * Sample google drive class.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">class</span> <span class="nc">Drive</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">js</span><span class="p">.</span><span class="n">Proxy</span> <span class="n">_drive</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">bool</span> <span class="kd">get</span> <span class="n">_isLoaded</span> <span class="o">=&gt;</span> <span class="n">_drive</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">   * Load the gapi.client.drive api.</span>
+</span><span class='line'><span class="cm">   */</span>
+</span><span class='line'>  <span class="n">Future</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span> <span class="n">load</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="n">completer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Completer</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">js</span><span class="p">.</span><span class="n">scoped</span><span class="p">(()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">gapi</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;drive&#39;</span><span class="p">,</span> <span class="s1">&#39;v2&#39;</span><span class="p">,</span> <span class="k">new</span> <span class="n">js</span><span class="p">.</span><span class="n">Callback</span><span class="p">.</span><span class="n">once</span><span class="p">(()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="n">_drive</span> <span class="o">=</span> <span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">gapi</span><span class="p">.</span><span class="n">client</span><span class="p">.</span><span class="n">drive</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">js</span><span class="p">.</span><span class="n">retain</span><span class="p">(</span><span class="n">_drive</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">completer</span><span class="p">.</span><span class="n">complete</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}));</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">completer</span><span class="p">.</span><span class="n">future</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">   * Check if gapi.client.drive is loaded, if not</span>
+</span><span class='line'><span class="cm">   * load before executing.</span>
+</span><span class='line'><span class="cm">   */</span>
+</span><span class='line'>  <span class="kt">void</span> <span class="n">_loadederExecute</span><span class="p">(</span><span class="n">Function</span> <span class="n">function</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">_isLoaded</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">function</span><span class="p">();</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">load</span><span class="p">().</span><span class="n">then</span><span class="p">((</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">==</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">function</span><span class="p">();</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>          <span class="k">throw</span> <span class="s2">&quot;loadedExecute failed&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="cm">/**</span>
+</span><span class='line'><span class="cm">   * List files with gapi.drive.files.list()</span>
+</span><span class='line'><span class="cm">   */</span>
+</span><span class='line'>  <span class="n">Future</span><span class="o">&lt;</span><span class="n">Map</span><span class="o">&gt;</span> <span class="n">list</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="n">completer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Completer</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">_loadederExecute</span><span class="p">(()</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">js</span><span class="p">.</span><span class="n">scoped</span><span class="p">(()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="n">request</span> <span class="o">=</span> <span class="n">_drive</span><span class="p">.</span><span class="n">files</span><span class="p">.</span><span class="n">list</span><span class="p">();</span>
+</span><span class='line'>        <span class="n">request</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="k">new</span> <span class="n">js</span><span class="p">.</span><span class="n">Callback</span><span class="p">.</span><span class="n">once</span><span class="p">((</span><span class="n">js</span><span class="p">.</span><span class="n">Proxy</span> <span class="n">jsonResp</span><span class="p">,</span> <span class="kd">var</span> <span class="n">rawResp</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>          <span class="n">Map</span> <span class="n">m</span> <span class="o">=</span> <span class="n">JSON</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">js</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">JSON</span><span class="p">.</span><span class="n">stringify</span><span class="p">(</span><span class="n">jsonResp</span><span class="p">));</span>
+</span><span class='line'>          <span class="n">completer</span><span class="p">.</span><span class="n">complete</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}));</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">completer</span><span class="p">.</span><span class="n">future</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With the following sugar classes it was easy to just list files from my google drive account.</p>
+
+<figure class='code'><figcaption><span>dart_drive_files_list.dart</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="kt">void</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">Drive</span> <span class="n">drive</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Drive</span><span class="p">();</span>
+</span><span class='line'>  <span class="n">GoogleApiClientLoader</span><span class="p">.</span><span class="n">load</span><span class="p">().</span><span class="n">then</span><span class="p">((</span><span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">drive</span><span class="p">.</span><span class="n">list</span><span class="p">().</span><span class="n">then</span><span class="p">((</span><span class="n">Map</span> <span class="n">files</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="c1">// https://developers.google.com/drive/v2/reference/files/list</span>
+</span><span class='line'>      <span class="n">files</span><span class="p">[</span><span class="s1">&#39;items&#39;</span><span class="p">].</span><span class="n">forEach</span><span class="p">((</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="kd">var</span> <span class="n">li</span> <span class="o">=</span> <span class="k">new</span> <span class="n">LIElement</span><span class="p">();</span>
+</span><span class='line'>        <span class="n">AnchorElement</span> <span class="n">a</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AnchorElement</span><span class="p">();</span>
+</span><span class='line'>        <span class="n">a</span><span class="p">.</span><span class="n">href</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;alternateLink&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="n">a</span><span class="p">.</span><span class="n">target</span> <span class="o">=</span> <span class="s1">&#39;_blank&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="n">a</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">];</span>
+</span><span class='line'>        <span class="n">li</span><span class="p">.</span><span class="n">children</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">UListElement</span> <span class="n">ul</span> <span class="o">=</span> <span class="n">query</span><span class="p">(</span><span class="s1">&#39;#listmenu&#39;</span><span class="p">);</span>
+</span><span class='line'>        <span class="n">ul</span><span class="p">.</span><span class="n">children</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">li</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">});</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="/images/2013-01-06-listing-files-with-google-drive-and-dart/listing_files_google_drive.png"><img src="/images/2013-01-06-listing-files-with-google-drive-and-dart/listing_files_google_drive.png" alt="listing-files-drive" /></a></p>
+
+<p>Hopefully this helps with developers interested in google drive &amp; dart! Sample can be found on github <a href="https://github.com/financeCoding/dart_drive_files_list">dart_drive_files_list</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1402,47 +1741,6 @@ $ dart2js --disallow-unsafe-eval -osolar.dart.js solar.dart</code></pre>
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/11/26/using-canvas-2d-to-create-gradient-in-dart/">Using Canvas 2d to Create Gradient in Dart</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-11-26T00:00:00-08:00" pubdate data-updated="true">Nov 26<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/11/26/using-canvas-2d-to-create-gradient-in-dart/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>This simple example displays how to use a <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/CanvasGradient.html">CanvasGradient</a> in Dart.</p>
-
-<script src="https://gist.github.com/4150001.js"><!-- gist --></script>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1468,11 +1766,15 @@ $ dart2js --disallow-unsafe-eval -osolar.dart.js solar.dart</code></pre>
 
 <section>
   <h1>Tag Cloud</h1>
-    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.6734693877551%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.22448979591837%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.22448979591837%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.22448979591837%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.22448979591837%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.22448979591837%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.6734693877551%'>API(3)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.44897959183673%'>BeagleBoard(2)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.44897959183673%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.22448979591837%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.22448979591837%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.22448979591837%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.22448979591837%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.89795918367346%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.44897959183673%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.22448979591837%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.22448979591837%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.22448979591837%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.6734693877551%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.22448979591837%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 101.22448979591837%'>Client(1)</a> <a href='/blog/categories/cloud' style='font-size: 102.44897959183673%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.44897959183673%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.22448979591837%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.89795918367346%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.22448979591837%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(49)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.44897959183673%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.22448979591837%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.6734693877551%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.22448979591837%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.44897959183673%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.6734693877551%'>DartVM(3)</a> <a href='/blog/categories/debugging' style='font-size: 101.22448979591837%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.89795918367346%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.22448979591837%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.89795918367346%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.6938775510204%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.22448979591837%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.22448979591837%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.22448979591837%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.22448979591837%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.22448979591837%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 129.3877551020408%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 102.44897959183673%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleAPI(1)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.22448979591837%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 106.12244897959184%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.22448979591837%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.22448979591837%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.22448979591837%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.22448979591837%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.44897959183673%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.6734693877551%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.44897959183673%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 106.12244897959184%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.22448979591837%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.22448979591837%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.44897959183673%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.22448979591837%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.22448979591837%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.22448979591837%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.44897959183673%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.22448979591837%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.89795918367346%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.89795918367346%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 101.22448979591837%'>Pub(1)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.22448979591837%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.22448979591837%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.44897959183673%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.22448979591837%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 130.6122448979592%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.44897959183673%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.22448979591837%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.22448979591837%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.22448979591837%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.44897959183673%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.22448979591837%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.22448979591837%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.44897959183673%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.44897959183673%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.6734693877551%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.22448979591837%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.22448979591837%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.44897959183673%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.22448979591837%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.22448979591837%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.22448979591837%'>WebGL(1)</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.6%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.2%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.2%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.2%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.2%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.2%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.6%'>API(3)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.4%'>BeagleBoard(2)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.4%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.2%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.2%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.2%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.2%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.8%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.4%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.2%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.2%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.2%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.6%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.2%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 102.4%'>Client(2)</a> <a href='/blog/categories/cloud' style='font-size: 102.4%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.4%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.2%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.8%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.2%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(50)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.4%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.2%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.6%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.2%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.4%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.6%'>DartVM(3)</a> <a href='/blog/categories/debugging' style='font-size: 101.2%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.8%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.2%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.8%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.4%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.2%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.2%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.2%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.2%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.2%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 128.8%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 102.4%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 102.4%'>GoogleAPI(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.2%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.2%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 106.0%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.2%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.2%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.2%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.2%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.4%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.6%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.4%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 106.0%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.2%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.2%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.4%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.2%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.2%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.2%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.4%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.2%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.8%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.8%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 102.4%'>Pub(2)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.2%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.2%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.4%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.2%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 130.0%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.4%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.2%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.2%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.2%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.4%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.2%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.2%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.4%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.4%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.6%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.2%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.2%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.4%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.2%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.2%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.2%'>WebGL(1)</a> </span>
 </section>
 <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/22/google-client-apis-new-release-0-dot-4-x/">google client apis new release 0.4.x</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
@@ -1488,10 +1790,6 @@ $ dart2js --disallow-unsafe-eval -osolar.dart.js solar.dart</code></pre>
     
       <li class="post">
         <a href="/blog/2013/03/09/rikulo-stream-on-heroku/">rikulo stream on heroku</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/02/08/google-client-apis-now-available-on-pub/">Dart Google Client Apis Now Available On Pub</a>
       </li>
     
   </ul>

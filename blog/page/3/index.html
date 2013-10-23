@@ -13,7 +13,7 @@
   <meta property="og:description" content="" />
 
   
-  <meta name="description" content="When looking to create an ImageElement from a CanvasElement&#8217;s context, toDataURL is your friend. An example use case of this would be creating &hellip;">
+  <meta name="description" content="This simple example displays how to use a CanvasGradient in Dart. ">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -82,6 +82,47 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/11/26/using-canvas-2d-to-create-gradient-in-dart/">Using Canvas 2d to Create Gradient in Dart</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-11-26T00:00:00-08:00" pubdate data-updated="true">Nov 26<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/11/26/using-canvas-2d-to-create-gradient-in-dart/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This simple example displays how to use a <a href="http://api.dartlang.org/docs/bleeding_edge/dart_html/CanvasGradient.html">CanvasGradient</a> in Dart.</p>
+
+<script src="https://gist.github.com/4150001.js"><!-- gist --></script>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -461,245 +502,6 @@ TODO: blog post on private contructors _internal()
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/03/19/dart-templates/">Dart Templates</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-03-19T00:00:00-07:00" pubdate data-updated="true">Mar 19<span>th</span>, 2012</time>
-        
-         | <a href="/blog/2012/03/19/dart-templates/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content">As <a href="http://blog.sethladd.com/2012/03/first-look-at-darts-html-template.html" target="_blank">mentioned</a> by <a href="https://plus.google.com/118397406534237711570/posts" title="Seth Ladd" target="_blank">Seth Ladd</a>, Dart now has a template system in the <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge" title="dart bleeding_edge" target="_blank">bleeding_edge</a> branch. One way to learn what is offered, is to look at the <a href="http://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/utils/template/uitest.dart" target="_blank">uitest.dart</a> unit test. Since the template code is in flux I&#8217;ve created some scripts to help init and build templates. A sample <a href="https://github.com/financeCoding/DartTemplateExample" target="_blank">Dart Template Example</a> is provided to follow along with this post. <em>Please keep in mind this is currently subject to change by the Dart team, provide feedback to help the project along.</em> 
-
-<a href="https://github.com/financeCoding/DartTemplateExample/blob/master/exportTemplateUtils.sh" target="_blank">exportTemplateUtils.sh</a> script is used for exporting all the dependent code from the dartlang code base. The <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/utils/template/template">template</a> build script depends on <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/lib">lib</a>, <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/css">css</a>, and <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils/template">template</a> folders from the <a href="https://github.com/financeCoding/DartTemplateExample/tree/master/utils">utils</a> directory.
-[code lang=&#8221;shell&#8221;]
-22:54:59-adam@Adams-MacBook-Air:~/dart/DartTemplateExample
-$ ./exportTemplateUtils.sh 
-A    lib
-[&#8230;]
-Exported revision 5635.
-A    css
-[&#8230;]
-Exported revision 5635.
-A    template
-[&#8230;]
-Exported revision 5635.
-[/code] 
-The <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DivisionSales.tmpl" target="_blank">DivisionSales.tmpl</a> was ripped from the unit test and adjusted for the project. The <em><strong>template</strong></em> keyword is used for defining the template name. Inside the template you can have css, html and scripting. Dart team is currently experimenting with the following. 
-[code lang=&#8221;html&#8221;]
-template DivisionSales(var divisions) {
-  css {
-    .division-item {
-      background-color: #bbb;
-      border-top: 2px solid white;
-      line-height: 20pt;
-      padding-left: 5px;
-    }
-    .product-item {
-      background-color: lightgray;
-      margin-left: 10px;
-      border-top: 2px solid white;
-      line-height: 20pt;
-    }
-    .product-title {
-      position: absolute;
-      left: 45px;
-    }
-    .product-name {
-      font-weight: bold;
-      position: absolute;
-      left: 100px;
-    }
-    .product-users {
-      position: absolute;
-      right: 150px;
-      font-style: italic;
-      color: gray;
-      width: 110px;
-    }
-    .expand-collapse {
-      margin-left: 5px;
-      margin-right: 5px;
-      vertical-align: top;
-      cursor: pointer;
-    }
-    .expand {
-      font-size: 9pt;
-    }
-    .collapse {
-      font-size: 8pt;
-    }
-    .show-sales {
-      display: inherit;
-    }
-    .hide-sales {
-      display: none;
-    }
-    .sales-item {
-      font-family: arial;
-      background-color: lightgray;
-      margin-left: 10px;
-      border-top: 1px solid white;
-      line-height: 18pt;
-      padding-left: 5px;
-    }
-    .ytd-sales {
-      position: absolute;
-      left: 100px;
-    }
-  }
-  &lt;div&gt;
-    ${#each divisions}
-      &lt;div class=&quot;division-item&quot;&gt;
-        &lt;span&gt;${name}&lt;/span&gt;
-        &lt;span&gt;&amp;nbsp;-&amp;nbsp;&lt;/span&gt;
-        &lt;span&gt;${id}&lt;/span&gt;
-      &lt;/div&gt;
-      &lt;div&gt;
-        ${#each divisions.products}
-          &lt;div class=&quot;product-item&quot;&gt;
-            &lt;span var=productZippy class=&quot;expand-collapse expand&quot;&gt;&#9660;&lt;/span&gt;
-            &lt;span class=&#8217;product-title&#8217;&gt;Product&lt;/span&gt;
-            &lt;span class=&quot;product-name&quot;&gt;${name}&lt;/span&gt;
-            &lt;span class=&quot;product-users&quot;&gt;${users}&amp;nbsp;&lt;/span&gt; 
-            &lt;div class=&quot;show-sales&quot;&gt;
-              ${#each products.sales}
-                &lt;div class=&quot;sales-item&quot;&gt;
-                  &lt;span&gt;${country}&lt;/span&gt;
-                  &lt;span class=&quot;ytd-sales&quot;&gt;${yearly}&lt;/span&gt;
-                &lt;/div&gt;
-              ${/each}
-            &lt;/div&gt;
-          &lt;/div&gt;
-        ${/each}
-      &lt;/div&gt;
-    ${/each}
-  &lt;/div&gt;
-}
-
-template Header(String company, Date date) {
-  css {
-    .header {
-      background-color: slateGray;
-      font-family: arial;
-      color: lightgray;
-      font-weight: bold;
-      padding-top: 20px;
-    }
-  }
-  &lt;div class=&#8217;header&#8217; align=center&gt;
-    &lt;h2&gt;${company}&lt;/h2&gt;
-    &lt;div align=right&gt;${date}&lt;/div&gt;
-  &lt;/div&gt;
-}
-[/code]
-The scripting is very basic at the moment. Looking at the <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/utils/template/tokenkind.dart#L44" target="_blank">tokenkind.dart</a> one can get an idea of what is supported. 
-[code lang=&#8221;java&#8221;]
-[&#8230;]
-  // Synthesized tokens:
-
-  static final int END_NO_SCOPE_TAG = 50;       // /&gt;
-  static final int START_EXPRESSION = 51;       // ${
-  static final int START_COMMAND = 52;          // ${#
-  static final int END_COMMAND = 53;            // ${/
-  static final int EACH_COMMAND = 53;           // ${#each list}
-  static final int WITH_COMMAND = 54;           // ${#with object}
-  static final int IF_COMMAND = 55;             // ${#if (expression)}
-  static final int ELSE_COMMAND = 56;           // ${#else}
-[&#8230;]
-[/code]
-<a href="https://github.com/financeCoding/DartTemplateExample/blob/master/buildTemplates.sh" target="_blank">buildTemplates.sh</a> script will loop over all *.tmpl files in the current working directory and generate *.dart files for each one. 
-[code lang=&#8221;shell&#8221;]
-22:57:41-adam@Adams-MacBook-Air:~/dart/DartTemplateExample
-$ ./buildTemplates.sh 
-
-Building dart templates
-
-Parsed /Users/adam/dart/DartTemplateExample/DivisionSales.tmpl in 3134 msec.
-Codegen /Users/adam/dart/DartTemplateExample/DivisionSales.tmpl in 215 msec.
-Wrote file /Users/adam/dart/DartTemplateExample/DivisionSales.dart in 215 msec.
-
-Copy &amp; Paste import statements
-
-#source(&#8216;DivisionSales.dart&#8217;);
-
-[/code]
-After the dart <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DivisionSales.dart" target="_blank">code</a> is generated the following source statements can be copied into the <a href="https://github.com/financeCoding/DartTemplateExample/blob/master/DartTemplateExample.dart" target="_blank">main</a>/lib. 
-[code lang=&#8221;javascript&#8221;]
-#import(&#8216;dart:html&#8217;);
-#source(&#8216;DivisionSales.dart&#8217;);
-
-class Sales {
-  String country;
-  String yearly;
-  Sales(this.country, this.yearly);
-}
-
-class Products {
-  List&lt;Sales&gt; sales;
-  String name;
-  String users;
-  Products(this.name, this.users, this.sales);
-}
-
-class Divisions {
-  List&lt;Products&gt; products;
-  String id;
-  String name;
-  Divisions(this.id, this.name, this.products);
-}
-
-class DartTemplateExample {
-
-  DartTemplateExample() {
-  }
-
-  void run() {
-    document.body.elements.add(new Header(&quot;Dollar Shave Club&quot;, new Date.now().toString()).root);
-    
-    List&lt;Sales&gt; sales = [new Sales(&quot;USA&quot;, &quot;3500&quot;), new Sales(&quot;USA&quot;, &quot;4500&quot;)];
-    List&lt;Products&gt; products = [new Products(&quot;Razor&quot;, &quot;Sammy&quot;, sales)];
-    List&lt;Divisions&gt; divisions = [new Divisions(&quot;South West&quot;, &quot;A-Team&quot;, products), new Divisions(&quot;North East&quot;, &quot;B-Team&quot;, products),];
-    
-    DivisionSales divisionSales = new DivisionSales(divisions);
-    document.body.elements.add(divisionSales.root);
-  }
-}
-
-void main() {
-  new DartTemplateExample().run();
-}
-[/code]
-This example is deployed on <a href="http://financecoding.github.com/DartTemplateExample/DartTemplateExample.html" target="_blank">github</a>. You can also experiment with the template system to see what code gets generated on a <a href="http://financecoding.github.com/DartTemplateExample/utils/template/template.html">live page</a>. At first glance the template system is simple enough to use, I would assume things would change in the future. For now the Dart team has provided enough for people to start banging away and provide feedback. 
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -725,11 +527,15 @@ This example is deployed on <a href="http://financecoding.github.com/DartTemplat
 
 <section>
   <h1>Tag Cloud</h1>
-    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.6734693877551%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.22448979591837%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.22448979591837%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.22448979591837%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.22448979591837%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.22448979591837%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.6734693877551%'>API(3)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.44897959183673%'>BeagleBoard(2)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.44897959183673%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.22448979591837%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.22448979591837%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.22448979591837%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.22448979591837%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.89795918367346%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.44897959183673%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.22448979591837%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.22448979591837%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.22448979591837%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.6734693877551%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.22448979591837%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 101.22448979591837%'>Client(1)</a> <a href='/blog/categories/cloud' style='font-size: 102.44897959183673%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.44897959183673%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.22448979591837%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.89795918367346%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.22448979591837%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(49)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.44897959183673%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.22448979591837%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.6734693877551%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.22448979591837%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.44897959183673%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.6734693877551%'>DartVM(3)</a> <a href='/blog/categories/debugging' style='font-size: 101.22448979591837%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.89795918367346%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.22448979591837%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.89795918367346%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.6938775510204%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.22448979591837%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.22448979591837%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.22448979591837%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.22448979591837%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.22448979591837%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 129.3877551020408%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 102.44897959183673%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleAPI(1)</a> <a href='/blog/categories/googleapi' style='font-size: 101.22448979591837%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.22448979591837%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 106.12244897959184%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.22448979591837%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.22448979591837%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.22448979591837%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.22448979591837%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.44897959183673%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.6734693877551%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.44897959183673%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 106.12244897959184%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.22448979591837%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.22448979591837%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.44897959183673%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.22448979591837%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.22448979591837%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.22448979591837%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.44897959183673%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.22448979591837%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.89795918367346%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.89795918367346%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 101.22448979591837%'>Pub(1)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.22448979591837%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.22448979591837%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.44897959183673%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.22448979591837%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 130.6122448979592%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.44897959183673%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.22448979591837%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.22448979591837%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.22448979591837%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.44897959183673%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.22448979591837%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.22448979591837%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.44897959183673%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.44897959183673%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.6734693877551%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.22448979591837%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.22448979591837%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.44897959183673%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.22448979591837%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.22448979591837%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.22448979591837%'>WebGL(1)</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.6%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.2%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.2%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.2%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.2%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.2%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.6%'>API(3)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.4%'>BeagleBoard(2)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.4%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.2%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.2%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.2%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.2%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.8%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.4%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.2%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.2%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.2%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.6%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.2%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 102.4%'>Client(2)</a> <a href='/blog/categories/cloud' style='font-size: 102.4%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.4%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.2%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.8%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.2%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(50)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.4%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.2%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.6%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.2%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.4%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.6%'>DartVM(3)</a> <a href='/blog/categories/debugging' style='font-size: 101.2%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.8%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.2%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.8%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.4%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.2%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.2%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.2%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.2%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.2%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 128.8%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 102.4%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 102.4%'>GoogleAPI(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.2%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.2%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 106.0%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.2%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.2%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.2%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.2%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.4%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.6%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.4%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 106.0%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.2%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.2%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.4%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.2%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.2%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.2%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.4%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.2%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.8%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.8%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 102.4%'>Pub(2)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.2%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.2%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.4%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.2%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 130.0%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.4%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.2%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.2%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.2%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.4%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.2%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.2%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.4%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.4%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.6%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.2%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.2%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.4%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.2%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.2%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.2%'>WebGL(1)</a> </span>
 </section>
 <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/22/google-client-apis-new-release-0-dot-4-x/">google client apis new release 0.4.x</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
@@ -745,10 +551,6 @@ This example is deployed on <a href="http://financecoding.github.com/DartTemplat
     
       <li class="post">
         <a href="/blog/2013/03/09/rikulo-stream-on-heroku/">rikulo stream on heroku</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/02/08/google-client-apis-now-available-on-pub/">Dart Google Client Apis Now Available On Pub</a>
       </li>
     
   </ul>
