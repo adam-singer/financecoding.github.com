@@ -10,9 +10,26 @@ categories:
 - Pub
 ---
 
-The [dart-gde](https://github.com/dart-gde?tab=members) team has updated the google client apis to `'>=0.4.0'`. Along with this change was an update for [Google OAuth2 Client](http://pub.dartlang.org/packages/google_oauth2_client) to `'>=0.3.0'`.
+The [dart-gde](https://github.com/dart-gde?tab=members) team has updated the [google client apis](https://github.com/dart-google-apis) to `'>=0.4.0'`. Along with this change was an update for [Google OAuth2 Client](http://pub.dartlang.org/packages/google_oauth2_client) to `'>=0.3.0'`.
 
-Updating requires a small change in `pubspec.yaml` to `'>=0.4.0'`
+## The breaking changes for [Google OAuth2 Client](http://pub.dartlang.org/packages/google_oauth2_client)
+
+* SystemCache has been removed.
+* `GoogleOAuth2.ensureAuthenticated()` A much cleaner impl that eliminates the need to pass in a HttpRequest object to authenticate.
+* All dependencies bumped to latest versions.
+* Code refactored.
+* Dead code eliminated.  
+* Remove deprecated libraries.
+* Heavy logging removed.
+
+## The breaking changes for generated [google client apis](https://github.com/dart-google-apis) include
+
+* Renamed `lib/src/{cloud_api.dart -> client_base.dart}` `lib/src/{cloud_api_console.dart -> console_client.dart}` `lib/src/{cloud_api_browser.dart -> browser_client.dart}`.
+* `ClientBase.responseParse(int statusCode, String responseBody)` introduced and handles parsing `responseBody`. `responseParse` will throw `DetailedApiRequestError` if the body has an error. 
+* Renamed `APIRequestException` -> `APIRequestError`.
+* Remove deprecated libraries.
+
+## Updating requires a small change in `pubspec.yaml`
 
 ```yaml pubspec.yaml
 dependencies:
