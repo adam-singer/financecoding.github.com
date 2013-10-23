@@ -5,15 +5,15 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>google client apis new release 0.4.x - Random posts about coding</title>
+  <title>HI - Random posts about coding</title>
   <meta name="author" content="Adam Singer">
 
-  <meta property="og:title" content="google client apis new release 0.4.x - Random posts about coding" />
+  <meta property="og:title" content="HI - Random posts about coding" />
   <meta property="og:image" content="/me.png" />
   <meta property="og:description" content="" />
 
   
-  <meta name="description" content="The dart-gde team has updated the google client apis to '&gt;=0.4.0'. Along with this change was an update for Google OAuth2 Client to '&gt;=0.3.0'. &hellip;">
+  <meta name="description" content="">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -22,7 +22,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://financeCoding.github.com/blog/2013/10/22/google-client-apis-new-release-0-dot-4-x/">
+  <link rel="canonical" href="http://financeCoding.github.com/blog/2010/12/24/hi/">
   <link href="/me_favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -85,7 +85,7 @@
   
   <header>
     
-      <h1 class="entry-title">Google Client Apis New Release 0.4.x</h1>
+      <h1 class="entry-title">HI</h1>
     
     
       <p class="meta">
@@ -101,7 +101,7 @@
   
 
 
-<time datetime="2013-10-22T19:34:00-07:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2013</time>
+<time datetime="2010-12-24T00:00:00-08:00" pubdate data-updated="true">Dec 24<span>th</span>, 2010</time>
         
          | <a href="#disqus_thread">Comments</a>
         
@@ -110,128 +110,7 @@
   </header>
 
 
-<div class="entry-content"><p>The <a href="https://github.com/dart-gde?tab=members">dart-gde</a> team has updated the <a href="https://github.com/dart-google-apis">google client apis</a> to <code>'&gt;=0.4.0'</code>. Along with this change was an update for <a href="http://pub.dartlang.org/packages/google_oauth2_client">Google OAuth2 Client</a> to <code>'&gt;=0.3.0'</code>.</p>
-
-<h2>The breaking changes for <a href="http://pub.dartlang.org/packages/google_oauth2_client">Google OAuth2 Client</a></h2>
-
-<ul>
-<li>SystemCache has been removed.</li>
-<li><code>GoogleOAuth2.ensureAuthenticated()</code> A much cleaner impl that eliminates the need to pass in a HttpRequest object to authenticate.</li>
-<li>All dependencies bumped to latest versions.</li>
-<li>Code refactored.</li>
-<li>Dead code eliminated.</li>
-<li>Remove deprecated libraries.</li>
-<li>Heavy logging removed.</li>
-</ul>
-
-
-<h2>The breaking changes for generated <a href="https://github.com/dart-google-apis">google client apis</a> include</h2>
-
-<ul>
-<li>Renamed <code>lib/src/{cloud_api.dart -&gt; client_base.dart}</code> <code>lib/src/{cloud_api_console.dart -&gt; console_client.dart}</code> <code>lib/src/{cloud_api_browser.dart -&gt; browser_client.dart}</code>.</li>
-<li><code>ClientBase.responseParse(int statusCode, String responseBody)</code> introduced and handles parsing <code>responseBody</code>. <code>responseParse</code> will throw <code>DetailedApiRequestError</code> if the body has an error.</li>
-<li>Renamed <code>APIRequestException</code> -> <code>APIRequestError</code>.</li>
-<li>Remove deprecated libraries.</li>
-</ul>
-
-
-<h2>Updating requires a small change in <code>pubspec.yaml</code></h2>
-
-<figure class='code'><figcaption><span>pubspec.yaml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">dependencies</span><span class="p-Indicator">:</span>
-</span><span class='line'>  <span class="l-Scalar-Plain">google_plus_v1_api</span><span class="p-Indicator">:</span> <span class="s">&#39;&gt;=0.4.0&#39;</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></p>
-
-<p>A small collection of demo examples could be found at <a href="https://github.com/dart-gde/dart_api_client_examples">dart_api_client_examples</a>.</p>
-
-<h2>Full list of available Google client apis on <a href="http://pub.dartlang.org">pub.dartlang.org</a></h2>
-
-<ul>
-<li><a href="http://pub.dartlang.org/packages/dart_adexchangebuyer_v1_api_client">dart_adexchangebuyer_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_adexchangebuyer_v1_1_api_client">dart_adexchangebuyer_v1_1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_adexchangebuyer_v1_2_api_client">dart_adexchangebuyer_v1_2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_adexchangebuyer_v1_3_api_client">dart_adexchangebuyer_v1_3_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_adexchangeseller_v1_api_client">dart_adexchangeseller_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_adexchangeseller_v1_1_api_client">dart_adexchangeseller_v1_1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_admin_directory_v1_api_client">dart_admin_directory_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_admin_email_migration_v2_api_client">dart_admin_email_migration_v2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_admin_reports_v1_api_client">dart_admin_reports_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_adsense_v1_2_api_client">dart_adsense_v1_2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_adsense_v1_3_api_client">dart_adsense_v1_3_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_adsensehost_v4_1_api_client">dart_adsensehost_v4_1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_analytics_v2_4_api_client">dart_analytics_v2_4_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_analytics_v3_api_client">dart_analytics_v3_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_androidpublisher_v1_api_client">dart_androidpublisher_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_androidpublisher_v1_1_api_client">dart_androidpublisher_v1_1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_appstate_v1_api_client">dart_appstate_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_audit_v1_api_client">dart_audit_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_bigquery_v2_api_client">dart_bigquery_v2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_blogger_v2_api_client">dart_blogger_v2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_blogger_v3_api_client">dart_blogger_v3_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_books_v1_api_client">dart_books_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_calendar_v3_api_client">dart_calendar_v3_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_civicinfo_us_v1_api_client">dart_civicinfo_us_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_compute_v1beta15_api_client">dart_compute_v1beta15_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_compute_v1beta16_api_client">dart_compute_v1beta16_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_coordinate_v1_api_client">dart_coordinate_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_customsearch_v1_api_client">dart_customsearch_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_datastore_v1beta1_api_client">dart_datastore_v1beta1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_datastore_v1beta2_api_client">dart_datastore_v1beta2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_dfareporting_v1_api_client">dart_dfareporting_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_dfareporting_v1_1_api_client">dart_dfareporting_v1_1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_dfareporting_v1_2_api_client">dart_dfareporting_v1_2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_dfareporting_v1_3_api_client">dart_dfareporting_v1_3_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_discovery_v1_api_client">dart_discovery_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_doubleclickbidmanager_v1_api_client">dart_doubleclickbidmanager_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_doubleclicksearch_v2_api_client">dart_doubleclicksearch_v2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_drive_v1_api_client">dart_drive_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_drive_v2_api_client">dart_drive_v2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_freebase_v1_sandbox_api_client">dart_freebase_v1_sandbox_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_freebase_v1sandbox_api_client">dart_freebase_v1sandbox_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_freebase_v1_api_client">dart_freebase_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_fusiontables_v1_api_client">dart_fusiontables_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_games_v1_api_client">dart_games_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_gamesmanagement_v1management_api_client">dart_gamesmanagement_v1management_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_gan_v1beta1_api_client">dart_gan_v1beta1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_groupsmigration_v1_api_client">dart_groupsmigration_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_groupssettings_v1_api_client">dart_groupssettings_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_identitytoolkit_v3_api_client">dart_identitytoolkit_v3_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_licensing_v1_api_client">dart_licensing_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_mirror_v1_api_client">dart_mirror_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_oauth2_v1_api_client">dart_oauth2_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_oauth2_v2_api_client">dart_oauth2_v2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_orkut_v2_api_client">dart_orkut_v2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_pagespeedonline_v1_api_client">dart_pagespeedonline_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_plus_v1_api_client">dart_plus_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_plusdomains_v1_api_client">dart_plusdomains_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_prediction_v1_2_api_client">dart_prediction_v1_2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_prediction_v1_3_api_client">dart_prediction_v1_3_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_prediction_v1_4_api_client">dart_prediction_v1_4_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_prediction_v1_5_api_client">dart_prediction_v1_5_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_prediction_v1_6_api_client">dart_prediction_v1_6_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_reseller_v1sandbox_api_client">dart_reseller_v1sandbox_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_reseller_v1_api_client">dart_reseller_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_shopping_v1_api_client">dart_shopping_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_siteverification_v1_api_client">dart_siteverification_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_sqladmin_v1beta1_api_client">dart_sqladmin_v1beta1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_storage_v1beta1_api_client">dart_storage_v1beta1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_storage_v1beta2_api_client">dart_storage_v1beta2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_taskqueue_v1beta1_api_client">dart_taskqueue_v1beta1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_taskqueue_v1beta2_api_client">dart_taskqueue_v1beta2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_tasks_v1_api_client">dart_tasks_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_translate_v2_api_client">dart_translate_v2_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_urlshortener_v1_api_client">dart_urlshortener_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_webfonts_v1_api_client">dart_webfonts_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_youtube_v3_api_client">dart_youtube_v3_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_youtubeanalytics_v1_api_client">dart_youtubeanalytics_v1_api_client</a></li>
-<li><a href="http://pub.dartlang.org/packages/dart_youtubeanalytics_v1beta1_api_client">dart_youtubeanalytics_v1beta1_api_client</a></li>
-</ul>
-
-</div>
+<div class="entry-content"></div>
 
 
   <footer>
@@ -253,21 +132,15 @@
   
 
 
-<time datetime="2013-10-22T19:34:00-07:00" pubdate data-updated="true">Oct 22<span>nd</span>, 2013</time>
+<time datetime="2010-12-24T00:00:00-08:00" pubdate data-updated="true">Dec 24<span>th</span>, 2010</time>
       
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/client/'>Client</a>, <a class='category' href='/blog/categories/dart/'>Dart</a>, <a class='category' href='/blog/categories/googleapi/'>GoogleAPI</a>, <a class='category' href='/blog/categories/pub/'>Pub</a>
-  
-</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://financeCoding.github.com/blog/2013/10/22/google-client-apis-new-release-0-dot-4-x/" data-via="" data-counturl="http://financeCoding.github.com/blog/2013/10/22/google-client-apis-new-release-0-dot-4-x/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://financeCoding.github.com/blog/2010/12/24/hi/" data-via="" data-counturl="http://financeCoding.github.com/blog/2010/12/24/hi/" >Tweet</a>
   
   
   <div class="g-plusone" data-size="medium"></div>
@@ -280,18 +153,14 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/" title="Previous Post: Getting Started with Dart on Compute Engine">&laquo; Getting Started with Dart on Compute Engine</a>
+        <a class="basic-alignment left" href="/blog/2010/12/24/hello-world/" title="Previous Post: Hello world!">&laquo; Hello world!</a>
       
+      
+        <a class="basic-alignment right" href="/blog/2010/12/24/how-to-flash-new-boot-loader-and-firmware-netduino-mini/" title="Next Post: How to Flash New Boot Loader and Firmware netduino mini">How to Flash New Boot Loader and Firmware netduino mini &raquo;</a>
       
     </p>
   </footer>
 </article>
-
-  <section>
-    <h1>Comments</h1>
-    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-</div>
-  </section>
 
 </div>
 
@@ -390,10 +259,7 @@
       var disqus_shortname = 'financecoding';
       
         
-        // var disqus_developer = 1;
-        var disqus_identifier = 'http://financeCoding.github.com/blog/2013/10/22/google-client-apis-new-release-0-dot-4-x/';
-        var disqus_url = 'http://financeCoding.github.com/blog/2013/10/22/google-client-apis-new-release-0-dot-4-x/';
-        var disqus_script = 'embed.js';
+        var disqus_script = 'count.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

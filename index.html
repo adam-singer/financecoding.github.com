@@ -113,9 +113,32 @@
   </header>
 
 
-  <div class="entry-content"><p>The <a href="https://github.com/dart-gde?tab=members">dart-gde</a> team has updated the google client apis to <code>'&gt;=0.4.0'</code>. Along with this change was an update for <a href="http://pub.dartlang.org/packages/google_oauth2_client">Google OAuth2 Client</a> to <code>'&gt;=0.3.0'</code>.</p>
+  <div class="entry-content"><p>The <a href="https://github.com/dart-gde?tab=members">dart-gde</a> team has updated the <a href="https://github.com/dart-google-apis">google client apis</a> to <code>'&gt;=0.4.0'</code>. Along with this change was an update for <a href="http://pub.dartlang.org/packages/google_oauth2_client">Google OAuth2 Client</a> to <code>'&gt;=0.3.0'</code>.</p>
 
-<p>Updating requires a small change in <code>pubspec.yaml</code> to <code>'&gt;=0.4.0'</code></p>
+<h2>The breaking changes for <a href="http://pub.dartlang.org/packages/google_oauth2_client">Google OAuth2 Client</a></h2>
+
+<ul>
+<li>SystemCache has been removed.</li>
+<li><code>GoogleOAuth2.ensureAuthenticated()</code> A much cleaner impl that eliminates the need to pass in a HttpRequest object to authenticate.</li>
+<li>All dependencies bumped to latest versions.</li>
+<li>Code refactored.</li>
+<li>Dead code eliminated.</li>
+<li>Remove deprecated libraries.</li>
+<li>Heavy logging removed.</li>
+</ul>
+
+
+<h2>The breaking changes for generated <a href="https://github.com/dart-google-apis">google client apis</a> include</h2>
+
+<ul>
+<li>Renamed <code>lib/src/{cloud_api.dart -&gt; client_base.dart}</code> <code>lib/src/{cloud_api_console.dart -&gt; console_client.dart}</code> <code>lib/src/{cloud_api_browser.dart -&gt; browser_client.dart}</code>.</li>
+<li><code>ClientBase.responseParse(int statusCode, String responseBody)</code> introduced and handles parsing <code>responseBody</code>. <code>responseParse</code> will throw <code>DetailedApiRequestError</code> if the body has an error.</li>
+<li>Renamed <code>APIRequestException</code> -> <code>APIRequestError</code>.</li>
+<li>Remove deprecated libraries.</li>
+</ul>
+
+
+<h2>Updating requires a small change in <code>pubspec.yaml</code></h2>
 
 <figure class='code'><figcaption><span>pubspec.yaml</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
