@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ARMv7 | Random posts about coding]]></title>
+  <link href="http://financeCoding.github.com/blog/categories/armv7/atom.xml" rel="self"/>
+  <link href="http://financeCoding.github.com/"/>
+  <updated>2013-11-30T15:53:28-08:00</updated>
+  <id>http://financeCoding.github.com/</id>
+  <author>
+    <name><![CDATA[Adam Singer]]></name>
+    <email><![CDATA[financeCoding@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Build and deploy dart to Beaglebone Black]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black/"/>
+    <updated>2013-11-29T08:56:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black</id>
+    <content type="html"><![CDATA[<p>I was looking into using <a href="https://www.dartlang.org">dart</a> on <a href="http://beagleboard.org/products/beaglebone%20black">Beaglebone Black</a> and decided it would be useful to share with others what I found.</p>
+
+<p>After a some build hacks and patches I found a minimal working solution for Beaglebone Black with <a href="https://wiki.debian.org/ArmHardFloatPort">Debian</a> <a href="http://www.armhf.com/">ARMhf</a>. A few important notes before going down the road of building dart for ARM. The <code>dart-sdk</code> is not fully supported and pub currently might not work. The <code>dartanalyzer</code> might not work. The only supported <a href="http://en.wikipedia.org/wiki/List_of_ARM_cores">ARM architectures</a> are the ones that have <a href="http://en.wikipedia.org/wiki/ARMv7#32-bit_architecture">ARMv7</a> with <a href="http://en.wikipedia.org/wiki/ARM_architecture#Floating-point_.28VFP.29">VFP</a>. Don't spin your wheels trying to target any architecutre that is not <code>ARMv7</code> with VFP (minimum at the moment <code>ARMv7-A</code>) unless you plan on implementing the routines needed in the runtime <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/runtime/vm/assembler_arm.cc">arm assembler</a>. If you do plan on implementing them, well thats just pure awesome!</p>
+
+<p>```cpp assembler_arm.cc
+void CPUFeatures::InitOnce() {</p>
+
+<h1>if defined(USING_SIMULATOR)</h1>
+
+<p>  integer_division_supported<em> = true;
+  neon_supported</em> = true;</p>
+
+<h1>else</h1>
+
+<p>  ASSERT(CPUInfoContainsString("ARMv7"));  // Implements ARMv7.
+  ASSERT(CPUInfoContainsString("vfp"));  // Has floating point unit.
+  // Has integer division.
+  if (CPUInfoContainsString("QCT APQ8064")) {</p>
+
+<pre><code>// Special case for Qualcomm Krait CPUs in Nexus 4 and 7.
+integer_division_supported_ = true;
+</code></pre>
+
+<p>  } else {</p>
+
+<pre><code>integer_division_supported_ = CPUInfoContainsString("idiva");
+</code></pre>
+
+<p>  }
+  neon_supported_ = CPUInfoContainsString("neon");</p>
+
+<h1>endif  // defined(USING_SIMULATOR)</h1>
+
+<h1>if defined(DEBUG)</h1>
+
+<p>  initialized_ = true;</p>
+
+<h1>endif</h1>
+
+<p>}
+```</p>
+
+<h3>Download <a href="http://releases.ubuntu.com/precise/">Ubuntu 12.04.3 LTS</a></h3>
+
+<p>Download the desktop iso to install on VirtualBox.</p>
+
+<h3>Install on <a href="https://www.virtualbox.org/">VirtualBox</a></h3>
+
+<p>I work mostly on mac so Ubuntu installed on VirtualBox was needed to help with cross compiling and flashing of uSD cards.</p>
+
+<h3>Update the packages</h3>
+
+<p>Just to be safe update any Ubuntu packages before installing the development software.</p>
+
+<h3>Install basic packages</h3>
+
+<p>I typically use the git <a href="https://code.google.com/p/dart/wiki/GettingTheSource#Using_Git">overlay</a> on subversion when working with the dart repo. The java jre/jdk is required for building the dart_analyzer which does not work in the sdk.</p>
+
+<p>```bash shell</p>
+
+<h1>Install subversion</h1>
+
+<p>sudo apt-get install subversion git git-svn openssh-server vim default-jre default-jdk
+```</p>
+
+<h3>Install the chrome build and arm dependencies</h3>
+
+<p>Checkout the latest build tools scripts. The following scripts prep your system with any packages needed for building dart.</p>
+
+<p>```bash shell</p>
+
+<h1>checkout build scripts</h1>
+
+<p>svn co http://src.chromium.org/chrome/trunk/src/build; cd build</p>
+
+<h1>install dependencies</h1>
+
+<p>chmod u+x install-build-deps.sh
+./install-build-deps.sh --no-chromeos-fonts
+./install-build-deps.sh --no-chromeos-fonts --arm
+```</p>
+
+<h3>Install addtional libraries</h3>
+
+<p>The following libraries are needed for building dart but might not be included from the chrome build tool scripts.</p>
+
+<p>```bash shell</p>
+
+<h1>Install addtional libs</h1>
+
+<p>sudo apt-get install libc6-dev-i386 g++-multilib
+```</p>
+
+<h3>Install depot-tools</h3>
+
+<p><a href="http://www.chromium.org/developers/how-tos/depottools">depot-tools</a> is required for hacking out the dart source code.</p>
+
+<p>```bash shell</p>
+
+<h1>depot tools</h1>
+
+<p>svn co http://src.chromium.org/svn/trunk/tools/depot_tools
+export PATH=$PATH:<code>pwd</code>//depot_tools
+```</p>
+
+<h3>Checkout the dart code base</h3>
+
+<p>You dont need to include <code>--username &lt;YOUR USERNAME&gt;</code> unless you plan on creating a CL for review.</p>
+
+<p><code>bash shell
+mkdir dart_bleeding
+cd dart_bleeding
+svn ls https://dart.googlecode.com/svn/branches/bleeding_edge/ --username &lt;YOUR USERNAME&gt;
+gclient config https://dart.googlecode.com/svn/branches/bleeding_edge/deps/all.deps
+git svn clone -rHEAD https://dart.googlecode.com/svn/branches/bleeding_edge/dart dart
+gclient sync
+gclient runhooks
+</code></p>
+
+<h3>Patch the gyp and version files</h3>
+
+<p>A git patch can be found here <a href="https://gist.github.com/financeCoding/7725354">7725354</a>, that patches the build scripts to support building the <code>dart-sdk</code> for ARM. Patching the <code>VERSION</code> file was done in an attempt to get pub working. At the moment its not required. If not done then an old version number is baked into the dartvm. This patch also modifies which dartvm creates the snapshots for <code>pub</code>, <code>dart2js</code> and a wrapper util. Patch creates the requirement of having to build the dartvm for x64 before building the <code>dart-sdk</code> for ARM. The dart build scripts have a funky dependency of wanting to use the dartvm target to create the snapshot files. Which in this case wont work since our dartvm is an ARM target being built on x64.</p>
+
+<p>```diff arm.build.patch
+diff --git a/tools/VERSION b/tools/VERSION
+index d1ab212..0d6101d 100644
+--- a/tools/VERSION
++++ b/tools/VERSION
+@@ -1,5 +1,5 @@
+ CHANNEL be
+-MAJOR 0
+-MINOR 1
+-BUILD 2
+-PATCH 0
++MAJOR 1
++MINOR 0
++BUILD 0
++PATCH 7
+diff --git a/utils/compiler/compiler.gyp b/utils/compiler/compiler.gyp
+index 294c7e9..5f3754a 100644
+--- a/utils/compiler/compiler.gyp
++++ b/utils/compiler/compiler.gyp
+@@ -18,7 +18,7 @@</p>
+
+<pre><code>     {
+       'action_name': 'generate_snapshots',
+       'inputs': [
+</code></pre>
+
+<ul>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/&lt;(EXECUTABLE_PREFIX)dart&lt;(EXECUTABLE_SUFFIX)',
+</code></pre></li>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/../DebugX64/dart',
+     '../../sdk/lib/_internal/libraries.dart',
+     '&lt;!@(["python", "../../tools/list_files.py", "\\.dart$", "../../sdk/lib/_internal/compiler", "../../runtime/lib", "../../sdk/lib/_internal/dartdoc"])',
+     'create_snapshot.dart',
+</code></pre>
+
+@@ -30,7 +30,7 @@
+
+<pre><code>     '&lt;(SHARED_INTERMEDIATE_DIR)/dart2js.dart.snapshot',
+   ],
+   'action': [
+</code></pre></li>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/&lt;(EXECUTABLE_PREFIX)dart&lt;(EXECUTABLE_SUFFIX)',
+</code></pre></li>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/../DebugX64/dart',
+     'create_snapshot.dart',
+     '--output_dir=&lt;(SHARED_INTERMEDIATE_DIR)',
+     '--dart2js_main=sdk/lib/_internal/compiler/implementation/dart2js.dart',
+</code></pre>
+
+diff --git a/utils/pub/pub.gyp b/utils/pub/pub.gyp
+index fd5e147..ab2e243 100644
+--- a/utils/pub/pub.gyp
++++ b/utils/pub/pub.gyp
+@@ -25,7 +25,7 @@
+
+<pre><code>     '&lt;(SHARED_INTERMEDIATE_DIR)/pub.dart.snapshot',
+   ],
+   'action': [
+</code></pre></li>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/&lt;(EXECUTABLE_PREFIX)dart&lt;(EXECUTABLE_SUFFIX)',
+</code></pre></li>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/../DebugX64/dart',
+     '--package-root=&lt;(PRODUCT_DIR)/packages/',
+     '--snapshot=&lt;(SHARED_INTERMEDIATE_DIR)/pub.dart.snapshot',
+     '../../sdk/lib/_internal/pub/bin/pub.dart',
+</code></pre>
+
+<p>```</p></li>
+</ul>
+
+
+<h3>Build the <code>dart-sdk</code></h3>
+
+<p>Building of the <code>dart-sdk</code> for ARM target is a two stop process. First build x64 so we can use that dartvm to generate the snapshot files. Then the second step is running the <code>create_sdk</code> build for ARM. When the build is finished the <code>out/ReleaseARM/dart-sdk</code> should contain a full <code>dart-sdk</code> build. Keep in mind this does build the <code>dartanalyzer</code> but it may not work on ARM.</p>
+
+<p>```bash shell</p>
+
+<h1>build a target for your native system to create the snapshot files.</h1>
+
+<p>./tools/build.py -m debug -v -a x64 -j 8</p>
+
+<h1>build the arm target</h1>
+
+<p>./tools/build.py -m release -v -a arm -j 8 create_sdk
+```</p>
+
+<h3>Tarball the sdk</h3>
+
+<p>Package up the <code>dart-sdk</code> as a tarball to distribute.</p>
+
+<p><code>bash shell
+cd ./out/ReleaseARM/
+tar -czvf dart-sdk.tar.gz dart-sdk
+</code></p>
+
+<h3>Install <a href="http://www.armhf.com/index.php/boards/beaglebone-black/#wheezy">Debian Wheezy 7.2 Hard Float Minimal Image</a> on Beaglebone Black</h3>
+
+<p>In virtualbox with a uSD card at <code>/dev/sdX</code> the following will download an image and write to the uSD card. Updated images can be found at <a href="http://www.armhf.com/index.php/boards/beaglebone-black/#wheezy">armhf</a></p>
+
+<p><code>bash shell
+wget http://s3.armhf.com/debian/wheezy/bone/debian-wheezy-7.2-armhf-3.8.13-bone30.img.xz
+xz -cd debian-wheezy-7.2-armhf-3.8.13-bone30.img.xz &gt; /dev/sdX
+</code></p>
+
+<p>Then insert the uSD card into the Beaglebone Black and boot the image by holding down the boot switch and powering on.</p>
+
+<p><img src="http://elinux.org/images/7/76/CONN_REVA5A.jpg"></p>
+
+<p>Write the booted image to the eMMC.</p>
+
+<p><code>bash shell
+xz -cd debian-wheezy-7.2-armhf-3.8.13-bone30.img.xz &gt; /dev/mmcblk1
+</code></p>
+
+<p>Power down and remove the uSD card.</p>
+
+<h3>Update glibc on the BeagleBone Black</h3>
+
+<p>Updating glibc is required cause the version of glibc installed from the chromium build scripts is greater then the one shipped with Wheezy 7.2. The following commands update glibc.</p>
+
+<p>```bash shell</p>
+
+<h1>Add an addtional source for the latest glibc</h1>
+
+<p>sudo sed -i '1i deb http://ftp.us.debian.org/debian/ jessie main' /etc/apt/sources.list</p>
+
+<h1>Update sources</h1>
+
+<p>sudo apt-get update</p>
+
+<h1>Download latest glibc</h1>
+
+<p>sudo DEBIAN_FRONTEND=noninteractive apt-get -t jessie install -y libc6 libc6-dev libc6-dbg git screen
+```</p>
+
+<h3>Copy over <code>dart-sdk</code></h3>
+
+<p>From virtual box copy over the tarball to Beaglebone Black running debian.</p>
+
+<p><code>bash shell
+scp dart-sdk.tar.gz debian@192.168.2.2:~/
+</code></p>
+
+<p>After the tarball is copied, uncompress and add to your <code>PATH</code>.</p>
+
+<p><code>bash shell
+tar -zxvf dart-sdk.tar.gz
+export PATH=~/dart-sdk:$PATH
+dart --version
+Dart VM version: 1.0.0.7_r30634_adam (Fri Nov 29 01:14:42 2013) on "linux_arm"
+</code></p>
+
+<h3>Known issues at the moment</h3>
+
+<p>Pub does not work, issue could be followed at <a href="https://code.google.com/p/dart/issues/detail?id=15383">15383</a>. I was testing this out while staying at a hotel so some proxy settings might of been blocking or tripping up pub.</p>
+
+<h3>Feedback</h3>
+
+<p>If you have a better way of running dart on Beagleblone Black I would love to hear it! Please contact me on <a href="https://plus.google.com/104569492481999771226/">g+</a> and lets discuss.</p>
+
+<h3>Addtional resources</h3>
+
+<ul>
+<li><a href="https://github.com/financeCoding/dart_bleeding">dart_bleeding</a> contains some scripts I typically use for this entire process.</li>
+<li><a href="https://code.google.com/p/dart/wiki/PreparingYourMachine">PreparingYourMachine</a> resources for preping your machine to build from source</li>
+<li><a href="https://code.google.com/p/dart/wiki/GettingTheSource">GettingTheSource</a> getting the source code documentation</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

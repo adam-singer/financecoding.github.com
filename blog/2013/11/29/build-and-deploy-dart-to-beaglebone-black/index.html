@@ -1,0 +1,676 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Build and deploy dart to Beaglebone Black - Random posts about coding</title>
+  <meta name="author" content="Adam Singer">
+
+  <meta property="og:title" content="Build and deploy dart to Beaglebone Black - Random posts about coding" />
+  <meta property="og:image" content="/me.png" />
+  <meta property="og:description" content="" />
+
+  
+  <meta name="description" content="I was looking into using dart on Beaglebone Black and decided it would be useful to share with others what I found. After a some build hacks and &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://financeCoding.github.com/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black/">
+  <link href="/me_favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Random posts about coding" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36566996-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="https://plus.google.com/s2/photos/profile/104569492481999771226?sz=100"></a><span> </span><a href="/">Random posts about coding</a></h1>
+  
+    <h2>Mostly blogging about dart.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:financeCoding.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/aboutme">AboutMe</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Build and Deploy Dart to Beaglebone Black</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-29T08:56:00-08:00" pubdate data-updated="true">Nov 29<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I was looking into using <a href="https://www.dartlang.org">dart</a> on <a href="http://beagleboard.org/products/beaglebone%20black">Beaglebone Black</a> and decided it would be useful to share with others what I found.</p>
+
+<p>After a some build hacks and patches I found a minimal working solution for Beaglebone Black with <a href="https://wiki.debian.org/ArmHardFloatPort">Debian</a> <a href="http://www.armhf.com/">ARMhf</a>. A few important notes before going down the road of building dart for ARM. The <code>dart-sdk</code> is not fully supported and pub currently might not work. The <code>dartanalyzer</code> might not work. The only supported <a href="http://en.wikipedia.org/wiki/List_of_ARM_cores">ARM architectures</a> are the ones that have <a href="http://en.wikipedia.org/wiki/ARMv7#32-bit_architecture">ARMv7</a> with <a href="http://en.wikipedia.org/wiki/ARM_architecture#Floating-point_.28VFP.29">VFP</a>. Don&#8217;t spin your wheels trying to target any architecutre that is not <code>ARMv7</code> with VFP (minimum at the moment <code>ARMv7-A</code>) unless you plan on implementing the routines needed in the runtime <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/runtime/vm/assembler_arm.cc">arm assembler</a>. If you do plan on implementing them, well thats just pure awesome!</p>
+
+<figure class='code'><figcaption><span>assembler_arm.cc</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='cpp'><span class='line'><span class="kt">void</span> <span class="n">CPUFeatures</span><span class="o">::</span><span class="n">InitOnce</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'><span class="cp">#if defined(USING_SIMULATOR)</span>
+</span><span class='line'>  <span class="n">integer_division_supported_</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">neon_supported_</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="cp">#else</span>
+</span><span class='line'>  <span class="n">ASSERT</span><span class="p">(</span><span class="n">CPUInfoContainsString</span><span class="p">(</span><span class="s">&quot;ARMv7&quot;</span><span class="p">));</span>  <span class="c1">// Implements ARMv7.</span>
+</span><span class='line'>  <span class="n">ASSERT</span><span class="p">(</span><span class="n">CPUInfoContainsString</span><span class="p">(</span><span class="s">&quot;vfp&quot;</span><span class="p">));</span>  <span class="c1">// Has floating point unit.</span>
+</span><span class='line'>  <span class="c1">// Has integer division.</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="n">CPUInfoContainsString</span><span class="p">(</span><span class="s">&quot;QCT APQ8064&quot;</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// Special case for Qualcomm Krait CPUs in Nexus 4 and 7.</span>
+</span><span class='line'>    <span class="n">integer_division_supported_</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>    <span class="n">integer_division_supported_</span> <span class="o">=</span> <span class="n">CPUInfoContainsString</span><span class="p">(</span><span class="s">&quot;idiva&quot;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="n">neon_supported_</span> <span class="o">=</span> <span class="n">CPUInfoContainsString</span><span class="p">(</span><span class="s">&quot;neon&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="cp">#endif  </span><span class="c1">// defined(USING_SIMULATOR)</span>
+</span><span class='line'><span class="cp">#if defined(DEBUG)</span>
+</span><span class='line'>  <span class="n">initialized_</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'><span class="cp">#endif</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Download <a href="http://releases.ubuntu.com/precise/">Ubuntu 12.04.3 LTS</a></h3>
+
+<p>Download the desktop iso to install on VirtualBox.</p>
+
+<h3>Install on <a href="https://www.virtualbox.org/">VirtualBox</a></h3>
+
+<p>I work mostly on mac so Ubuntu installed on VirtualBox was needed to help with cross compiling and flashing of uSD cards.</p>
+
+<h3>Update the packages</h3>
+
+<p>Just to be safe update any Ubuntu packages before installing the development software.</p>
+
+<h3>Install basic packages</h3>
+
+<p>I typically use the git <a href="https://code.google.com/p/dart/wiki/GettingTheSource#Using_Git">overlay</a> on subversion when working with the dart repo. The java jre/jdk is required for building the dart_analyzer which does not work in the sdk.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Install subversion </span>
+</span><span class='line'>sudo apt-get install subversion git git-svn openssh-server vim default-jre default-jdk
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Install the chrome build and arm dependencies</h3>
+
+<p>Checkout the latest build tools scripts. The following scripts prep your system with any packages needed for building dart.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># checkout build scripts</span>
+</span><span class='line'>svn co http://src.chromium.org/chrome/trunk/src/build; <span class="nb">cd </span>build
+</span><span class='line'>
+</span><span class='line'><span class="c"># install dependencies</span>
+</span><span class='line'>chmod u+x install-build-deps.sh
+</span><span class='line'>./install-build-deps.sh --no-chromeos-fonts
+</span><span class='line'>./install-build-deps.sh --no-chromeos-fonts --arm
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Install addtional libraries</h3>
+
+<p>The following libraries are needed for building dart but might not be included from the chrome build tool scripts.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Install addtional libs</span>
+</span><span class='line'>sudo apt-get install libc6-dev-i386 g++-multilib
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Install depot-tools</h3>
+
+<p><a href="http://www.chromium.org/developers/how-tos/depottools">depot-tools</a> is required for hacking out the dart source code.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># depot tools</span>
+</span><span class='line'>svn co http://src.chromium.org/svn/trunk/tools/depot_tools
+</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>//depot_tools
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Checkout the dart code base</h3>
+
+<p>You dont need to include <code>--username &lt;YOUR USERNAME&gt;</code> unless you plan on creating a CL for review.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>mkdir dart_bleeding
+</span><span class='line'><span class="nb">cd </span>dart_bleeding
+</span><span class='line'>svn ls https://dart.googlecode.com/svn/branches/bleeding_edge/ --username &lt;YOUR USERNAME&gt;
+</span><span class='line'>gclient config https://dart.googlecode.com/svn/branches/bleeding_edge/deps/all.deps
+</span><span class='line'>git svn clone -rHEAD https://dart.googlecode.com/svn/branches/bleeding_edge/dart dart
+</span><span class='line'>gclient sync
+</span><span class='line'>gclient runhooks
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Patch the gyp and version files</h3>
+
+<p>A git patch can be found here <a href="https://gist.github.com/financeCoding/7725354">7725354</a>, that patches the build scripts to support building the <code>dart-sdk</code> for ARM. Patching the <code>VERSION</code> file was done in an attempt to get pub working. At the moment its not required. If not done then an old version number is baked into the dartvm. This patch also modifies which dartvm creates the snapshots for <code>pub</code>, <code>dart2js</code> and a wrapper util. Patch creates the requirement of having to build the dartvm for x64 before building the <code>dart-sdk</code> for ARM. The dart build scripts have a funky dependency of wanting to use the dartvm target to create the snapshot files. Which in this case wont work since our dartvm is an ARM target being built on x64.</p>
+
+<figure class='code'><figcaption><span>arm.build.patch</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+</pre></td><td class='code'><pre><code class='diff'><span class='line'><span class="gh">diff --git a/tools/VERSION b/tools/VERSION</span>
+</span><span class='line'><span class="gh">index d1ab212..0d6101d 100644</span>
+</span><span class='line'><span class="gd">--- a/tools/VERSION</span>
+</span><span class='line'><span class="gi">+++ b/tools/VERSION</span>
+</span><span class='line'><span class="gu">@@ -1,5 +1,5 @@</span>
+</span><span class='line'> CHANNEL be
+</span><span class='line'><span class="gd">-MAJOR 0</span>
+</span><span class='line'><span class="gd">-MINOR 1</span>
+</span><span class='line'><span class="gd">-BUILD 2</span>
+</span><span class='line'><span class="gd">-PATCH 0</span>
+</span><span class='line'><span class="gi">+MAJOR 1</span>
+</span><span class='line'><span class="gi">+MINOR 0</span>
+</span><span class='line'><span class="gi">+BUILD 0</span>
+</span><span class='line'><span class="gi">+PATCH 7</span>
+</span><span class='line'><span class="gh">diff --git a/utils/compiler/compiler.gyp b/utils/compiler/compiler.gyp</span>
+</span><span class='line'><span class="gh">index 294c7e9..5f3754a 100644</span>
+</span><span class='line'><span class="gd">--- a/utils/compiler/compiler.gyp</span>
+</span><span class='line'><span class="gi">+++ b/utils/compiler/compiler.gyp</span>
+</span><span class='line'><span class="gu">@@ -18,7 +18,7 @@</span>
+</span><span class='line'>         {
+</span><span class='line'>           &#39;action_name&#39;: &#39;generate_snapshots&#39;,
+</span><span class='line'>           &#39;inputs&#39;: [
+</span><span class='line'><span class="gd">-            &#39;&lt;(PRODUCT_DIR)/&lt;(EXECUTABLE_PREFIX)dart&lt;(EXECUTABLE_SUFFIX)&#39;,</span>
+</span><span class='line'><span class="gi">+            &#39;&lt;(PRODUCT_DIR)/../DebugX64/dart&#39;,</span>
+</span><span class='line'>             &#39;../../sdk/lib/_internal/libraries.dart&#39;,
+</span><span class='line'>             &#39;&lt;!@([&quot;python&quot;, &quot;../../tools/list_files.py&quot;, &quot;\\.dart$&quot;, &quot;../../sdk/lib/_internal/compiler&quot;, &quot;../../runtime/lib&quot;, &quot;../../sdk/lib/_internal/dartdoc&quot;])&#39;,
+</span><span class='line'>             &#39;create_snapshot.dart&#39;,
+</span><span class='line'><span class="gu">@@ -30,7 +30,7 @@</span>
+</span><span class='line'>             &#39;&lt;(SHARED_INTERMEDIATE_DIR)/dart2js.dart.snapshot&#39;,
+</span><span class='line'>           ],
+</span><span class='line'>           &#39;action&#39;: [
+</span><span class='line'><span class="gd">-            &#39;&lt;(PRODUCT_DIR)/&lt;(EXECUTABLE_PREFIX)dart&lt;(EXECUTABLE_SUFFIX)&#39;,</span>
+</span><span class='line'><span class="gi">+            &#39;&lt;(PRODUCT_DIR)/../DebugX64/dart&#39;,</span>
+</span><span class='line'>             &#39;create_snapshot.dart&#39;,
+</span><span class='line'>             &#39;--output_dir=&lt;(SHARED_INTERMEDIATE_DIR)&#39;,
+</span><span class='line'>             &#39;--dart2js_main=sdk/lib/_internal/compiler/implementation/dart2js.dart&#39;,
+</span><span class='line'><span class="gh">diff --git a/utils/pub/pub.gyp b/utils/pub/pub.gyp</span>
+</span><span class='line'><span class="gh">index fd5e147..ab2e243 100644</span>
+</span><span class='line'><span class="gd">--- a/utils/pub/pub.gyp</span>
+</span><span class='line'><span class="gi">+++ b/utils/pub/pub.gyp</span>
+</span><span class='line'><span class="gu">@@ -25,7 +25,7 @@</span>
+</span><span class='line'>             &#39;&lt;(SHARED_INTERMEDIATE_DIR)/pub.dart.snapshot&#39;,
+</span><span class='line'>           ],
+</span><span class='line'>           &#39;action&#39;: [
+</span><span class='line'><span class="gd">-            &#39;&lt;(PRODUCT_DIR)/&lt;(EXECUTABLE_PREFIX)dart&lt;(EXECUTABLE_SUFFIX)&#39;,</span>
+</span><span class='line'><span class="gi">+            &#39;&lt;(PRODUCT_DIR)/../DebugX64/dart&#39;,</span>
+</span><span class='line'>             &#39;--package-root=&lt;(PRODUCT_DIR)/packages/&#39;,
+</span><span class='line'>             &#39;--snapshot=&lt;(SHARED_INTERMEDIATE_DIR)/pub.dart.snapshot&#39;,
+</span><span class='line'>             &#39;../../sdk/lib/_internal/pub/bin/pub.dart&#39;,
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Build the <code>dart-sdk</code></h3>
+
+<p>Building of the <code>dart-sdk</code> for ARM target is a two stop process. First build x64 so we can use that dartvm to generate the snapshot files. Then the second step is running the <code>create_sdk</code> build for ARM. When the build is finished the <code>out/ReleaseARM/dart-sdk</code> should contain a full <code>dart-sdk</code> build. Keep in mind this does build the <code>dartanalyzer</code> but it may not work on ARM.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># build a target for your native system to create the snapshot files. </span>
+</span><span class='line'>./tools/build.py -m debug -v -a x64 -j 8
+</span><span class='line'>
+</span><span class='line'><span class="c"># build the arm target</span>
+</span><span class='line'>./tools/build.py -m release -v -a arm -j 8 create_sdk
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Tarball the sdk</h3>
+
+<p>Package up the <code>dart-sdk</code> as a tarball to distribute.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd</span> ./out/ReleaseARM/
+</span><span class='line'>tar -czvf dart-sdk.tar.gz dart-sdk
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Install <a href="http://www.armhf.com/index.php/boards/beaglebone-black/#wheezy">Debian Wheezy 7.2 Hard Float Minimal Image</a> on Beaglebone Black</h3>
+
+<p>In virtualbox with a uSD card at <code>/dev/sdX</code> the following will download an image and write to the uSD card. Updated images can be found at <a href="http://www.armhf.com/index.php/boards/beaglebone-black/#wheezy">armhf</a></p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>wget http://s3.armhf.com/debian/wheezy/bone/debian-wheezy-7.2-armhf-3.8.13-bone30.img.xz
+</span><span class='line'>xz -cd debian-wheezy-7.2-armhf-3.8.13-bone30.img.xz &gt; /dev/sdX
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then insert the uSD card into the Beaglebone Black and boot the image by holding down the boot switch and powering on.</p>
+
+<p><img src="http://elinux.org/images/7/76/CONN_REVA5A.jpg"></p>
+
+<p>Write the booted image to the eMMC.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>xz -cd debian-wheezy-7.2-armhf-3.8.13-bone30.img.xz &gt; /dev/mmcblk1
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Power down and remove the uSD card.</p>
+
+<h3>Update glibc on the BeagleBone Black</h3>
+
+<p>Updating glibc is required cause the version of glibc installed from the chromium build scripts is greater then the one shipped with Wheezy 7.2. The following commands update glibc.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># Add an addtional source for the latest glibc</span>
+</span><span class='line'>sudo sed -i <span class="s1">&#39;1i deb http://ftp.us.debian.org/debian/ jessie main&#39;</span> /etc/apt/sources.list
+</span><span class='line'>
+</span><span class='line'><span class="c"># Update sources </span>
+</span><span class='line'>sudo apt-get update
+</span><span class='line'>
+</span><span class='line'><span class="c"># Download latest glibc</span>
+</span><span class='line'>sudo <span class="nv">DEBIAN_FRONTEND</span><span class="o">=</span>noninteractive apt-get -t jessie install -y libc6 libc6-dev libc6-dbg git screen
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Copy over <code>dart-sdk</code></h3>
+
+<p>From virtual box copy over the tarball to Beaglebone Black running debian.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>scp dart-sdk.tar.gz debian@192.168.2.2:~/
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After the tarball is copied, uncompress and add to your <code>PATH</code>.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>tar -zxvf dart-sdk.tar.gz
+</span><span class='line'><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span>~/dart-sdk:<span class="nv">$PATH</span>
+</span><span class='line'>dart --version
+</span><span class='line'>Dart VM version: 1.0.0.7_r30634_adam <span class="o">(</span>Fri Nov 29 01:14:42 2013<span class="o">)</span> on <span class="s2">&quot;linux_arm&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Known issues at the moment</h3>
+
+<p>Pub does not work, issue could be followed at <a href="https://code.google.com/p/dart/issues/detail?id=15383">15383</a>. I was testing this out while staying at a hotel so some proxy settings might of been blocking or tripping up pub.</p>
+
+<h3>Feedback</h3>
+
+<p>If you have a better way of running dart on Beagleblone Black I would love to hear it! Please contact me on <a href="https://plus.google.com/104569492481999771226/">g+</a> and lets discuss.</p>
+
+<h3>Addtional resources</h3>
+
+<ul>
+<li><a href="https://github.com/financeCoding/dart_bleeding">dart_bleeding</a> contains some scripts I typically use for this entire process.</li>
+<li><a href="https://code.google.com/p/dart/wiki/PreparingYourMachine">PreparingYourMachine</a> resources for preping your machine to build from source</li>
+<li><a href="https://code.google.com/p/dart/wiki/GettingTheSource">GettingTheSource</a> getting the source code documentation</li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Adam Singer</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-29T08:56:00-08:00" pubdate data-updated="true">Nov 29<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/arm/'>ARM</a>, <a class='category' href='/blog/categories/armv7/'>ARMv7</a>, <a class='category' href='/blog/categories/beagleboneblack/'>BeagleBoneBlack</a>, <a class='category' href='/blog/categories/dart/'>Dart</a>, <a class='category' href='/blog/categories/debian/'>Debian</a>, <a class='category' href='/blog/categories/embedded/'>Embedded</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://financeCoding.github.com/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black/" data-via="" data-counturl="http://financeCoding.github.com/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/10/22/google-client-apis-new-release-0-dot-4-x/" title="Previous Post: google client apis new release 0.4.x">&laquo; google client apis new release 0.4.x</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/104569492481999771226?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+<section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.52941176470588%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.17647058823529%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.17647058823529%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.17647058823529%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.17647058823529%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.17647058823529%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.52941176470588%'>API(3)</a> <a href='/blog/categories/arm' style='font-size: 101.17647058823529%'>ARM(1)</a> <a href='/blog/categories/armv7' style='font-size: 101.17647058823529%'>ARMv7(1)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.3529411764706%'>BeagleBoard(2)</a> <a href='/blog/categories/beagleboneblack' style='font-size: 101.17647058823529%'>BeagleBoneBlack(1)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.3529411764706%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.17647058823529%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.17647058823529%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.17647058823529%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.17647058823529%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.70588235294117%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.3529411764706%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.17647058823529%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.17647058823529%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.17647058823529%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.52941176470588%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.17647058823529%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 102.3529411764706%'>Client(2)</a> <a href='/blog/categories/cloud' style='font-size: 102.3529411764706%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.3529411764706%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.17647058823529%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.70588235294117%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.17647058823529%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(51)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.3529411764706%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.17647058823529%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.52941176470588%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.17647058823529%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.3529411764706%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.52941176470588%'>DartVM(3)</a> <a href='/blog/categories/debian' style='font-size: 101.17647058823529%'>Debian(1)</a> <a href='/blog/categories/debugging' style='font-size: 101.17647058823529%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.70588235294117%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.17647058823529%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 101.17647058823529%'>Embedded(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.70588235294117%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.11764705882354%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.17647058823529%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.17647058823529%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.17647058823529%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.17647058823529%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.17647058823529%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 128.23529411764707%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 101.17647058823529%'>GoogleApi(1)</a> <a href='/blog/categories/googleapi' style='font-size: 102.3529411764706%'>GoogleAPI(2)</a> <a href='/blog/categories/googleapi' style='font-size: 102.3529411764706%'>googleapi(2)</a> <a href='/blog/categories/gplus' style='font-size: 101.17647058823529%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 105.88235294117646%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.17647058823529%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.17647058823529%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.17647058823529%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.17647058823529%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.3529411764706%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.52941176470588%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.3529411764706%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 105.88235294117646%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.17647058823529%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.17647058823529%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.3529411764706%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.17647058823529%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.17647058823529%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.17647058823529%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.3529411764706%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.17647058823529%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.70588235294117%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.70588235294117%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 102.3529411764706%'>Pub(2)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.17647058823529%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.17647058823529%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.3529411764706%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.17647058823529%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 129.41176470588235%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.3529411764706%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.17647058823529%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.17647058823529%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.17647058823529%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.3529411764706%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.17647058823529%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.17647058823529%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.3529411764706%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.3529411764706%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.52941176470588%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.17647058823529%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.17647058823529%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.3529411764706%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.17647058823529%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.17647058823529%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.17647058823529%'>WebGL(1)</a> </span>
+</section>
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black/">Build and deploy dart to Beaglebone Black</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/10/22/google-client-apis-new-release-0-dot-4-x/">google client apis new release 0.4.x</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/">Dart Multi Touch Canvas With Realtime APIs</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/financeCoding">@financeCoding</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'financeCoding',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Adam Singer -
+  <a href='https://plus.google.com/u/0/104569492481999771226/posts' rel='me'>Adam Singer</a>
+  - <a href='https://github.com/financeCoding' rel='me'>Adam Singer @ Github</a>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'financecoding';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://financeCoding.github.com/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black/';
+        var disqus_url = 'http://financeCoding.github.com/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

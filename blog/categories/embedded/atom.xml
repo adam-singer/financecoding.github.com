@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: embedded | Random posts about coding]]></title>
+  <title><![CDATA[Category: Embedded | Random posts about coding]]></title>
   <link href="http://financeCoding.github.com/blog/categories/embedded/atom.xml" rel="self"/>
   <link href="http://financeCoding.github.com/"/>
-  <updated>2013-10-22T21:13:50-07:00</updated>
+  <updated>2013-11-30T15:53:28-08:00</updated>
   <id>http://financeCoding.github.com/</id>
   <author>
     <name><![CDATA[Adam Singer]]></name>
@@ -14,265 +14,300 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Netduino Plus with RelayShield as networked light switches]]></title>
-    <link href="http://financeCoding.github.com/blog/2011/07/31/netduino-plus-with-relayshield-as-networked-light-switches/"/>
-    <updated>2011-07-31T00:00:00-07:00</updated>
-    <id>http://financeCoding.github.com/blog/2011/07/31/netduino-plus-with-relayshield-as-networked-light-switches</id>
-    <content type="html"><![CDATA[<p>Picked up a fun <a href="http://garden.seeedstudio.com/index.php?title=Relay_Shield">relay shield</a> from the <a href="http://www.seeedstudio.com/depot/">seeedstudio</a> people. My goal was to be able to control lights over the network. After grabbing some webserver code from this <a href="http://forums.netduino.com/index.php?/topic/1345-pachube-client-for-netduinoplus/">post</a>, I was able to get a simple <a href="https://bitbucket.org/financecoding/relaywebserver/overview">basic web server and light controller</a> up in no time. One stumbling block I had was the MAC configuration with <a href="http://msdn.microsoft.com/en-us/library/cc544593.aspx">MFDeploy</a>. If you don't use the proper MAC that was assigned to the Ethernet controller you could have potential DHCP or router ARP table issues. When setting up the <a href="http://www.netduino.com/netduinoplus/specs.htm">netduino</a> network I was lazy and put in a bogus MAC, that caused a few hours of debugging. Once deployed and networking is configured hit the root address from the network and a simple page with links get displayed</p>
+    <title type="html"><![CDATA[Build and deploy dart to Beaglebone Black]]></title>
+    <link href="http://financeCoding.github.com/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black/"/>
+    <updated>2013-11-29T08:56:00-08:00</updated>
+    <id>http://financeCoding.github.com/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black</id>
+    <content type="html"><![CDATA[<p>I was looking into using <a href="https://www.dartlang.org">dart</a> on <a href="http://beagleboard.org/products/beaglebone%20black">Beaglebone Black</a> and decided it would be useful to share with others what I found.</p>
 
-<p><img src="http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu1.png" alt="" /></p>
+<p>After a some build hacks and patches I found a minimal working solution for Beaglebone Black with <a href="https://wiki.debian.org/ArmHardFloatPort">Debian</a> <a href="http://www.armhf.com/">ARMhf</a>. A few important notes before going down the road of building dart for ARM. The <code>dart-sdk</code> is not fully supported and pub currently might not work. The <code>dartanalyzer</code> might not work. The only supported <a href="http://en.wikipedia.org/wiki/List_of_ARM_cores">ARM architectures</a> are the ones that have <a href="http://en.wikipedia.org/wiki/ARMv7#32-bit_architecture">ARMv7</a> with <a href="http://en.wikipedia.org/wiki/ARM_architecture#Floating-point_.28VFP.29">VFP</a>. Don't spin your wheels trying to target any architecutre that is not <code>ARMv7</code> with VFP (minimum at the moment <code>ARMv7-A</code>) unless you plan on implementing the routines needed in the runtime <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/runtime/vm/assembler_arm.cc">arm assembler</a>. If you do plan on implementing them, well thats just pure awesome!</p>
 
-<p>Quick photo and diagram of the setup</p>
+<p>```cpp assembler_arm.cc
+void CPUFeatures::InitOnce() {</p>
 
-<p><img src="http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu2.jpg" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-<img src="http://financecoding.files.wordpress.com/2011/07/080111_0110_netduinoplu3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-Pick up the <a href="https://bitbucket.org/financecoding/relaywebserver/overview">code</a> hack around and have fun. Suggestions and comments welcome.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Building and Editing Linux Kernel in Eclipse for Android Rowboat]]></title>
-    <link href="http://financeCoding.github.com/blog/2011/03/17/building-and-editing-linux-kernel-in-eclipse-for-android-rowboat/"/>
-    <updated>2011-03-17T00:00:00-07:00</updated>
-    <id>http://financeCoding.github.com/blog/2011/03/17/building-and-editing-linux-kernel-in-eclipse-for-android-rowboat</id>
-    <content type="html"><![CDATA[<p>First off some references I used to complete this task. This was possibly the best so far
-<a href="http://issaris.blogspot.com/2007/12/download-linux-kernel-sourcecode-from.html">http://issaris.blogspot.com/2007/12/download-linux-kernel-sourcecode-from.html</a>
-Some other references also helped <a title="Eclipse Wiki" href="http://wiki.eclipse.org/HowTo_use_the_CDT_to_navigate_Linux_kernel_source" target="_blank">Ref1</a>, <a title="linuxtopia" href="http://www.linuxtopia.org/online_books/eclipse_documentation/eclipse_c_c++_guide/topic/org.eclipse.cdt.doc.user/getting_started/eclipse_c_c++_guide_cdt_w_existing_code.htm" target="_blank">Ref2</a>, <a title="devkit8000" href="http://devkit8000.wikispaces.com/CPP+development+with+Eclipse" target="_blank">Ref3</a>, <a title="bigresource" href="http://android.bigresource.com/Android-run-android-source-code-in-linux-eclipse-bQKNaH320.html" target="_blank">Ref4
-</a>I had following file system layout when dealing with <a href="http://processors.wiki.ti.com/index.php/TI-Android-FroYo-DevKit-V2.2_UserGuide">TI_DevKit V2.2</a></p>
+<h1>if defined(USING_SIMULATOR)</h1>
 
-<p><img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></p>
+<p>  integer_division_supported<em> = true;
+  neon_supported</em> = true;</p>
 
-<p>After you have everything imported per directions the next big step is getting the .config setup. Follow the directions on the <a href="http://code.google.com/p/rowboat/wiki/ConfigureAndBuild">android rowboat</a> site for doing a first build of the linux kernel in commandline before trying to build from eclipse. This helps generate the .config file. Some additional settings needed was PATH and Build Command</p>
+<h1>else</h1>
 
-<p><img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand2.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></p>
+<p>  ASSERT(CPUInfoContainsString("ARMv7"));  // Implements ARMv7.
+  ASSERT(CPUInfoContainsString("vfp"));  // Has floating point unit.
+  // Has integer division.
+  if (CPUInfoContainsString("QCT APQ8064")) {</p>
 
-<p><em>/home/adam/BeagleBoard/rowboat-prebuilt/linux-x86/toolchain/arm-eabi-4.4.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games</em></p>
+<pre><code>// Special case for Qualcomm Krait CPUs in Nexus 4 and 7.
+integer_division_supported_ = true;
+</code></pre>
 
-<p><img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></p>
+<p>  } else {</p>
 
-<p><img src="http://financecoding.files.wordpress.com/2011/03/031711_0640_buildingand4.png" alt="" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[BeagleTouch on TI_Android_Froyo_DevKit-V2.2]]></title>
-    <link href="http://financeCoding.github.com/blog/2011/03/06/beagletouch-on-ti_android_froyo_devkit-v2-2/"/>
-    <updated>2011-03-06T00:00:00-08:00</updated>
-    <id>http://financeCoding.github.com/blog/2011/03/06/beagletouch-on-ti_android_froyo_devkit-v2-2</id>
-    <content type="html"><![CDATA[<p>Liquidware's <a href="http://www.liquidware.com/shop/show/BB-BT/BeagleTouch">BeagleTouch</a> provides a nice display device for <a href="http://beagleboard.org/">BeagleBoard</a> developer. They provide non android <a href="https://github.com/liquidware/liquidware_beagleboard_linux/tree/liquidware">linux</a> kernel source code to jump in right away to use it. <a href="http://antipastohw.pbworks.com/w/page/27129517/BeagleTouch">BeagleTouch blog</a> post by will on <a href="http://antipastohw.pbworks.com/w/page/26554120/FrontPage">antipastohw</a>. Here is some crude patches to get started with it on <a href="http://code.google.com/p/rowboat/">rowboat</a> / <a href="http://processors.wiki.ti.com/index.php/TI-Android-FroYo-DevKit-V2.2_UserGuide">TI DevKit</a>. I have my patches located on google docs:</p>
+<pre><code>integer_division_supported_ = CPUInfoContainsString("idiva");
+</code></pre>
 
-<p><a href="https://docs.google.com/leaf?id=0B29MR2FlgtejMjFjOWVhOGYtOThiNC00NGJkLTk5NTktMDE3ZTBiZjhhYTY0&amp;hl=en"><span style="font-family:Arial;font-size:10pt;">BeagleTouch.TI_Android_Froyo_DevKit-V2.2.config</span></a><span style="color:black;font-family:Arial;font-size:10pt;">
-</span></p>
+<p>  }
+  neon_supported_ = CPUInfoContainsString("neon");</p>
 
-<p><a href="https://docs.google.com/leaf?id=0B29MR2FlgtejODdjZDBhNzQtZmYyNC00MWVmLWI4YzYtN2Y2ODNhZjlhZmRk&amp;hl=en"><span style="font-family:Arial;font-size:10pt;">BeagleTouch.TI_Android_Froyo_DevKit-V2.2.patch</span></a><span style="color:black;font-family:Arial;font-size:10pt;">
-</span></p>
+<h1>endif  // defined(USING_SIMULATOR)</h1>
 
-<p>Apply the patch accordingly and copy over the config into the kernel source tree.</p>
+<h1>if defined(DEBUG)</h1>
 
-<p><img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></p>
+<p>  initialized_ = true;</p>
 
-<p>One issue that was noticeable from a direct patch of code was the y-axis being inverted. I corrected it with a hard coded reference value for now.</p>
+<h1>endif</h1>
 
-<p><img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch22.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></p>
+<p>}
+```</p>
 
-<p><img src="http://financecoding.files.wordpress.com/2011/03/030611_2121_beagletouch32.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></p>
+<h3>Download <a href="http://releases.ubuntu.com/precise/">Ubuntu 12.04.3 LTS</a></h3>
 
-<p>This patch doesn't help when offset loss happens in the touch screen. Looking info using <a href="https://github.com/kergoth/tslib">tslib</a> to capture better data settings and a linear formula for pointer <a href="http://wcyan.spaces.live.com/blog/cns!69F0ECE1192E739!381.entry">calculations</a>.  Some good instructions for compiling tslib on android can be found on <a href="http://www.eefocus.com/wenes1/blog/10-05/190293_09ed8.html">wenes1's blog</a>. A different direction to fix this issue would be to use <a href="http://androidzaurus.seesaa.net/article/90045743.html">Y_AXIS_MAX constant</a>.</p>
+<p>Download the desktop iso to install on VirtualBox.</p>
 
-<p>[youtube=http://www.youtube.com/watch?v=8594I2NDPsM]</p>
+<h3>Install on <a href="https://www.virtualbox.org/">VirtualBox</a></h3>
 
-<p>It was hard for me to find any direct documentation on how touch screen drivers should be designed and configured in Android. If you know of any please ping <a href="mailto:financecoding@gmail.com">me</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[How to Flash New Boot Loader and Firmware netduino mini]]></title>
-    <link href="http://financeCoding.github.com/blog/2010/12/24/how-to-flash-new-boot-loader-and-firmware-netduino-mini/"/>
-    <updated>2010-12-24T00:00:00-08:00</updated>
-    <id>http://financeCoding.github.com/blog/2010/12/24/how-to-flash-new-boot-loader-and-firmware-netduino-mini</id>
-    <content type="html"><![CDATA[<h5>I got my netduino in the mail and whatever was flashed on it was toast, so after a few posts on the forum I got great advice on how to flash the Boot Loader (TinyBooter) and firmware (ER_CONFIG and ER_FLASH)</h5>
+<p>I work mostly on mac so Ubuntu installed on VirtualBox was needed to help with cross compiling and flashing of uSD cards.</p>
 
+<h3>Update the packages</h3>
 
-<h5><span style="color:#366092;font-size:13pt;"><strong>Erase Chip</strong>
-</span></h5>
+<p>Just to be safe update any Ubuntu packages before installing the development software.</p>
 
+<h3>Install basic packages</h3>
 
-<h5>Erase the chip by applying +5v to the gold pad located by pin 12</h5>
+<p>I typically use the git <a href="https://code.google.com/p/dart/wiki/GettingTheSource#Using_Git">overlay</a> on subversion when working with the dart repo. The java jre/jdk is required for building the dart_analyzer which does not work in the sdk.</p>
 
+<p>```bash shell</p>
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<h1>Install subversion</h1>
 
+<p>sudo apt-get install subversion git git-svn openssh-server vim default-jre default-jdk
+```</p>
 
-<h5><span style="color:#366092;font-size:13pt;"><strong>Download the TinyBooter</strong>
-</span></h5>
+<h3>Install the chrome build and arm dependencies</h3>
 
+<p>Checkout the latest build tools scripts. The following scripts prep your system with any packages needed for building dart.</p>
 
-<h5><a href="http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/">http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/</a></h5>
+<p>```bash shell</p>
 
+<h1>checkout build scripts</h1>
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn2.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<p>svn co http://src.chromium.org/chrome/trunk/src/build; cd build</p>
 
+<h1>install dependencies</h1>
 
-<h5><span style="color:#366092;font-size:13pt;"><strong>Run SAM-BA</strong>
-</span></h5>
+<p>chmod u+x install-build-deps.sh
+./install-build-deps.sh --no-chromeos-fonts
+./install-build-deps.sh --no-chromeos-fonts --arm
+```</p>
 
+<h3>Install addtional libraries</h3>
 
-<h5>Run the SAM-BA application from ATMEL (Note if your on windows 7 Ultimate stick with an older version of SAM-BA, do not use 2.10.)</h5>
+<p>The following libraries are needed for building dart but might not be included from the chrome build tool scripts.</p>
 
+<p>```bash shell</p>
 
-<h5>The current package I have installed is from: Install_AT91-ISP_v1.13.exe</h5>
+<h1>Install addtional libs</h1>
 
+<p>sudo apt-get install libc6-dev-i386 g++-multilib
+```</p>
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<h3>Install depot-tools</h3>
 
+<p><a href="http://www.chromium.org/developers/how-tos/depottools">depot-tools</a> is required for hacking out the dart source code.</p>
 
-<h5><span style="color:#366092;font-size:13pt;"><strong>Power Up</strong>
-</span></h5>
+<p>```bash shell</p>
+
+<h1>depot tools</h1>
+
+<p>svn co http://src.chromium.org/svn/trunk/tools/depot_tools
+export PATH=$PATH:<code>pwd</code>//depot_tools
+```</p>
+
+<h3>Checkout the dart code base</h3>
+
+<p>You dont need to include <code>--username &lt;YOUR USERNAME&gt;</code> unless you plan on creating a CL for review.</p>
+
+<p><code>bash shell
+mkdir dart_bleeding
+cd dart_bleeding
+svn ls https://dart.googlecode.com/svn/branches/bleeding_edge/ --username &lt;YOUR USERNAME&gt;
+gclient config https://dart.googlecode.com/svn/branches/bleeding_edge/deps/all.deps
+git svn clone -rHEAD https://dart.googlecode.com/svn/branches/bleeding_edge/dart dart
+gclient sync
+gclient runhooks
+</code></p>
+
+<h3>Patch the gyp and version files</h3>
+
+<p>A git patch can be found here <a href="https://gist.github.com/financeCoding/7725354">7725354</a>, that patches the build scripts to support building the <code>dart-sdk</code> for ARM. Patching the <code>VERSION</code> file was done in an attempt to get pub working. At the moment its not required. If not done then an old version number is baked into the dartvm. This patch also modifies which dartvm creates the snapshots for <code>pub</code>, <code>dart2js</code> and a wrapper util. Patch creates the requirement of having to build the dartvm for x64 before building the <code>dart-sdk</code> for ARM. The dart build scripts have a funky dependency of wanting to use the dartvm target to create the snapshot files. Which in this case wont work since our dartvm is an ARM target being built on x64.</p>
+
+<p>```diff arm.build.patch
+diff --git a/tools/VERSION b/tools/VERSION
+index d1ab212..0d6101d 100644
+--- a/tools/VERSION
++++ b/tools/VERSION
+@@ -1,5 +1,5 @@
+ CHANNEL be
+-MAJOR 0
+-MINOR 1
+-BUILD 2
+-PATCH 0
++MAJOR 1
++MINOR 0
++BUILD 0
++PATCH 7
+diff --git a/utils/compiler/compiler.gyp b/utils/compiler/compiler.gyp
+index 294c7e9..5f3754a 100644
+--- a/utils/compiler/compiler.gyp
++++ b/utils/compiler/compiler.gyp
+@@ -18,7 +18,7 @@</p>
 
+<pre><code>     {
+       'action_name': 'generate_snapshots',
+       'inputs': [
+</code></pre>
 
-<h5>Power up the netdruino by connecting the power and serial TX/RX on pin 1 &amp; 2 (Note: make sure you have completely removed power after sending +5v to the gold pad)</h5>
+<ul>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/&lt;(EXECUTABLE_PREFIX)dart&lt;(EXECUTABLE_SUFFIX)',
+</code></pre></li>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/../DebugX64/dart',
+     '../../sdk/lib/_internal/libraries.dart',
+     '&lt;!@(["python", "../../tools/list_files.py", "\\.dart$", "../../sdk/lib/_internal/compiler", "../../runtime/lib", "../../sdk/lib/_internal/dartdoc"])',
+     'create_snapshot.dart',
+</code></pre>
 
+@@ -30,7 +30,7 @@
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn4.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<pre><code>     '&lt;(SHARED_INTERMEDIATE_DIR)/dart2js.dart.snapshot',
+   ],
+   'action': [
+</code></pre></li>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/&lt;(EXECUTABLE_PREFIX)dart&lt;(EXECUTABLE_SUFFIX)',
+</code></pre></li>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/../DebugX64/dart',
+     'create_snapshot.dart',
+     '--output_dir=&lt;(SHARED_INTERMEDIATE_DIR)',
+     '--dart2js_main=sdk/lib/_internal/compiler/implementation/dart2js.dart',
+</code></pre>
 
+diff --git a/utils/pub/pub.gyp b/utils/pub/pub.gyp
+index fd5e147..ab2e243 100644
+--- a/utils/pub/pub.gyp
++++ b/utils/pub/pub.gyp
+@@ -25,7 +25,7 @@
 
-<h5>Chose serial port and board</h5>
+<pre><code>     '&lt;(SHARED_INTERMEDIATE_DIR)/pub.dart.snapshot',
+   ],
+   'action': [
+</code></pre></li>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/&lt;(EXECUTABLE_PREFIX)dart&lt;(EXECUTABLE_SUFFIX)',
+</code></pre></li>
+<li><pre><code>     '&lt;(PRODUCT_DIR)/../DebugX64/dart',
+     '--package-root=&lt;(PRODUCT_DIR)/packages/',
+     '--snapshot=&lt;(SHARED_INTERMEDIATE_DIR)/pub.dart.snapshot',
+     '../../sdk/lib/_internal/pub/bin/pub.dart',
+</code></pre>
 
+<p>```</p></li>
+</ul>
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
 
+<h3>Build the <code>dart-sdk</code></h3>
 
-<h5>If the first time does not succeed power down and try again. And if it still does not succeed try hitting the gold pad for a second time.</h5>
+<p>Building of the <code>dart-sdk</code> for ARM target is a two stop process. First build x64 so we can use that dartvm to generate the snapshot files. Then the second step is running the <code>create_sdk</code> build for ARM. When the build is finished the <code>out/ReleaseARM/dart-sdk</code> should contain a full <code>dart-sdk</code> build. Keep in mind this does build the <code>dartanalyzer</code> but it may not work on ARM.</p>
 
+<p>```bash shell</p>
 
-<h5>If SAM-BA can communicate and get a valid id on the chip you should be presented with the following screen</h5>
+<h1>build a target for your native system to create the snapshot files.</h1>
 
+<p>./tools/build.py -m debug -v -a x64 -j 8</p>
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<h1>build the arm target</h1>
 
+<p>./tools/build.py -m release -v -a arm -j 8 create_sdk
+```</p>
 
-<h5>Choose a file to send while in the "Flash" tab.</h5>
+<h3>Tarball the sdk</h3>
 
+<p>Package up the <code>dart-sdk</code> as a tarball to distribute.</p>
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn7.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<p><code>bash shell
+cd ./out/ReleaseARM/
+tar -czvf dart-sdk.tar.gz dart-sdk
+</code></p>
 
+<h3>Install <a href="http://www.armhf.com/index.php/boards/beaglebone-black/#wheezy">Debian Wheezy 7.2 Hard Float Minimal Image</a> on Beaglebone Black</h3>
 
-<h5>Click Send File. The SAM-BA application isn't that great and locks up while sending data over the serial port. If possible just wait. This part of the process will take a while, even if you don't see data being sent over the serial port stuff is going on.</h5>
+<p>In virtualbox with a uSD card at <code>/dev/sdX</code> the following will download an image and write to the uSD card. Updated images can be found at <a href="http://www.armhf.com/index.php/boards/beaglebone-black/#wheezy">armhf</a></p>
 
+<p><code>bash shell
+wget http://s3.armhf.com/debian/wheezy/bone/debian-wheezy-7.2-armhf-3.8.13-bone30.img.xz
+xz -cd debian-wheezy-7.2-armhf-3.8.13-bone30.img.xz &gt; /dev/sdX
+</code></p>
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn8.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<p>Then insert the uSD card into the Beaglebone Black and boot the image by holding down the boot switch and powering on.</p>
 
+<p><img src="http://elinux.org/images/7/76/CONN_REVA5A.jpg"></p>
 
-<h5>SAM-BA will ask you if you want to "lock involved lock region(s) (0 to 2)", I choose "No" on this.</h5>
+<p>Write the booted image to the eMMC.</p>
 
+<p><code>bash shell
+xz -cd debian-wheezy-7.2-armhf-3.8.13-bone30.img.xz &gt; /dev/mmcblk1
+</code></p>
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn9.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<p>Power down and remove the uSD card.</p>
 
+<h3>Update glibc on the BeagleBone Black</h3>
 
-<h5>At this point you should have succeefully flashed the Boot Loader onto the netduino mini. Click on "Compare sent file with memory" to ensure the Boot Loader did not get corrupted in the process. If everything is fine you should be presented with something similar to  the following screen.</h5>
+<p>Updating glibc is required cause the version of glibc installed from the chromium build scripts is greater then the one shipped with Wheezy 7.2. The following commands update glibc.</p>
 
+<p>```bash shell</p>
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn10.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<h1>Add an addtional source for the latest glibc</h1>
 
+<p>sudo sed -i '1i deb http://ftp.us.debian.org/debian/ jessie main' /etc/apt/sources.list</p>
 
-<h5>While still in the "Flash" tab execute the script "Boot from Flash (GPNVM2)" by clicking on the "Execute" button. The terminal on the bottom of the app should display "-I- GPNVM2 set"</h5>
+<h1>Update sources</h1>
 
+<p>sudo apt-get update</p>
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn11.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<h1>Download latest glibc</h1>
 
+<p>sudo DEBIAN_FRONTEND=noninteractive apt-get -t jessie install -y libc6 libc6-dev libc6-dbg git screen
+```</p>
 
-<h5><span style="color:#366092;font-size:13pt;"><strong>Download and extract the firmware</strong>
-</span></h5>
+<h3>Copy over <code>dart-sdk</code></h3>
 
+<p>From virtual box copy over the tarball to Beaglebone Black running debian.</p>
 
-<h5><a href="http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/">http://forums.netduino.com/index.php?/topic/621-netduino-mini-firmware-v410-update-5/</a></h5>
+<p><code>bash shell
+scp dart-sdk.tar.gz debian@192.168.2.2:~/
+</code></p>
 
+<p>After the tarball is copied, uncompress and add to your <code>PATH</code>.</p>
 
-<h5><span style="color:#366092;font-size:13pt;"><strong>Run MFDeploy.exe</strong>
-</span></h5>
+<p><code>bash shell
+tar -zxvf dart-sdk.tar.gz
+export PATH=~/dart-sdk:$PATH
+dart --version
+Dart VM version: 1.0.0.7_r30634_adam (Fri Nov 29 01:14:42 2013) on "linux_arm"
+</code></p>
 
+<h3>Known issues at the moment</h3>
 
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<p>Pub does not work, issue could be followed at <a href="https://code.google.com/p/dart/issues/detail?id=15383">15383</a>. I was testing this out while staying at a hotel so some proxy settings might of been blocking or tripping up pub.</p>
 
+<h3>Feedback</h3>
 
-<h5>Remove power from the netduino before trying to pin the device.</h5>
+<p>If you have a better way of running dart on Beagleblone Black I would love to hear it! Please contact me on <a href="https://plus.google.com/104569492481999771226/">g+</a> and lets discuss.</p>
 
+<h3>Addtional resources</h3>
 
-<h5>If you open a putty terminal and repower the device you should see the following</h5>
-
-
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn13.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
-
-
-<h5>This should help you determine if the Boot Loader that has been flash is working.</h5>
-
-
-<h5>Choose the proper COM port the netduino is on.</h5>
-
-
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn14.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
-
-
-<h5>Try and ping</h5>
-
-
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn15.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
-
-
-<h5>Erase</h5>
-
-
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn16.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
-
-
-<h5><span style="color:#366092;font-size:13pt;"><strong>Deploy Firmware</strong>
-</span></h5>
-
-
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn17.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
-
-
-<h5>A successful flash should look something like this</h5>
-
-
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn18.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
-
-
-<h5>Try sending some debug commands</h5>
-
-
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn19.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
-
-
-<h5><img src="http://financecoding.files.wordpress.com/2010/12/122410_0519_howtoflashn20.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span></h5>
+<ul>
+<li><a href="https://github.com/financeCoding/dart_bleeding">dart_bleeding</a> contains some scripts I typically use for this entire process.</li>
+<li><a href="https://code.google.com/p/dart/wiki/PreparingYourMachine">PreparingYourMachine</a> resources for preping your machine to build from source</li>
+<li><a href="https://code.google.com/p/dart/wiki/GettingTheSource">GettingTheSource</a> getting the source code documentation</li>
+</ul>
 
 ]]></content>
   </entry>
