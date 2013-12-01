@@ -14,7 +14,7 @@ categories:
 
 I was looking into using [dart](https://www.dartlang.org) on [Beaglebone Black](http://beagleboard.org/products/beaglebone%20black) and decided it would be useful to share with others what I found.
 
-After a some build hacks and patches I found a minimal working solution for Beaglebone Black with [Debian](https://wiki.debian.org/ArmHardFloatPort) [ARMhf](http://www.armhf.com/). A few important notes before going down the road of building dart for ARM. The `dart-sdk` is not fully supported and pub currently might not work. The `dartanalyzer` might not work. The only supported [ARM architectures](http://en.wikipedia.org/wiki/List_of_ARM_cores) are the ones that have [ARMv7](http://en.wikipedia.org/wiki/ARMv7#32-bit_architecture) with [VFP](http://en.wikipedia.org/wiki/ARM_architecture#Floating-point_.28VFP.29). Don't spin your wheels trying to target any architecutre that is not `ARMv7` with VFP (minimum at the moment `ARMv7-A`) unless you plan on implementing the routines needed in the runtime [arm assembler](https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/runtime/vm/assembler_arm.cc). If you do plan on implementing them, well thats just pure awesome!
+After a some build hacks and patches I found a minimal working solution for Beaglebone Black with [Debian](https://wiki.debian.org/ArmHardFloatPort) [ARMhf](http://www.armhf.com/). A few important notes before going down the road of building dart for ARM. The `dart-sdk` is not fully supported and pub currently might not work. ~~The `dartanalyzer` might not work~~. The only supported [ARM architectures](http://en.wikipedia.org/wiki/List_of_ARM_cores) are the ones that have [ARMv7](http://en.wikipedia.org/wiki/ARMv7#32-bit_architecture) with [VFP](http://en.wikipedia.org/wiki/ARM_architecture#Floating-point_.28VFP.29). Don't spin your wheels trying to target any architecutre that is not `ARMv7` with VFP (minimum at the moment `ARMv7-A`) unless you plan on implementing the routines needed in the runtime [arm assembler](https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/runtime/vm/assembler_arm.cc). If you do plan on implementing them, well thats just pure awesome!
 
 ```cpp assembler_arm.cc
 void CPUFeatures::InitOnce() {
@@ -165,7 +165,7 @@ index fd5e147..ab2e243 100644
 
 ### Build the `dart-sdk`  
 
-Building of the `dart-sdk` for ARM target is a two stop process. First build x64 so we can use that dartvm to generate the snapshot files. Then the second step is running the `create_sdk` build for ARM. When the build is finished the `out/ReleaseARM/dart-sdk` should contain a full `dart-sdk` build. Keep in mind this does build the `dartanalyzer` but it may not work on ARM.   
+Building of the `dart-sdk` for ARM target is a two stop process. First build x64 so we can use that dartvm to generate the snapshot files. Then the second step is running the `create_sdk` build for ARM. When the build is finished the `out/ReleaseARM/dart-sdk` should contain a full `dart-sdk` build. ~~Keep in mind this does build the `dartanalyzer` but it may not work on ARM.~~
 
 ```bash shell
 # build a target for your native system to create the snapshot files. 
@@ -243,7 +243,15 @@ Pub does not work, issue could be followed at [15383](https://code.google.com/p/
 
 ### Feedback
 
-If you have a better way of running dart on Beagleblone Black I would love to hear it! Please contact me on [g+](https://plus.google.com/104569492481999771226/) and lets discuss. 
+If you have a better way of running dart on Beagleblone Black I would love to hear it! Please contact me on [g+](https://plus.google.com/104569492481999771226/) and lets discuss.
+
+### Update on `dartanalyzer`
+
+`dartanalyzer` will work after installing the `default-jre` on Beaglebone Black.
+
+```bash shell
+sudo apt-get install default-jre
+``` 
 
 ### Addtional resources
 
