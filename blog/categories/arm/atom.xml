@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ARM | Random posts about coding]]></title>
   <link href="http://financeCoding.github.com/blog/categories/arm/atom.xml" rel="self"/>
   <link href="http://financeCoding.github.com/"/>
-  <updated>2013-11-30T15:53:28-08:00</updated>
+  <updated>2013-11-30T16:10:03-08:00</updated>
   <id>http://financeCoding.github.com/</id>
   <author>
     <name><![CDATA[Adam Singer]]></name>
@@ -20,7 +20,7 @@
     <id>http://financeCoding.github.com/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black</id>
     <content type="html"><![CDATA[<p>I was looking into using <a href="https://www.dartlang.org">dart</a> on <a href="http://beagleboard.org/products/beaglebone%20black">Beaglebone Black</a> and decided it would be useful to share with others what I found.</p>
 
-<p>After a some build hacks and patches I found a minimal working solution for Beaglebone Black with <a href="https://wiki.debian.org/ArmHardFloatPort">Debian</a> <a href="http://www.armhf.com/">ARMhf</a>. A few important notes before going down the road of building dart for ARM. The <code>dart-sdk</code> is not fully supported and pub currently might not work. The <code>dartanalyzer</code> might not work. The only supported <a href="http://en.wikipedia.org/wiki/List_of_ARM_cores">ARM architectures</a> are the ones that have <a href="http://en.wikipedia.org/wiki/ARMv7#32-bit_architecture">ARMv7</a> with <a href="http://en.wikipedia.org/wiki/ARM_architecture#Floating-point_.28VFP.29">VFP</a>. Don't spin your wheels trying to target any architecutre that is not <code>ARMv7</code> with VFP (minimum at the moment <code>ARMv7-A</code>) unless you plan on implementing the routines needed in the runtime <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/runtime/vm/assembler_arm.cc">arm assembler</a>. If you do plan on implementing them, well thats just pure awesome!</p>
+<p>After a some build hacks and patches I found a minimal working solution for Beaglebone Black with <a href="https://wiki.debian.org/ArmHardFloatPort">Debian</a> <a href="http://www.armhf.com/">ARMhf</a>. A few important notes before going down the road of building dart for ARM. The <code>dart-sdk</code> is not fully supported and pub currently might not work. <del>The <code>dartanalyzer</code> might not work</del>. The only supported <a href="http://en.wikipedia.org/wiki/List_of_ARM_cores">ARM architectures</a> are the ones that have <a href="http://en.wikipedia.org/wiki/ARMv7#32-bit_architecture">ARMv7</a> with <a href="http://en.wikipedia.org/wiki/ARM_architecture#Floating-point_.28VFP.29">VFP</a>. Don't spin your wheels trying to target any architecutre that is not <code>ARMv7</code> with VFP (minimum at the moment <code>ARMv7-A</code>) unless you plan on implementing the routines needed in the runtime <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/runtime/vm/assembler_arm.cc">arm assembler</a>. If you do plan on implementing them, well thats just pure awesome!</p>
 
 <p>```cpp assembler_arm.cc
 void CPUFeatures::InitOnce() {</p>
@@ -214,7 +214,7 @@ index fd5e147..ab2e243 100644
 
 <h3>Build the <code>dart-sdk</code></h3>
 
-<p>Building of the <code>dart-sdk</code> for ARM target is a two stop process. First build x64 so we can use that dartvm to generate the snapshot files. Then the second step is running the <code>create_sdk</code> build for ARM. When the build is finished the <code>out/ReleaseARM/dart-sdk</code> should contain a full <code>dart-sdk</code> build. Keep in mind this does build the <code>dartanalyzer</code> but it may not work on ARM.</p>
+<p>Building of the <code>dart-sdk</code> for ARM target is a two stop process. First build x64 so we can use that dartvm to generate the snapshot files. Then the second step is running the <code>create_sdk</code> build for ARM. When the build is finished the <code>out/ReleaseARM/dart-sdk</code> should contain a full <code>dart-sdk</code> build. <del>Keep in mind this does build the <code>dartanalyzer</code> but it may not work on ARM.</del></p>
 
 <p>```bash shell</p>
 
@@ -300,6 +300,14 @@ Dart VM version: 1.0.0.7_r30634_adam (Fri Nov 29 01:14:42 2013) on "linux_arm"
 <h3>Feedback</h3>
 
 <p>If you have a better way of running dart on Beagleblone Black I would love to hear it! Please contact me on <a href="https://plus.google.com/104569492481999771226/">g+</a> and lets discuss.</p>
+
+<h3>Update on <code>dartanalyzer</code></h3>
+
+<p><code>dartanalyzer</code> will work after installing the <code>default-jre</code> on Beaglebone Black.</p>
+
+<p><code>bash shell
+sudo apt-get install default-jre
+</code></p>
 
 <h3>Addtional resources</h3>
 

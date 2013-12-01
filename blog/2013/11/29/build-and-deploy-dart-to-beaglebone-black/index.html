@@ -112,7 +112,7 @@
 
 <div class="entry-content"><p>I was looking into using <a href="https://www.dartlang.org">dart</a> on <a href="http://beagleboard.org/products/beaglebone%20black">Beaglebone Black</a> and decided it would be useful to share with others what I found.</p>
 
-<p>After a some build hacks and patches I found a minimal working solution for Beaglebone Black with <a href="https://wiki.debian.org/ArmHardFloatPort">Debian</a> <a href="http://www.armhf.com/">ARMhf</a>. A few important notes before going down the road of building dart for ARM. The <code>dart-sdk</code> is not fully supported and pub currently might not work. The <code>dartanalyzer</code> might not work. The only supported <a href="http://en.wikipedia.org/wiki/List_of_ARM_cores">ARM architectures</a> are the ones that have <a href="http://en.wikipedia.org/wiki/ARMv7#32-bit_architecture">ARMv7</a> with <a href="http://en.wikipedia.org/wiki/ARM_architecture#Floating-point_.28VFP.29">VFP</a>. Don&#8217;t spin your wheels trying to target any architecutre that is not <code>ARMv7</code> with VFP (minimum at the moment <code>ARMv7-A</code>) unless you plan on implementing the routines needed in the runtime <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/runtime/vm/assembler_arm.cc">arm assembler</a>. If you do plan on implementing them, well thats just pure awesome!</p>
+<p>After a some build hacks and patches I found a minimal working solution for Beaglebone Black with <a href="https://wiki.debian.org/ArmHardFloatPort">Debian</a> <a href="http://www.armhf.com/">ARMhf</a>. A few important notes before going down the road of building dart for ARM. The <code>dart-sdk</code> is not fully supported and pub currently might not work. <del>The <code>dartanalyzer</code> might not work</del>. The only supported <a href="http://en.wikipedia.org/wiki/List_of_ARM_cores">ARM architectures</a> are the ones that have <a href="http://en.wikipedia.org/wiki/ARMv7#32-bit_architecture">ARMv7</a> with <a href="http://en.wikipedia.org/wiki/ARM_architecture#Floating-point_.28VFP.29">VFP</a>. Don&#8217;t spin your wheels trying to target any architecutre that is not <code>ARMv7</code> with VFP (minimum at the moment <code>ARMv7-A</code>) unless you plan on implementing the routines needed in the runtime <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/runtime/vm/assembler_arm.cc">arm assembler</a>. If you do plan on implementing them, well thats just pure awesome!</p>
 
 <figure class='code'><figcaption><span>assembler_arm.cc</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -353,7 +353,7 @@
 
 <h3>Build the <code>dart-sdk</code></h3>
 
-<p>Building of the <code>dart-sdk</code> for ARM target is a two stop process. First build x64 so we can use that dartvm to generate the snapshot files. Then the second step is running the <code>create_sdk</code> build for ARM. When the build is finished the <code>out/ReleaseARM/dart-sdk</code> should contain a full <code>dart-sdk</code> build. Keep in mind this does build the <code>dartanalyzer</code> but it may not work on ARM.</p>
+<p>Building of the <code>dart-sdk</code> for ARM target is a two stop process. First build x64 so we can use that dartvm to generate the snapshot files. Then the second step is running the <code>create_sdk</code> build for ARM. When the build is finished the <code>out/ReleaseARM/dart-sdk</code> should contain a full <code>dart-sdk</code> build. <del>Keep in mind this does build the <code>dartanalyzer</code> but it may not work on ARM.</del></p>
 
 <figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -455,6 +455,17 @@
 <h3>Feedback</h3>
 
 <p>If you have a better way of running dart on Beagleblone Black I would love to hear it! Please contact me on <a href="https://plus.google.com/104569492481999771226/">g+</a> and lets discuss.</p>
+
+<h3>Update on <code>dartanalyzer</code></h3>
+
+<p><code>dartanalyzer</code> will work after installing the <code>default-jre</code> on Beaglebone Black.</p>
+
+<figure class='code'><figcaption><span>shell</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>sudo apt-get install default-jre
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
 
 <h3>Addtional resources</h3>
 
