@@ -13,7 +13,7 @@
   <meta property="og:description" content="" />
 
   
-  <meta name="description" content="A fun example using Dart to draw on Canvas an H-Fractal. Fractals are those beautiful geometric shapes that can be implemented with recursion in &hellip;">
+  <meta name="description" content="Sample post">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -82,6 +82,43 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/01/06/Upgraded-my-blogger/">Upgraded My Blogger</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+<time datetime="2012-01-06T08:35:09Z" pubdate data-updated="true">Jan 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content">Sample post<div class="blogger-post-footer"><img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/478539871162226053-8944341043724060039?l=financecoding.blogspot.com' alt='' /></div></div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -591,108 +628,6 @@ And you have the basic hello world from the cloud foundry samples.
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/04/02/byte-clientserver-for-springframework-net/">Byte Client/Server for SpringFramework.NET</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-04-02T00:00:00-07:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2011</time>
-        
-         | <a href="/blog/2011/04/02/byte-clientserver-for-springframework-net/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><a href="https://docs.google.com/leaf?id=0B29MR2FlgtejYmYzZTQ5NzktOTRlZi00M2I4LTk1N2EtOTg0ZWZmY2ZjZTI4&amp;hl=en">Investigating</a> using <a href="http://www.springframework.net">springframework.net</a> for a project, I decided to create a quick sample of how to pass byte arrays around in a client server model. Reviewing the <a href="http://www.springframework.net/doc-latest/reference/html/nms-quickstart.html">Spring.NmsQuickStart</a> helped me create a sample that just passes byte arrays from a client to the server. One starting point was to get <a href="http://activemq.apache.org/">ActiveMQ</a> running on the system, downloading the latest at the time <a href="http://activemq.apache.org/activemq-550-release.html">ActiveMQ 5.5.0 Release</a>. Unpack and launch the activemq service
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients1.png" alt="" />
-
-The administration console can be viewed from a web url <a href="http://localhost:8161/admin">http://localhost:8161/admin</a>
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients2.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-The project&#8217;s layout has a server, client, and shared data component.
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-The objects that get passed between the client and server are located in ByteServer.Common. This is a very simply defined byte array object.
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients4.png" alt="" />
-
-A bat file located in the Data folder called generate-classes.bat is used to create the C# code from DataBlob.xsd.
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-The Converters folder holds some general utility classes that help with converting and resolving type objects from xml.
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-For the server component the sample is laid out as follows. Config data containing the configuration data for the spring framework. Handlers for handling and routing messages to the correct locations within the application. Services for defining the service interfaces. Gateways for sending service data out.
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients7.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-A good general start is to define and implement the service interfaces before moving onto anything else. The sample defines a single call that the client can make that returns a response.
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients8.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-Actual implementation of this interface is bind by the spring framework configuration data in ServiceStubs.xml
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients9.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-<span style="color:#595959;font-size:9pt;">Screen clipping taken: 4/2/2011 10:06 PM
-</span>
-
-Handlers.xml is the configuration data that binds the service object to a handler object which then gets configured as a MesssageListenerAdapter in the Messaging.xml configuration.
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients10.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients11.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-The MessageListenerAdapter is then assigned a destination &#8220;APP.DATA.BLOB.REQUEST&#8221; to consume messages that are passed on that pipe.
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-The client application is very similar except we need a Gateway to get our messages from the client to the server and receive the return objects from the server. Config folder contains the spring framework configurations. Handlers contains the functions that handle returns from the server. Gateways contain the object that can communicate directly with the message broker for sending messages. Controller would be the objects that could be used in a MVC fashion in application development.
-
-<img src="http://financecoding.files.wordpress.com/2011/04/040311_0544_byteclients13.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-The trickiest thing I found about using spring framework for .net was getting the configuration data correct. Besides that the data transferred is great, very fast and persistence works great in AciveMQ. Here is <a href="https://docs.google.com/leaf?id=0B29MR2FlgtejYmYzZTQ5NzktOTRlZi00M2I4LTk1N2EtOTg0ZWZmY2ZjZTI4&amp;hl=en">ByteServer.zip</a> project, the springframework.net project need to be included or referenced.
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/7/">&larr; Older</a>
@@ -718,11 +653,15 @@ The trickiest thing I found about using spring framework for .net was getting th
 
 <section>
   <h1>Tag Cloud</h1>
-    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.52941176470588%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.17647058823529%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.17647058823529%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.17647058823529%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.17647058823529%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.17647058823529%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.52941176470588%'>API(3)</a> <a href='/blog/categories/arm' style='font-size: 101.17647058823529%'>ARM(1)</a> <a href='/blog/categories/armv7' style='font-size: 101.17647058823529%'>ARMv7(1)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.3529411764706%'>BeagleBoard(2)</a> <a href='/blog/categories/beagleboneblack' style='font-size: 101.17647058823529%'>BeagleBoneBlack(1)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.3529411764706%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.17647058823529%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.17647058823529%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.17647058823529%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.17647058823529%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.70588235294117%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.3529411764706%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.17647058823529%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.17647058823529%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 101.17647058823529%'>chrome.dart(1)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.52941176470588%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.17647058823529%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 102.3529411764706%'>Client(2)</a> <a href='/blog/categories/cloud' style='font-size: 102.3529411764706%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.3529411764706%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.17647058823529%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.70588235294117%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.17647058823529%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(51)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.3529411764706%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.17647058823529%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.52941176470588%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.17647058823529%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.3529411764706%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.52941176470588%'>DartVM(3)</a> <a href='/blog/categories/debian' style='font-size: 101.17647058823529%'>Debian(1)</a> <a href='/blog/categories/debugging' style='font-size: 101.17647058823529%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.70588235294117%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.17647058823529%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 101.17647058823529%'>Embedded(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.70588235294117%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 114.11764705882354%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.17647058823529%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.17647058823529%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.17647058823529%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.17647058823529%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.17647058823529%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 128.23529411764707%'>Google(24)</a> <a href='/blog/categories/googleapi' style='font-size: 101.17647058823529%'>GoogleApi(1)</a> <a href='/blog/categories/googleapi' style='font-size: 102.3529411764706%'>GoogleAPI(2)</a> <a href='/blog/categories/googleapi' style='font-size: 102.3529411764706%'>googleapi(2)</a> <a href='/blog/categories/gplus' style='font-size: 101.17647058823529%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 105.88235294117646%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.17647058823529%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.17647058823529%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.17647058823529%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.17647058823529%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.3529411764706%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.52941176470588%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.3529411764706%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 105.88235294117646%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.17647058823529%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.17647058823529%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.3529411764706%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.17647058823529%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.17647058823529%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.17647058823529%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.3529411764706%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.17647058823529%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.70588235294117%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.70588235294117%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 102.3529411764706%'>Pub(2)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.17647058823529%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.17647058823529%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.3529411764706%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.17647058823529%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 129.41176470588235%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.3529411764706%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.17647058823529%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.17647058823529%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.17647058823529%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.3529411764706%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.17647058823529%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.17647058823529%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.3529411764706%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.3529411764706%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.52941176470588%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.17647058823529%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.17647058823529%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.3529411764706%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.17647058823529%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.17647058823529%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.17647058823529%'>WebGL(1)</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.46153846153847%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.15384615384616%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.15384615384616%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.15384615384616%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.15384615384616%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.15384615384616%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.46153846153847%'>API(3)</a> <a href='/blog/categories/arm' style='font-size: 101.15384615384616%'>ARM(1)</a> <a href='/blog/categories/armv7' style='font-size: 101.15384615384616%'>ARMv7(1)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.3076923076923%'>BeagleBoard(2)</a> <a href='/blog/categories/beagleboneblack' style='font-size: 101.15384615384616%'>BeagleBoneBlack(1)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.3076923076923%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.15384615384616%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.15384615384616%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.15384615384616%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.15384615384616%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.61538461538461%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.3076923076923%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.15384615384616%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.15384615384616%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 102.3076923076923%'>chrome.dart(2)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.46153846153847%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.15384615384616%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 102.3076923076923%'>Client(2)</a> <a href='/blog/categories/cloud' style='font-size: 102.3076923076923%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.3076923076923%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.15384615384616%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.61538461538461%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.15384615384616%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(52)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.3076923076923%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.15384615384616%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.46153846153847%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.15384615384616%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.3076923076923%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.46153846153847%'>DartVM(3)</a> <a href='/blog/categories/debian' style='font-size: 101.15384615384616%'>Debian(1)</a> <a href='/blog/categories/debugging' style='font-size: 101.15384615384616%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.61538461538461%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.15384615384616%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 101.15384615384616%'>Embedded(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.61538461538461%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 113.84615384615384%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.15384615384616%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.15384615384616%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.15384615384616%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.15384615384616%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.15384615384616%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 127.6923076923077%'>Google(24)</a> <a href='/blog/categories/google-apps-api' style='font-size: 101.15384615384616%'>Google Apps API(1)</a> <a href='/blog/categories/google-ext-api' style='font-size: 101.15384615384616%'>Google Ext API(1)</a> <a href='/blog/categories/googleapi' style='font-size: 102.3076923076923%'>GoogleAPI(2)</a> <a href='/blog/categories/googleapi' style='font-size: 102.3076923076923%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.15384615384616%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.15384615384616%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 105.76923076923077%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.15384615384616%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.15384615384616%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.15384615384616%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.15384615384616%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.3076923076923%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.46153846153847%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.3076923076923%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 105.76923076923077%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.15384615384616%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.15384615384616%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.3076923076923%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.15384615384616%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.15384615384616%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.15384615384616%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.3076923076923%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.15384615384616%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.61538461538461%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.61538461538461%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 102.3076923076923%'>Pub(2)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.15384615384616%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.15384615384616%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.3076923076923%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.15384615384616%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 128.84615384615384%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.3076923076923%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.15384615384616%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.15384615384616%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.15384615384616%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.3076923076923%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.15384615384616%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.15384615384616%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.3076923076923%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.3076923076923%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.46153846153847%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.15384615384616%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.15384615384616%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.3076923076923%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.15384615384616%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.15384615384616%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.15384615384616%'>WebGL(1)</a> </span>
 </section>
 <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/01/14/chrome-dot-dart-0-dot-4-0-release/">chrome.dart 0.4.0 release</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/11/29/build-and-deploy-dart-to-beaglebone-black/">Build and deploy dart to Beaglebone Black</a>
@@ -738,10 +677,6 @@ The trickiest thing I found about using spring framework for .net was getting th
     
       <li class="post">
         <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/03/21/dart-multi-touch-canvas-with-realtime-apis/">Dart Multi Touch Canvas With Realtime APIs</a>
       </li>
     
   </ul>
@@ -785,7 +720,7 @@ The trickiest thing I found about using spring framework for .net was getting th
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Adam Singer -
+  Copyright &copy; 2014 - Adam Singer -
   <a href='https://plus.google.com/u/0/104569492481999771226/posts' rel='me'>Adam Singer</a>
   - <a href='https://github.com/financeCoding' rel='me'>Adam Singer @ Github</a>
 </p>
