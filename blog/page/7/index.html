@@ -13,7 +13,7 @@
   <meta property="og:description" content="" />
 
   
-  <meta name="description" content="Investigating using springframework.net for a project, I decided to create a quick sample of how to pass byte arrays around in a client server model &hellip;">
+  <meta name="description" content="After picking up SpringSource Tool Suite and Installing the Cloudfoundry plugins creating a new java project is painless, as long as you know which &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -82,6 +82,88 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2011/05/20/creating-new-java-project-with-cloudfoundry-and-spring-source-tool/">Creating New Java Project With Cloudfoundry and Spring Source Tool</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-05-20T00:00:00-07:00" pubdate data-updated="true">May 20<span>th</span>, 2011</time>
+        
+         | <a href="/blog/2011/05/20/creating-new-java-project-with-cloudfoundry-and-spring-source-tool/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content">After picking up <a href="http://www.springsource.com/developer/sts">SpringSource Tool Suite</a> and Installing the <a href="http://blog.springsource.com/2011/04/13/using-cloud-foundry-from-sts/">Cloudfoundry plugins</a> creating a new java project is painless, as long as you know which options to choose. From the New wizard you need to choose &#8220;Dynamic Web Project&#8221;
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Target runtime at the time of this post was &#8220;Cloud Foundry (Runtime) v1.0&#8221; and Dynamic web module version &#8220;2.5&#8221; with a Configuration of &#8220;Default Configuration for Cloud Foundry (Runtime) v1.0&#8221;
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew2.png" alt="" />
+
+The Project layout
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Creating a new Package and class
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew4.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Create a classic <a href="http://en.wikipedia.org/wiki/Hello_world_program">HelloWorld</a>
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew7.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Time to extend the <a href="http://download.oracle.com/javaee/5/api/javax/servlet/http/HttpServlet.html">HttpServlet</a> and override <a href="http://download.oracle.com/javaee/5/api/javax/servlet/http/HttpServlet.html">doGet</a>
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew8.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Add entries of the <a href="http://www.caucho.com/resin-3.0/config/webapp.xtp">servlet</a> and <a href="http://www.caucho.com/resin-3.0/config/webapp.xtp">servlet-mapping</a>
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew9.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Add Application
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew10.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+Start the service
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew11.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+And you have the basic hello world from the cloud foundry samples.
+
+<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
+</span>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -641,6 +723,10 @@ It was hard for me to find any direct documentation on how touch screen drivers 
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/03/28/getting-started-with-google-cloud-datastore-and-dart/">Getting started with Google Cloud Datastore and Dart</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/01/14/chrome-dot-dart-0-dot-4-0-release/">chrome.dart 0.4.0 release</a>
       </li>
     
@@ -654,10 +740,6 @@ It was hard for me to find any direct documentation on how touch screen drivers 
     
       <li class="post">
         <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
       </li>
     
   </ul>

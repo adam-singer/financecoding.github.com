@@ -371,16 +371,22 @@
         <lastmod>2014-01-15T09:40:24-08:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://financeCoding.github.com/blog/2014/03/28/getting-started-with-google-cloud-datastore-and-dart/
+        </loc>
+        <lastmod>2014-03-28T14:38:18-07:00</lastmod>
+    </url>
+    <url>
         <loc>http://financeCoding.github.com/aboutme/</loc>
         <lastmod>2013-10-01T23:10:03-07:00</lastmod>
     </url>
     <url>
         <loc>http://financeCoding.github.com/blog/archives/</loc>
-        <lastmod>2014-01-15T09:40:24-08:00</lastmod>
+        <lastmod>2014-03-28T14:38:18-07:00</lastmod>
     </url>
     <url>
         <loc>http://financeCoding.github.com/</loc>
-        <lastmod>2014-01-15T09:40:24-08:00</lastmod>
+        <lastmod>2014-03-28T14:38:18-07:00</lastmod>
     </url>
     <url>
         <loc>http://financeCoding.github.com/robots.txt</loc>

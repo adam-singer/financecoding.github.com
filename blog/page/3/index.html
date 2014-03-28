@@ -13,7 +13,7 @@
   <meta property="og:description" content="" />
 
   
-  <meta name="description" content="Ventured tonight with creating an installable Chrome App in #dartlang. I was compiling to javascript and ran into problems with dart2js using unsafe &hellip;">
+  <meta name="description" content="I had the privilege to attend Chrome Apps Accelerated MTV hackathon. The goal set out for my self was to create a bluetooth scanner via chrome. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -82,6 +82,87 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/12/10/how-to-communicate-with-chrome-api-in-dart/">How to Communicate With Chrome.* API in Dart</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-12-10T00:00:00-08:00" pubdate data-updated="true">Dec 10<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/12/10/how-to-communicate-with-chrome-api-in-dart/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>I had the privilege to attend <a href="https://plus.google.com/+GoogleChromeDevelopers/posts/d8q3ffNhjBE">Chrome Apps Accelerated MTV</a> hackathon. The goal set out for my self was to create a bluetooth scanner via <a href="http://developer.chrome.com/apps/bluetooth.html">chrome.bluetooth</a> api.</p>
+
+<p>First I started off by reviewing the <a href="https://developers.google.com/chrome/apps/docs/developers_guide">Chrome app</a> developer guide. From a previous <a href="http://financecoding.github.com/2012/12/09/turning-solar3d-into-a-chrome-app/">post</a>, a patch for <a href="http://goo.gl/alaAK">7228</a> was needed at the time.</p>
+
+<p>Second was too communicate with the js defined context which Chrome Apps execute in. Some setup ceremony is needed such as a <a href="http://developer.chrome.com/extensions/manifest.html">manifest</a> file and <a href="https://developers.google.com/chrome/apps/docs/background">background window</a>. Creating the manifest file was easy, mostly choosing permissions and adding the entry Javascript background entry.</p>
+
+<script src="https://gist.github.com/4263547.js"><!-- gist --></script>
+
+
+<p>For dart we will need to create the background javascript that loads our dart application.</p>
+
+<script src="https://gist.github.com/4263559.js"><!-- gist --></script>
+
+
+<p>I stumbled with the communications between dart generated javascript and js-interop for some time. The first part of the stumbling blocks was <a href="http://developer.chrome.com/extensions/contentSecurityPolicy.html">CSP</a> (Content Security Policy) and how dart2js apps are loaded. Thanks to <a href="https://plus.google.com/114045999004646044580">Vijay Menon</a> and <a href="https://plus.google.com/102180419759627664875">Renato Mangini</a>, I was able to create successful call and callback from dart to javascript. This was non trivial since it required knowledge of <a href="https://dart.googlecode.com/svn/branches/bleeding_edge/dart/client/dart.js">dart.js</a> and loading of dart_interop.js/js.dart.</p>
+
+<p>The diff file below removes the reference to <a href="http://goo.gl/ojkEW">localStorage</a> and replaces it with a map.</p>
+
+<script src="https://gist.github.com/4263581.js"><!-- gist --></script>
+
+
+<p><a href="http://goo.gl/oYRFx">dart_interop.js</a> and <a href="http://goo.gl/g6qq6">js.dart</a> needed to be copied into the root folder of the project. Not sure exactly why this is, very possible that only dart_interop.js is needed since were compiling to js.</p>
+
+<script src="https://gist.github.com/4267476.js"><!-- gist --></script>
+
+
+<p>The first sanity check of being able to communicate with dart in a Chrome App was printing out the permissions from <a href="https://developer.chrome.com/apps/permissions.html">chrome.permissions.getAll</a></p>
+
+<script src="https://gist.github.com/4267502.js"><!-- gist --></script>
+
+
+<p>Google searches lead me to the wrong api docs for accessing the bluetooth device. Managed to land on <a href="http://developer.chrome.com/extensions/experimental.bluetooth.html">chrome.experimental.bluetooth</a> from <a href="https://developer.chrome.com/extensions/api_index.html">extensions api</a>, which is different from the <a href="http://developer.chrome.com/apps/api_index.html">Chrome Apps chrome.* api</a>. Bug was filed about how easy it was to land on the wrong api pages.</p>
+
+<p>Now that I&#8217;ve got the right context too loaded, calling the chrome.bluetooth api produced errors with bluetooth support on MacOSX. doh! Bluetooth is currently only supported on ChromeOS and Windows. This was not mentioned in any of the docs and bug was filed on that.</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Error during bluetooth.isAvailable: This operation is not supported on your platform 
+</span><span class='line'>chromeHidden.handleResponse</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At this point I was glad to be able to make calls on chrome.* api, in a following post I will go over a more complete sample from start to finish. Feel free to browse code and project structure <a href="http://goo.gl/sDj6i">bluetooth_example_chrome_app</a>. Please note this is not a fully working sample and has bugs!</p>
+
+<p>By the end of the hackathon I decided my best bet was to package something that did not rely on the chrome.* api so heavily. An <a href="http://goo.gl/wDnql">ASCII camera capture app</a> was created and demoed. The application accesses the client&#8217;s video input device and converts images capture to <a href="http://en.wikipedia.org/wiki/ASCII_art">ascii images</a> based on a <a href="http://mattmik.com/articles/ascii/ascii.html">ascii art formula</a>. &#8220;videoCapture&#8221; permissions are required for accessing video input, this was set in the manifest file. The <a href="http://goo.gl/wDnql">ASCII camera capture app</a> code is available on the following branch <a href="http://goo.gl/45UDj">chrome_app_example</a>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -507,43 +588,6 @@ TODO: blog post on private contructors _internal()
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/15/First-steps-to-dart-debugging/">First Steps to Dart Debugging</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-
-  
-<time datetime="2012-05-15T07:19:16Z" pubdate data-updated="true">May 15<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><br />The debugger <a href="http://goo.gl/RfMBO" target="_blank">implementations</a> are starting to land in <a href="http://goo.gl/oyBXC" target="_blank">bleeding_edge</a>. This might all change by tomorrow, but for those of you who are tracking bleeding edge the following should get you running.<br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="http://2.bp.blogspot.com/-n5kzKWTG4_c/T7H8VfENN5I/AAAAAAAAlIo/__lwcub1h6E/s1600/Screen+Shot+2012-05-14+at+11.48.37+PM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="254" src="http://2.bp.blogspot.com/-n5kzKWTG4_c/T7H8VfENN5I/AAAAAAAAlIo/__lwcub1h6E/s640/Screen+Shot+2012-05-14+at+11.48.37+PM.png" width="640" /></a></div><br /><br />Choose a server side script you would like to debug, in this post will use&nbsp;<a href="http://goo.gl/Z9Vls" target="_blank">chat-websocket-dart</a>&nbsp;sample. Launch the dart vm with the &#8211;debug flag<br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="http://4.bp.blogspot.com/-YyXZyTZd2lw/T7H87JbaU-I/AAAAAAAAlIw/wvOJDpH_VXE/s1600/Screen+Shot+2012-05-14+at+11.51.13+PM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="100" src="http://4.bp.blogspot.com/-YyXZyTZd2lw/T7H87JbaU-I/AAAAAAAAlIw/wvOJDpH_VXE/s640/Screen+Shot+2012-05-14+at+11.51.13+PM.png" width="640" /></a></div><br />The dart vm will now be waiting for&nbsp;incoming&nbsp;connections on 127.0.0.1:5858, the dart script state will be paused at the main entry point. <a href="http://goo.gl/eqKzs" target="_blank">ddbg.dart</a>&nbsp;can be used to send debugging commands over the connection encoded as Json. Json has been selected as the format to be used for communications between the debugger client and dart vm debugger. From another shell, go into dart/tools and run ddbg.dart<br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="http://3.bp.blogspot.com/-2S9oJ1wErZQ/T7H-WdDBOHI/AAAAAAAAlI4/YZlcolJHtfQ/s1600/Screen+Shot+2012-05-14+at+11.57.22+PM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="106" src="http://3.bp.blogspot.com/-2S9oJ1wErZQ/T7H-WdDBOHI/AAAAAAAAlI4/YZlcolJHtfQ/s640/Screen+Shot+2012-05-14+at+11.57.22+PM.png" width="640" /></a></div><br />Currently the shell is very raw, so standard input is used for interacting with ddbg.dart. Following commands are currently available, hit &#8216;h&#8217; to get the list of commands.<br /><div class="separator" style="clear: both; text-align: center;"><br /></div><div class="separator" style="clear: both; text-align: center;"><a href="http://3.bp.blogspot.com/-rSZ9IEaUDCQ/T7H-0Uohi-I/AAAAAAAAlJA/sqKVea8gj-8/s1600/Screen+Shot+2012-05-14+at+11.59.17+PM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="300" src="http://3.bp.blogspot.com/-rSZ9IEaUDCQ/T7H-0Uohi-I/AAAAAAAAlJA/sqKVea8gj-8/s640/Screen+Shot+2012-05-14+at+11.59.17+PM.png" width="640" /></a></div><br />Putting a break point and resume execution in the following way.<br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="http://4.bp.blogspot.com/-ySytPVw3u58/T7IAMYFODoI/AAAAAAAAlJQ/EhaAVtbX0Zk/s1600/Screen+Shot+2012-05-15+at+12.05.19+AM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="86" src="http://4.bp.blogspot.com/-ySytPVw3u58/T7IAMYFODoI/AAAAAAAAlJQ/EhaAVtbX0Zk/s640/Screen+Shot+2012-05-15+at+12.05.19+AM.png" width="640" /></a></div><div class="separator" style="clear: both; text-align: -webkit-auto;"><br /></div>Connect with the web socket client and we should hit the break point.<br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="http://3.bp.blogspot.com/-MTrd0KcrMbo/T7IAe2htFtI/AAAAAAAAlJY/YvXvSHIEoaw/s1600/Screen+Shot+2012-05-15+at+12.06.21+AM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="145" src="http://3.bp.blogspot.com/-MTrd0KcrMbo/T7IAe2htFtI/AAAAAAAAlJY/YvXvSHIEoaw/s640/Screen+Shot+2012-05-15+at+12.06.21+AM.png" width="640" /></a></div><br />Taking a few steps we can see the line of execution change.<br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="http://2.bp.blogspot.com/-tb9XGZjY2m4/T7IA6RyPH-I/AAAAAAAAlJg/w67YmcSQbmU/s1600/Screen+Shot+2012-05-15+at+12.07.52+AM.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="577" src="http://2.bp.blogspot.com/-tb9XGZjY2m4/T7IA6RyPH-I/AAAAAAAAlJg/w67YmcSQbmU/s640/Screen+Shot+2012-05-15+at+12.07.52+AM.png" width="640" /></a></div><br />While all this is still raw at the moment, the direction of the debugger is starting to come along. I feel the&nbsp;quality&nbsp;of the debugger really matters for adoption, Visual Studio for me has been the leading edge of debugger UI and functionality. The amazing part of the current state of the dart vm debugger, it should be trivial for anyone to implement an interface to the dart vm debugger with Json.<div class="blogger-post-footer"><img width='1' height='1' src='https://blogger.googleusercontent.com/tracker/478539871162226053-7808011325046247143?l=financecoding.blogspot.com' alt='' /></div></div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/4/">&larr; Older</a>
@@ -576,6 +620,10 @@ TODO: blog post on private contructors _internal()
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/03/28/getting-started-with-google-cloud-datastore-and-dart/">Getting started with Google Cloud Datastore and Dart</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/01/14/chrome-dot-dart-0-dot-4-0-release/">chrome.dart 0.4.0 release</a>
       </li>
     
@@ -589,10 +637,6 @@ TODO: blog post on private contructors _internal()
     
       <li class="post">
         <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
       </li>
     
   </ul>

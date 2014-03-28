@@ -13,7 +13,7 @@
   <meta property="og:description" content="" />
 
   
-  <meta name="description" content="Sample post">
+  <meta name="description" content="Another fun dart example in the works. The goal of this example was to explore LUCA UI Framework and the server side component provided in the dart &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -82,6 +82,47 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/01/08/hash-server-example/">Dart: Hash Server Example</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-01-08T00:00:00-08:00" pubdate data-updated="true">Jan 8<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/01/08/hash-server-example/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://github.com/financeCoding/dart-hash-server"><img src="http://financecoding.files.wordpress.com/2012/01/010912_0127_hashservere1.png" alt="" border="0" /></a>
+	</p><p>Another fun <a href="https://github.com/financeCoding/dart-hash-server">dart example</a> in the works. The goal of this example was to explore <a href="https://github.com/LUCA-Studios-LLC/LUCA-UI-Framework-for-Dart">LUCA UI Framework</a> and the server side component provided in the <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/">dart samples</a> folder. The <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/">chat</a> sample provides enough implementation to get your own dart <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/samples/chat/http.dart">http server</a> running in no time at all. The only issue with <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/">chat</a> is its an early sample and not modular enough to copy and paste. It is simple enough to read and split apart your self.  I have done some of that in the <a href="https://github.com/financeCoding/dart-hash-server/tree/master/src/HashServer">HashServer</a>. Eventually I would like to take it one step further and break the <a href="https://code.google.com/p/dart/source/browse/branches/bleeding_edge/dart/">chat</a> sample up enough that anyone could clone and get started right away.
+</p><p>The <a href="https://github.com/financeCoding/dart-hash-server/tree/master/src/HashClient">HashClient</a> takes a string input from the <a href="https://github.com/LUCA-Studios-LLC/LUCA-UI-Framework-for-Dart/blob/master/core/TextBox.dart">TextBox</a> and sends it to the server by <a href="http://api.dartlang.org/html/XMLHttpRequest.html">XMLHttpRequest</a>  in <a href="http://api.dartlang.org/json/JSON.html">JSON</a> format. The server then <a href="https://github.com/financeCoding/dart-hash-server/blob/master/src/HashServer/IsolatedServer.dart">parses</a> the request data and creates a hash value based on the hasher selected by the client. The client updates the hash value on the UI when the <a href="https://github.com/financeCoding/dart-hash-server/blob/master/src/HashClient/GenerateHash.dart">response received</a>. The <a href="https://github.com/LUCA-Studios-LLC/LUCA-UI-Framework-for-Dart">LUCA UI</a> provides a <a href="http://en.wikipedia.org/wiki/Model_View_ViewModel">MVVM</a> framework so the domain logic was separated from the UI, a convenient and coherent way to do UI application development. More work on the client and server side is needed to separate the available hashes from what is coded into the client, but for now it works.  See the <a href="https://github.com/financeCoding/dart-hash-server/blob/master/README.md">README.md</a> on how to get running. Feedback and comments always welcome!
+</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -546,88 +587,6 @@ Pick up the <a href="https://bitbucket.org/financecoding/relaywebserver/overview
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2011/05/20/creating-new-java-project-with-cloudfoundry-and-spring-source-tool/">Creating New Java Project With Cloudfoundry and Spring Source Tool</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-05-20T00:00:00-07:00" pubdate data-updated="true">May 20<span>th</span>, 2011</time>
-        
-         | <a href="/blog/2011/05/20/creating-new-java-project-with-cloudfoundry-and-spring-source-tool/#disqus_thread">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content">After picking up <a href="http://www.springsource.com/developer/sts">SpringSource Tool Suite</a> and Installing the <a href="http://blog.springsource.com/2011/04/13/using-cloud-foundry-from-sts/">Cloudfoundry plugins</a> creating a new java project is painless, as long as you know which options to choose. From the New wizard you need to choose &#8220;Dynamic Web Project&#8221;
-
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew1.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-Target runtime at the time of this post was &#8220;Cloud Foundry (Runtime) v1.0&#8221; and Dynamic web module version &#8220;2.5&#8221; with a Configuration of &#8220;Default Configuration for Cloud Foundry (Runtime) v1.0&#8221;
-
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew2.png" alt="" />
-
-The Project layout
-
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew3.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-Creating a new Package and class
-
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew4.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew5.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew6.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-Create a classic <a href="http://en.wikipedia.org/wiki/Hello_world_program">HelloWorld</a>
-
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew7.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-Time to extend the <a href="http://download.oracle.com/javaee/5/api/javax/servlet/http/HttpServlet.html">HttpServlet</a> and override <a href="http://download.oracle.com/javaee/5/api/javax/servlet/http/HttpServlet.html">doGet</a>
-
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew8.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-Add entries of the <a href="http://www.caucho.com/resin-3.0/config/webapp.xtp">servlet</a> and <a href="http://www.caucho.com/resin-3.0/config/webapp.xtp">servlet-mapping</a>
-
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew9.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-Add Application
-
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew10.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-Start the service
-
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew11.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-And you have the basic hello world from the cloud foundry samples.
-
-<img src="http://financecoding.files.wordpress.com/2011/05/052111_0541_creatingnew12.png" alt="" /><span style="font-family:Times New Roman;font-size:12pt;">
-</span>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/7/">&larr; Older</a>
@@ -660,6 +619,10 @@ And you have the basic hello world from the cloud foundry samples.
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/03/28/getting-started-with-google-cloud-datastore-and-dart/">Getting started with Google Cloud Datastore and Dart</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/01/14/chrome-dot-dart-0-dot-4-0-release/">chrome.dart 0.4.0 release</a>
       </li>
     
@@ -673,10 +636,6 @@ And you have the basic hello world from the cloud foundry samples.
     
       <li class="post">
         <a href="/blog/2013/09/30/getting-started-with-dart-on-compute-engine/">Getting Started with Dart on Compute Engine</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/04/02/gplus-quickstart-with-dart/">gplus quickstart with dart</a>
       </li>
     
   </ul>
