@@ -13,8 +13,7 @@
   <meta property="og:description" content="" />
 
   
-  <meta name="description" content="
-">
+  <meta name="description" content="NOTE: Experimental and future developments with Dart+GCE+Datastore may change Before running through the steps below, make sure that: You have &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -111,7 +110,474 @@
   </header>
 
 
-<div class="entry-content">
+<div class="entry-content"><p><strong>NOTE: Experimental and future developments with Dart+GCE+Datastore may change</strong></p>
+
+<p>Before running through the steps below, make sure that:</p>
+
+<ul>
+<li>You have <a href="https://developers.google.com/datastore/docs/activate">enabled</a> Google Cloud Datastore API.</li>
+<li>You have your <code>&lt;project-id&gt;</code> (same identifier as your Google Cloud <a href="https://developers.google.com/datastore/docs/activate#project_id">Project ID</a>).</li>
+<li>You are <a href="https://developers.google.com/compute/docs/instances#sshing">connected</a> to a Compute Engine instance with both the <code>datastore</code> and
+<code>userinfo.email</code> <a href="https://developers.google.com/compute/docs/authentication#using">scopes</a> or have a <a href="https://developers.google.com/datastore/docs/activate#service_account"><service-account></a> and the <a href="https://developers.google.com/datastore/docs/activate#private_key"><path-to-private-key-file></a>.</li>
+<li>You have a working local <a href="https://www.dartlang.org/tools/download.html">dart environment</a> or working <a href="#example-deployment-and-startup-scripts-for-gce-with-dart">Compute Engine instance</a></li>
+</ul>
+
+
+<p>In order to make API calls to the Datastore, <code>pubspec.yaml</code> file needs the following</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">dependencies</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">google_oauth2_client</span><span class="p-Indicator">:</span> <span class="s">&#39;&gt;=0.3.6</span><span class="nv"> </span><span class="s">&lt;0.3.7&#39;</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">google_datastore_v1beta2_api</span><span class="p-Indicator">:</span> <span class="s">&quot;&gt;=0.4.0</span><span class="nv"> </span><span class="s">&lt;0.5.0&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then, get the <a href="https://github.com/financeCoding/dart_datastore_example"><code>dart_datastore_example</code></a> sample:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>git clone https://github.com/financeCoding/dart_datastore_example.git
+</span><span class='line'><span class="nb">cd </span>dart_datastore_example
+</span><span class='line'>pub install
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you are not connected to a Compute Engine instance, make sure to run
+the following commands (in a bash-like shell):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="c"># convert the .p12 private key file to a .pem file</span>
+</span><span class='line'><span class="c"># if asked to enter import password, use &quot;notasecret&quot;</span>
+</span><span class='line'>
+</span><span class='line'>openssl pkcs12 -in &lt;privatekey&gt;.p12 -nocerts -passin pass:notasecret -nodes -out &lt;rsa_private_key&gt;.pem
+</span><span class='line'>
+</span><span class='line'><span class="c"># configure your credentials</span>
+</span><span class='line'><span class="nb">export </span><span class="nv">DATASTORE_SERVICE_ACCOUNT</span><span class="o">=</span>&lt;service-account&gt;
+</span><span class='line'><span class="nb">export </span><span class="nv">DATASTORE_PRIVATE_KEY_FILE</span><span class="o">=</span>&lt;path-to-pem-file&gt;
+</span><span class='line'><span class="nb">export </span><span class="nv">CLOUD_PROJECT_ID</span><span class="o">=</span>&lt;project-id&gt;
+</span><span class='line'><span class="nb">export </span><span class="nv">CLOUD_PROJECT_NUMBER</span><span class="o">=</span>&lt;project-number&gt;
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Alternatively the sample allows for passing parameters via commandline:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'><span class="nb">cd </span>dart_datastore_example
+</span><span class='line'>pub install
+</span><span class='line'><span class="nb">cd </span>bin
+</span><span class='line'><span class="c"># dart dart_datastore_example.dart &lt;project-id&gt; &lt;project-number&gt; &lt;path-to-pem-file&gt; &lt;service-account&gt;</span>
+</span><span class='line'>dart dart_datastore_example.dart dartcloud 657648630269 privatekey.pem 657648630269-ge2he8e46y4u42bd89nmgtj52j3ilzvv@developer.gserviceaccount.com
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>Example output on first run:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>dartcloud
+</span><span class='line'>657648630269
+</span><span class='line'>privatekey.pem
+</span><span class='line'>657648630269-ge2he8e46y4u42bd89nmgtj52j3ilzvv@developer.gserviceaccount.com
+</span><span class='line'>did not found entity
+</span><span class='line'>&gt; <span class="nv">entity</span> <span class="o">=</span> <span class="o">{</span>question: <span class="o">{</span><span class="s2">&quot;stringValue&quot;</span>:<span class="s2">&quot;Meaning of life?&quot;</span><span class="o">}</span>, answer: <span class="o">{</span><span class="s2">&quot;integerValue&quot;</span>:42<span class="o">}}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Example output on second run:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>dartcloud
+</span><span class='line'>657648630269
+</span><span class='line'>privatekey.pem
+</span><span class='line'>657648630269-ge2he8e46y4u42bd89nmgtj52j3ilzvv@developer.gserviceaccount.com
+</span><span class='line'>found <span class="nv">entity</span> <span class="o">=</span> <span class="o">{</span><span class="s2">&quot;key&quot;</span>:<span class="o">{</span><span class="s2">&quot;partitionId&quot;</span>:<span class="o">{</span><span class="s2">&quot;datasetId&quot;</span>:<span class="s2">&quot;s~dartcloud&quot;</span><span class="o">}</span>,<span class="s2">&quot;path&quot;</span>:<span class="o">[{</span><span class="s2">&quot;kind&quot;</span>:<span class="s2">&quot;Trivia&quot;</span>,<span class="s2">&quot;name&quot;</span>:<span class="s2">&quot;hgtg&quot;</span><span class="o">}]}</span>,<span class="s2">&quot;properties&quot;</span>:<span class="o">{</span><span class="s2">&quot;question&quot;</span>:<span class="o">{</span><span class="s2">&quot;stringValue&quot;</span>:<span class="s2">&quot;Meaning of life?&quot;</span><span class="o">}</span>,<span class="s2">&quot;answer&quot;</span>:<span class="o">{</span><span class="s2">&quot;integerValue&quot;</span>:42<span class="o">}}}</span>
+</span><span class='line'>&gt; <span class="nv">entity</span> <span class="o">=</span> <span class="o">{</span>question: <span class="o">{</span><span class="s2">&quot;stringValue&quot;</span>:<span class="s2">&quot;Meaning of life?&quot;</span><span class="o">}</span>, answer: <span class="o">{</span><span class="s2">&quot;integerValue&quot;</span>:42<span class="o">}}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The comments in the sample&#8217;s source explain its behavior in detail:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="n">import</span> <span class="s2">&quot;dart:io&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">import</span> <span class="s2">&quot;package:google_oauth2_client/google_oauth2_console.dart&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="n">import</span> <span class="s2">&quot;package:google_datastore_v1beta2_api/datastore_v1beta2_api_client.dart&quot;</span>
+</span><span class='line'>    <span class="n">as</span> <span class="n">client</span><span class="p">;</span>
+</span><span class='line'><span class="n">import</span> <span class="s2">&quot;package:google_datastore_v1beta2_api/datastore_v1beta2_api_console.dart&quot;</span>
+</span><span class='line'>    <span class="n">as</span> <span class="n">console</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kt">void</span> <span class="n">main</span><span class="p">(</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">String</span><span class="o">&gt;</span> <span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="kt">String</span><span class="o">&gt;</span> <span class="n">envVars</span> <span class="o">=</span> <span class="n">Platform</span><span class="p">.</span><span class="n">environment</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="n">projectId</span> <span class="o">=</span> <span class="n">envVars</span><span class="p">[</span><span class="s1">&#39;CLOUD_PROJECT_ID&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span>
+</span><span class='line'>      <span class="n">args</span><span class="p">[</span><span class="m">0</span><span class="p">]</span> <span class="o">:</span> <span class="n">envVars</span><span class="p">[</span><span class="s1">&#39;CLOUD_PROJECT_ID&#39;</span><span class="p">];</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="n">projectNumber</span> <span class="o">=</span> <span class="n">envVars</span><span class="p">[</span><span class="s1">&#39;CLOUD_PROJECT_NUMBER&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span>
+</span><span class='line'>      <span class="n">args</span><span class="p">[</span><span class="m">1</span><span class="p">]</span> <span class="o">:</span> <span class="n">envVars</span><span class="p">[</span><span class="s1">&#39;CLOUD_PROJECT_NUMBER&#39;</span><span class="p">];</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="n">pemFilename</span> <span class="o">=</span> <span class="n">envVars</span><span class="p">[</span><span class="s1">&#39;DATASTORE_PRIVATE_KEY_FILE&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span>
+</span><span class='line'>      <span class="n">args</span><span class="p">[</span><span class="m">2</span><span class="p">]</span> <span class="o">:</span> <span class="n">envVars</span><span class="p">[</span><span class="s1">&#39;DATASTORE_PRIVATE_KEY_FILE&#39;</span><span class="p">];</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="n">serviceAccountEmail</span> <span class="o">=</span> <span class="n">envVars</span><span class="p">[</span><span class="s1">&#39;DATASTORE_SERVICE_ACCOUNT&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span>
+</span><span class='line'>      <span class="n">args</span><span class="p">[</span><span class="m">3</span><span class="p">]</span> <span class="o">:</span> <span class="n">envVars</span><span class="p">[</span><span class="s1">&#39;DATASTORE_SERVICE_ACCOUNT&#39;</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">print</span><span class="p">(</span><span class="n">projectId</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">print</span><span class="p">(</span><span class="n">projectNumber</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">print</span><span class="p">(</span><span class="n">pemFilename</span><span class="p">);</span>
+</span><span class='line'>  <span class="n">print</span><span class="p">(</span><span class="n">serviceAccountEmail</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kt">String</span> <span class="n">iss</span> <span class="o">=</span> <span class="n">serviceAccountEmail</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="n">scopes</span> <span class="o">=</span> <span class="s1">&#39;https://www.googleapis.com/auth/userinfo.email &#39;</span>
+</span><span class='line'>      <span class="s1">&#39;https://www.googleapis.com/auth/datastore&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="n">rsa_private_key_file</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="p">(</span><span class="n">pemFilename</span><span class="p">).</span><span class="n">readAsStringSync</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">ComputeOAuth2Console</span> <span class="n">computeEngineClient</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ComputeOAuth2Console</span><span class="p">(</span>
+</span><span class='line'>      <span class="n">projectNumber</span><span class="p">,</span> <span class="nl">privateKey:</span> <span class="n">rsa_private_key_file</span><span class="p">,</span> <span class="nl">iss:</span> <span class="n">iss</span><span class="p">,</span> <span class="nl">scopes:</span> <span class="n">scopes</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">console</span><span class="p">.</span><span class="n">Datastore</span> <span class="n">datastore</span> <span class="o">=</span> <span class="k">new</span> <span class="n">console</span><span class="p">.</span><span class="n">Datastore</span><span class="p">(</span><span class="n">computeEngineClient</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">..</span><span class="n">makeAuthRequests</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Create a RPC request to begin a new transaction</span>
+</span><span class='line'>  <span class="kd">var</span> <span class="n">beginTransactionRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">client</span><span class="p">.</span><span class="n">BeginTransactionRequest</span><span class="p">.</span><span class="n">fromJson</span><span class="p">({});</span>
+</span><span class='line'>  <span class="kt">String</span> <span class="n">transaction</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">client</span><span class="p">.</span><span class="n">Key</span> <span class="n">key</span><span class="p">;</span>
+</span><span class='line'>  <span class="n">client</span><span class="p">.</span><span class="n">Entity</span> <span class="n">entity</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="c1">// Execute the RPC asynchronously</span>
+</span><span class='line'>  <span class="n">datastore</span><span class="p">.</span><span class="n">datasets</span><span class="p">.</span><span class="n">beginTransaction</span><span class="p">(</span><span class="n">beginTransactionRequest</span><span class="p">,</span> <span class="n">projectId</span><span class="p">).</span><span class="n">then</span><span class="p">(</span>
+</span><span class='line'>      <span class="p">(</span><span class="n">client</span><span class="p">.</span><span class="n">BeginTransactionResponse</span> <span class="n">beginTransactionResponse</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// Get the transaction handle from the response.</span>
+</span><span class='line'>    <span class="n">transaction</span> <span class="o">=</span> <span class="n">beginTransactionResponse</span><span class="p">.</span><span class="n">transaction</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Create a RPC request to get entities by key.</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="n">lookupRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="n">client</span><span class="p">.</span><span class="n">LookupRequest</span><span class="p">.</span><span class="n">fromJson</span><span class="p">({});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Create a new entities by key</span>
+</span><span class='line'>    <span class="n">key</span> <span class="o">=</span> <span class="k">new</span> <span class="n">client</span><span class="p">.</span><span class="n">Key</span><span class="p">.</span><span class="n">fromJson</span><span class="p">({});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Set the entity key with only one `path_element`: no parent.</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="n">path</span> <span class="o">=</span> <span class="k">new</span> <span class="n">client</span><span class="p">.</span><span class="n">KeyPathElement</span><span class="p">.</span><span class="n">fromJson</span><span class="p">({</span>
+</span><span class='line'>      <span class="s1">&#39;kind&#39;</span><span class="o">:</span> <span class="s1">&#39;Trivia&#39;</span><span class="p">,</span>
+</span><span class='line'>      <span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="s1">&#39;hgtg&#39;</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>    <span class="n">key</span><span class="p">.</span><span class="n">path</span> <span class="o">=</span> <span class="k">new</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">client</span><span class="p">.</span><span class="n">KeyPathElement</span><span class="o">&gt;</span><span class="p">();</span>
+</span><span class='line'>    <span class="n">key</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">path</span><span class="p">);</span>
+</span><span class='line'>    <span class="n">lookupRequest</span><span class="p">.</span><span class="n">keys</span> <span class="o">=</span> <span class="k">new</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">client</span><span class="p">.</span><span class="n">Key</span><span class="o">&gt;</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Add one key to the lookup request.</span>
+</span><span class='line'>    <span class="n">lookupRequest</span><span class="p">.</span><span class="n">keys</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Set the transaction, so we get a consistent snapshot of the</span>
+</span><span class='line'>    <span class="c1">// entity at the time the transaction started.</span>
+</span><span class='line'>    <span class="n">lookupRequest</span><span class="p">.</span><span class="n">readOptions</span> <span class="o">=</span> <span class="k">new</span> <span class="n">client</span><span class="p">.</span><span class="n">ReadOptions</span><span class="p">.</span><span class="n">fromJson</span><span class="p">({</span>
+</span><span class='line'>      <span class="s1">&#39;transaction&#39;</span><span class="o">:</span> <span class="n">transaction</span>
+</span><span class='line'>    <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Execute the RPC and get the response.</span>
+</span><span class='line'>    <span class="k">return</span> <span class="n">datastore</span><span class="p">.</span><span class="n">datasets</span><span class="p">.</span><span class="n">lookup</span><span class="p">(</span><span class="n">lookupRequest</span><span class="p">,</span> <span class="n">projectId</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}).</span><span class="n">then</span><span class="p">((</span><span class="n">client</span><span class="p">.</span><span class="n">LookupResponse</span> <span class="n">lookupResponse</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="c1">// Create a RPC request to commit the transaction.</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="n">req</span> <span class="o">=</span> <span class="k">new</span> <span class="n">client</span><span class="p">.</span><span class="n">CommitRequest</span><span class="p">.</span><span class="n">fromJson</span><span class="p">({});</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">// Set the transaction to commit.</span>
+</span><span class='line'>    <span class="n">req</span><span class="p">.</span><span class="n">transaction</span> <span class="o">=</span> <span class="n">transaction</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">lookupResponse</span><span class="p">.</span><span class="n">found</span><span class="p">.</span><span class="n">isNotEmpty</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>      <span class="c1">// Get the entity from the response if found</span>
+</span><span class='line'>      <span class="n">entity</span> <span class="o">=</span> <span class="n">lookupResponse</span><span class="p">.</span><span class="n">found</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">entity</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">print</span><span class="p">(</span><span class="s2">&quot;found entity = </span><span class="si">${</span><span class="n">entity</span><span class="p">.</span><span class="n">toString</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>      <span class="n">print</span><span class="p">(</span><span class="s2">&quot;did not found entity&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="c1">// If no entity was found, insert a new one in the commit request mutation.</span>
+</span><span class='line'>      <span class="n">entity</span> <span class="o">=</span> <span class="k">new</span> <span class="n">client</span><span class="p">.</span><span class="n">Entity</span><span class="p">.</span><span class="n">fromJson</span><span class="p">({});</span>
+</span><span class='line'>      <span class="n">req</span><span class="p">.</span><span class="n">mutation</span> <span class="o">=</span> <span class="k">new</span> <span class="n">client</span><span class="p">.</span><span class="n">Mutation</span><span class="p">.</span><span class="n">fromJson</span><span class="p">({});</span>
+</span><span class='line'>      <span class="n">req</span><span class="p">.</span><span class="n">mutation</span><span class="p">.</span><span class="n">insert</span> <span class="o">=</span> <span class="k">new</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">client</span><span class="p">.</span><span class="n">Entity</span><span class="o">&gt;</span><span class="p">();</span>
+</span><span class='line'>      <span class="n">req</span><span class="p">.</span><span class="n">mutation</span><span class="p">.</span><span class="n">insert</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">entity</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// Copy the entity key.</span>
+</span><span class='line'>      <span class="n">entity</span><span class="p">.</span><span class="n">key</span> <span class="o">=</span> <span class="k">new</span> <span class="n">client</span><span class="p">.</span><span class="n">Key</span><span class="p">.</span><span class="n">fromJson</span><span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="n">toJson</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// Add two entity properties:</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// - a utf-8 string: `question`</span>
+</span><span class='line'>      <span class="n">client</span><span class="p">.</span><span class="n">Property</span> <span class="n">property</span> <span class="o">=</span> <span class="k">new</span> <span class="n">client</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">fromJson</span><span class="p">({});</span>
+</span><span class='line'>      <span class="n">property</span><span class="p">.</span><span class="n">stringValue</span> <span class="o">=</span> <span class="s2">&quot;Meaning of life?&quot;</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">entity</span><span class="p">.</span><span class="n">properties</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Map</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">,</span> <span class="n">client</span><span class="p">.</span><span class="n">Property</span><span class="o">&gt;</span><span class="p">();</span>
+</span><span class='line'>      <span class="n">entity</span><span class="p">.</span><span class="n">properties</span><span class="p">[</span><span class="s1">&#39;question&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">property</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// - a 64bit integer: `answer`</span>
+</span><span class='line'>      <span class="n">property</span> <span class="o">=</span> <span class="k">new</span> <span class="n">client</span><span class="p">.</span><span class="n">Property</span><span class="p">.</span><span class="n">fromJson</span><span class="p">({});</span>
+</span><span class='line'>      <span class="n">property</span><span class="p">.</span><span class="kt">int</span><span class="n">egerValue</span> <span class="o">=</span> <span class="m">42</span><span class="p">;</span>
+</span><span class='line'>      <span class="n">entity</span><span class="p">.</span><span class="n">properties</span><span class="p">[</span><span class="s1">&#39;answer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">property</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="c1">// Execute the Commit RPC synchronously and ignore the response:</span>
+</span><span class='line'>      <span class="c1">// Apply the insert mutation if the entity was not found and close</span>
+</span><span class='line'>      <span class="c1">// the transaction.</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">datastore</span><span class="p">.</span><span class="n">datasets</span><span class="p">.</span><span class="n">commit</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">projectId</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>  <span class="p">}).</span><span class="n">then</span><span class="p">((</span><span class="n">client</span><span class="p">.</span><span class="n">CommitResponse</span> <span class="n">commitResponse</span><span class="p">)</span> <span class="o">=&gt;</span>
+</span><span class='line'>      <span class="n">print</span><span class="p">(</span><span class="s2">&quot;&gt; entity = </span><span class="si">${</span><span class="n">entity</span><span class="p">.</span><span class="n">properties</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">));</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>With this example, you learned how to use the:</p>
+
+<ul>
+<li><a href="http://pub.dartlang.org/packages/google_datastore_v1beta1_api">google_datastore_v1beta1_api</a> dart package to connect to the Datastore API.</li>
+<li><a href="">beginTransaction</a> method to start a transaction.</li>
+<li><a href="https://developers.google.com/datastore/docs/apis/v1beta2/datasets/lookup">lookup</a> method to retrieve entities by key from your dataset.</li>
+<li><a href="https://developers.google.com/datastore/docs/apis/v1beta2/datasets/commit">commit</a> method to send mutations to entities in your dataset and commit the transaction.</li>
+</ul>
+
+
+<p>Now, you are ready to learn more about the <a href="https://developers.google.com/datastore/docs/concepts/">Key Datastore Concepts</a> and look at the <a href="https://developers.google.com/datastore/docs/apis/v1beta2/">JSON API reference</a>.</p>
+
+<hr />
+
+<h2>Example deployment and startup scripts for GCE with Dart</h2>
+
+<p><code>setup-instance.sh</code> script creates the node with the right correct scopes and image.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="cp">#!/usr/bin/env bash</span>
+</span><span class='line'><span class="kd">set</span> <span class="o">+</span><span class="n">o</span> <span class="n">xtrace</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">USER</span><span class="o">=</span><span class="n">$USER</span>
+</span><span class='line'><span class="n">PROJECT</span><span class="o">=</span><span class="n">dart</span><span class="o">-</span><span class="n">compute</span><span class="o">-</span><span class="n">project</span>
+</span><span class='line'><span class="n">INSTANCE_NAME</span><span class="o">=</span><span class="n">dart</span><span class="o">-</span><span class="n">compute</span>
+</span><span class='line'><span class="n">TAGS</span><span class="o">=</span><span class="n">dart</span>
+</span><span class='line'><span class="n">MACHINE_TYPE</span><span class="o">=</span><span class="n">f1</span><span class="o">-</span><span class="n">micro</span>
+</span><span class='line'><span class="n">NETWORK</span><span class="o">=</span><span class="k">default</span>
+</span><span class='line'><span class="n">IP</span><span class="o">=</span><span class="n">ephemeral</span>
+</span><span class='line'><span class="n">IMAGE</span><span class="o">=</span><span class="nl">https:</span><span class="c1">//www.googleapis.com/compute/v1/projects/debian-cloud/global/images/backports-debian-7-wheezy-v20140318</span>
+</span><span class='line'><span class="n">SCOPES</span><span class="o">=</span><span class="nl">https:</span><span class="c1">//www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/compute,https://www.googleapis.com/auth/devstorage.full_control,https://www.googleapis.com/auth/datastore</span>
+</span><span class='line'><span class="n">PERSISTENT_BOOT_DISK</span><span class="o">=</span><span class="kc">true</span>
+</span><span class='line'><span class="n">AUTO_DELETE_BOOT_DISK</span><span class="o">=</span><span class="kc">true</span>
+</span><span class='line'><span class="n">ZONE</span><span class="o">=</span><span class="n">us</span><span class="o">-</span><span class="n">central1</span><span class="o">-</span><span class="n">b</span>
+</span><span class='line'><span class="n">STARTUP_SCRIPT</span><span class="o">=</span><span class="n">startup</span><span class="o">-</span><span class="n">script</span><span class="p">.</span><span class="n">sh</span>
+</span><span class='line'><span class="n">GCUTIL</span><span class="o">=</span><span class="s2">&quot;gcutil --service_version=v1 --project=</span><span class="si">$</span><span class="n">PROJECT</span><span class="s2">&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">$GCUTIL</span> <span class="n">addinstance</span> <span class="n">$INSTANCE_NAME</span> <span class="o">--</span><span class="n">tags</span><span class="o">=</span><span class="n">$TAGS</span> <span class="o">--</span><span class="n">zone</span><span class="o">=</span><span class="n">$ZONE</span> <span class="o">--</span><span class="n">machine_type</span><span class="o">=</span><span class="n">$MACHINE_TYPE</span> <span class="o">--</span><span class="n">network</span><span class="o">=</span><span class="n">$NETWORK</span> <span class="o">--</span><span class="n">external_ip_address</span><span class="o">=</span><span class="n">$IP</span> <span class="o">--</span><span class="n">service_account_scopes</span><span class="o">=</span><span class="n">$SCOPES</span> <span class="o">--</span><span class="n">image</span><span class="o">=</span><span class="n">$IMAGE</span> <span class="o">--</span><span class="n">persistent_boot_disk</span><span class="o">=</span><span class="n">$PERSISTENT_BOOT_DISK</span> <span class="o">--</span><span class="n">auto_delete_boot_disk</span><span class="o">=</span><span class="n">$AUTO_DELETE_BOOT_DISK</span> <span class="o">--</span><span class="n">metadata_from_file</span><span class="o">=</span><span class="n">startup</span><span class="o">-</span><span class="nl">script:</span><span class="n">$STARTUP_SCRIPT</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">rc</span><span class="o">=</span><span class="n">$</span><span class="o">?</span>
+</span><span class='line'><span class="k">if</span> <span class="p">[[</span> <span class="n">$rc</span> <span class="o">!=</span> <span class="m">0</span> <span class="p">]]</span> <span class="p">;</span> <span class="n">then</span>
+</span><span class='line'>  <span class="n">echo</span> <span class="s2">&quot;Not able to add instance&quot;</span>
+</span><span class='line'>    <span class="n">exit</span> <span class="n">$rc</span>
+</span><span class='line'><span class="n">fi</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><code>startup-script.sh</code> script that provisions the node with dart.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='dart'><span class='line'><span class="cp">#!/usr/bin/env bash</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="n">Add</span> <span class="n">an</span> <span class="n">addtional</span> <span class="n">source</span> <span class="k">for</span> <span class="n">the</span> <span class="n">latest</span> <span class="n">glibc</span>
+</span><span class='line'><span class="n">sudo</span> <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;1i deb http://ftp.us.debian.org/debian/ jessie main&#39;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">apt</span><span class="o">/</span><span class="n">sources</span><span class="p">.</span><span class="n">list</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="n">Update</span> <span class="n">sources</span>
+</span><span class='line'><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="kd">get</span> <span class="n">update</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="n">Download</span> <span class="n">latest</span> <span class="n">glibc</span>
+</span><span class='line'><span class="n">sudo</span> <span class="n">DEBIAN_FRONTEND</span><span class="o">=</span><span class="n">noninteractive</span> <span class="n">apt</span><span class="o">-</span><span class="kd">get</span> <span class="o">-</span><span class="n">t</span> <span class="n">jessie</span> <span class="n">install</span> <span class="o">-</span><span class="n">y</span> <span class="n">libc6</span> <span class="n">libc6</span><span class="o">-</span><span class="n">dev</span> <span class="n">libc6</span><span class="o">-</span><span class="n">dbg</span> <span class="n">git</span> <span class="n">screen</span> <span class="n">unzip</span> <span class="n">vim</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="n">Download</span> <span class="n">the</span> <span class="n">latest</span> <span class="n">dart</span> <span class="n">sdk</span>
+</span><span class='line'><span class="n">wget</span> <span class="nl">http:</span><span class="c1">//storage.googleapis.com/dart-archive/channels/dev/release/latest/sdk/dartsdk-linux-x64-release.zip -O dartsdk-linux-x64-release.zip </span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="n">Unpack</span> <span class="n">the</span> <span class="n">dart</span> <span class="n">sdk</span>
+</span><span class='line'><span class="n">unzip</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span> <span class="n">dartsdk</span><span class="o">-</span><span class="n">linux</span><span class="o">-</span><span class="n">x64</span><span class="o">-</span><span class="n">release</span><span class="p">.</span><span class="n">zip</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="n">Make</span> <span class="n">the</span> <span class="n">sdk</span> <span class="n">readable</span>
+</span><span class='line'><span class="n">chmod</span> <span class="o">-</span><span class="n">R</span> <span class="n">go</span><span class="o">+</span><span class="n">rx</span> <span class="o">/</span><span class="n">dart</span><span class="o">-</span><span class="n">sdk</span>
+</span><span class='line'>
+</span><span class='line'><span class="err">#</span> <span class="n">Add</span> <span class="n">dart</span> <span class="n">bin</span> <span class="n">to</span> <span class="n">global</span> <span class="n">path</span>
+</span><span class='line'><span class="n">echo</span> <span class="s2">&quot;export PATH=\</span><span class="si">$</span><span class="n">PATH</span><span class="s2">:/dart-sdk/bin&quot;</span> <span class="o">&gt;&gt;</span> <span class="o">/</span><span class="n">etc</span><span class="o">/</span><span class="n">profile</span>
+</span></code></pre></td></tr></table></div></figure>
+
 </div>
 
 
@@ -136,6 +602,12 @@
 
 <time datetime="2014-03-28T14:38:00-07:00" pubdate data-updated="true">Mar 28<span>th</span>, 2014</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/api/'>API</a>, <a class='category' href='/blog/categories/dart/'>Dart</a>, <a class='category' href='/blog/categories/gce/'>GCE</a>, <a class='category' href='/blog/categories/google/'>Google</a>, <a class='category' href='/blog/categories/datastore/'>datastore</a>
+  
+</span>
 
 
     </p>
@@ -185,7 +657,7 @@
 
 <section>
   <h1>Tag Cloud</h1>
-    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.46153846153847%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.15384615384616%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.15384615384616%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.15384615384616%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.15384615384616%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.15384615384616%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 103.46153846153847%'>API(3)</a> <a href='/blog/categories/arm' style='font-size: 101.15384615384616%'>ARM(1)</a> <a href='/blog/categories/armv7' style='font-size: 101.15384615384616%'>ARMv7(1)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.3076923076923%'>BeagleBoard(2)</a> <a href='/blog/categories/beagleboneblack' style='font-size: 101.15384615384616%'>BeagleBoneBlack(1)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.3076923076923%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.15384615384616%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.15384615384616%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.15384615384616%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.15384615384616%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.61538461538461%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.3076923076923%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.15384615384616%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.15384615384616%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 102.3076923076923%'>chrome.dart(2)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.46153846153847%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.15384615384616%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 102.3076923076923%'>Client(2)</a> <a href='/blog/categories/cloud' style='font-size: 102.3076923076923%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.3076923076923%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.15384615384616%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.61538461538461%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.15384615384616%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(52)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.3076923076923%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.15384615384616%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.46153846153847%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.15384615384616%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.3076923076923%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.46153846153847%'>DartVM(3)</a> <a href='/blog/categories/debian' style='font-size: 101.15384615384616%'>Debian(1)</a> <a href='/blog/categories/debugging' style='font-size: 101.15384615384616%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.61538461538461%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.15384615384616%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 101.15384615384616%'>Embedded(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.61538461538461%'>embedded(4)</a> <a href='/blog/categories/example' style='font-size: 113.84615384615384%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.15384615384616%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.15384615384616%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.15384615384616%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.15384615384616%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.15384615384616%'>Game Of Life(1)</a> <a href='/blog/categories/google' style='font-size: 127.6923076923077%'>Google(24)</a> <a href='/blog/categories/google-apps-api' style='font-size: 101.15384615384616%'>Google Apps API(1)</a> <a href='/blog/categories/google-ext-api' style='font-size: 101.15384615384616%'>Google Ext API(1)</a> <a href='/blog/categories/googleapi' style='font-size: 102.3076923076923%'>GoogleAPI(2)</a> <a href='/blog/categories/googleapi' style='font-size: 102.3076923076923%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.15384615384616%'>GoogleApi(1)</a> <a href='/blog/categories/gplus' style='font-size: 101.15384615384616%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 105.76923076923077%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.15384615384616%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.15384615384616%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.15384615384616%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.15384615384616%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.3076923076923%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.46153846153847%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.3076923076923%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 105.76923076923077%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.15384615384616%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.15384615384616%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.3076923076923%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.15384615384616%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.15384615384616%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.15384615384616%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.3076923076923%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.15384615384616%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.61538461538461%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.61538461538461%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 102.3076923076923%'>Pub(2)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.15384615384616%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.15384615384616%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.3076923076923%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.15384615384616%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 128.84615384615384%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.3076923076923%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.15384615384616%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.15384615384616%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.15384615384616%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.3076923076923%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.15384615384616%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.15384615384616%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.3076923076923%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.3076923076923%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.46153846153847%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.15384615384616%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.15384615384616%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.3076923076923%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.15384615384616%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.15384615384616%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.15384615384616%'>WebGL(1)</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/-net' style='font-size: 103.39622641509433%'>.NET(3)</a> <a href='/blog/categories/activemq' style='font-size: 101.13207547169812%'>ActiveMQ(1)</a> <a href='/blog/categories/adk' style='font-size: 101.13207547169812%'>adk(1)</a> <a href='/blog/categories/adk2012' style='font-size: 101.13207547169812%'>adk2012(1)</a> <a href='/blog/categories/apache' style='font-size: 101.13207547169812%'>Apache(1)</a> <a href='/blog/categories/apache-nms' style='font-size: 101.13207547169812%'>Apache.Nms(1)</a> <a href='/blog/categories/api' style='font-size: 104.52830188679245%'>API(4)</a> <a href='/blog/categories/arm' style='font-size: 101.13207547169812%'>ARM(1)</a> <a href='/blog/categories/armv7' style='font-size: 101.13207547169812%'>ARMv7(1)</a> <a href='/blog/categories/beagleboard' style='font-size: 102.26415094339623%'>BeagleBoard(2)</a> <a href='/blog/categories/beagleboneblack' style='font-size: 101.13207547169812%'>BeagleBoneBlack(1)</a> <a href='/blog/categories/beagletouch' style='font-size: 102.26415094339623%'>BeagleTouch(2)</a> <a href='/blog/categories/blackjack' style='font-size: 101.13207547169812%'>Blackjack(1)</a> <a href='/blog/categories/bot-dart' style='font-size: 101.13207547169812%'>bot.dart(1)</a> <a href='/blog/categories/brainteaser' style='font-size: 101.13207547169812%'>Brainteaser(1)</a> <a href='/blog/categories/c-' style='font-size: 101.13207547169812%'>C#(1)</a> <a href='/blog/categories/canvas' style='font-size: 104.52830188679245%'>Canvas(4)</a> <a href='/blog/categories/canvas2d' style='font-size: 102.26415094339623%'>Canvas2d(2)</a> <a href='/blog/categories/card-counting' style='font-size: 101.13207547169812%'>Card Counting(1)</a> <a href='/blog/categories/chrome-' style='font-size: 101.13207547169812%'>chrome.*(1)</a> <a href='/blog/categories/chrome-dart' style='font-size: 102.26415094339623%'>chrome.dart(2)</a> <a href='/blog/categories/chromeapp' style='font-size: 103.39622641509433%'>ChromeApp(3)</a> <a href='/blog/categories/chromeos' style='font-size: 101.13207547169812%'>ChromeOS(1)</a> <a href='/blog/categories/client' style='font-size: 102.26415094339623%'>Client(2)</a> <a href='/blog/categories/cloud' style='font-size: 102.26415094339623%'>Cloud(2)</a> <a href='/blog/categories/cloudfoundry' style='font-size: 102.26415094339623%'>Cloudfoundry(2)</a> <a href='/blog/categories/computeengine' style='font-size: 101.13207547169812%'>ComputeEngine(1)</a> <a href='/blog/categories/cordova' style='font-size: 104.52830188679245%'>Cordova(4)</a> <a href='/blog/categories/couchdb' style='font-size: 101.13207547169812%'>CouchDB(1)</a> <a href='/blog/categories/dart' style='font-size: 160.0%'>Dart(53)</a> <a href='/blog/categories/dart-native-access' style='font-size: 102.26415094339623%'>Dart Native Access(2)</a> <a href='/blog/categories/dartanalyzer' style='font-size: 101.13207547169812%'>DartAnalyzer(1)</a> <a href='/blog/categories/darteditor' style='font-size: 103.39622641509433%'>DartEditor(3)</a> <a href='/blog/categories/dartiu' style='font-size: 101.13207547169812%'>Dartiu(1)</a> <a href='/blog/categories/dartium' style='font-size: 102.26415094339623%'>Dartium(2)</a> <a href='/blog/categories/dartvm' style='font-size: 103.39622641509433%'>DartVM(3)</a> <a href='/blog/categories/datastore' style='font-size: 101.13207547169812%'>datastore(1)</a> <a href='/blog/categories/debian' style='font-size: 101.13207547169812%'>Debian(1)</a> <a href='/blog/categories/debugging' style='font-size: 101.13207547169812%'>Debugging(1)</a> <a href='/blog/categories/drive' style='font-size: 104.52830188679245%'>Drive(4)</a> <a href='/blog/categories/drone-io' style='font-size: 101.13207547169812%'>Drone.io(1)</a> <a href='/blog/categories/embedded' style='font-size: 104.52830188679245%'>embedded(4)</a> <a href='/blog/categories/embedded' style='font-size: 101.13207547169812%'>Embedded(1)</a> <a href='/blog/categories/example' style='font-size: 113.58490566037736%'>Example(12)</a> <a href='/blog/categories/finance' style='font-size: 101.13207547169812%'>Finance(1)</a> <a href='/blog/categories/fractal' style='font-size: 101.13207547169812%'>Fractal(1)</a> <a href='/blog/categories/fullstack' style='font-size: 101.13207547169812%'>FullStack(1)</a> <a href='/blog/categories/gambling' style='font-size: 101.13207547169812%'>Gambling(1)</a> <a href='/blog/categories/game-of-life' style='font-size: 101.13207547169812%'>Game Of Life(1)</a> <a href='/blog/categories/gce' style='font-size: 101.13207547169812%'>GCE(1)</a> <a href='/blog/categories/google' style='font-size: 128.30188679245282%'>Google(25)</a> <a href='/blog/categories/google-apps-api' style='font-size: 101.13207547169812%'>Google Apps API(1)</a> <a href='/blog/categories/google-ext-api' style='font-size: 101.13207547169812%'>Google Ext API(1)</a> <a href='/blog/categories/googleapi' style='font-size: 102.26415094339623%'>googleapi(2)</a> <a href='/blog/categories/googleapi' style='font-size: 101.13207547169812%'>GoogleApi(1)</a> <a href='/blog/categories/googleapi' style='font-size: 102.26415094339623%'>GoogleAPI(2)</a> <a href='/blog/categories/gplus' style='font-size: 101.13207547169812%'>gplus(1)</a> <a href='/blog/categories/hardware' style='font-size: 105.66037735849056%'>Hardware(5)</a> <a href='/blog/categories/hash' style='font-size: 101.13207547169812%'>Hash(1)</a> <a href='/blog/categories/helloworld' style='font-size: 101.13207547169812%'>HelloWorld(1)</a> <a href='/blog/categories/heroku' style='font-size: 101.13207547169812%'>Heroku(1)</a> <a href='/blog/categories/high-low' style='font-size: 101.13207547169812%'>High-Low(1)</a> <a href='/blog/categories/html5' style='font-size: 102.26415094339623%'>HTML5(2)</a> <a href='/blog/categories/js-interop' style='font-size: 103.39622641509433%'>js-interop(3)</a> <a href='/blog/categories/kernel' style='font-size: 102.26415094339623%'>Kernel(2)</a> <a href='/blog/categories/linux' style='font-size: 105.66037735849056%'>Linux(5)</a> <a href='/blog/categories/macosx' style='font-size: 101.13207547169812%'>MacOSX(1)</a> <a href='/blog/categories/markdown' style='font-size: 101.13207547169812%'>Markdown(1)</a> <a href='/blog/categories/math' style='font-size: 102.26415094339623%'>Math(2)</a> <a href='/blog/categories/mongo' style='font-size: 101.13207547169812%'>Mongo(1)</a> <a href='/blog/categories/mongodb' style='font-size: 101.13207547169812%'>Mongodb(1)</a> <a href='/blog/categories/mvvm' style='font-size: 101.13207547169812%'>MVVM(1)</a> <a href='/blog/categories/netduino' style='font-size: 102.26415094339623%'>netduino(2)</a> <a href='/blog/categories/objectory' style='font-size: 101.13207547169812%'>objectory(1)</a> <a href='/blog/categories/phonegap' style='font-size: 104.52830188679245%'>Phonegap(4)</a> <a href='/blog/categories/phonegap-from-scratch' style='font-size: 104.52830188679245%'>phonegap-from-scratch(4)</a> <a href='/blog/categories/pub' style='font-size: 102.26415094339623%'>Pub(2)</a> <a href='/blog/categories/rabbitmq' style='font-size: 101.13207547169812%'>rabbitmq(1)</a> <a href='/blog/categories/realtime' style='font-size: 101.13207547169812%'>Realtime(1)</a> <a href='/blog/categories/rikulo' style='font-size: 102.26415094339623%'>Rikulo(2)</a> <a href='/blog/categories/snapshots' style='font-size: 101.13207547169812%'>snapshots(1)</a> <a href='/blog/categories/software' style='font-size: 128.30188679245282%'>Software(25)</a> <a href='/blog/categories/spring' style='font-size: 102.26415094339623%'>Spring(2)</a> <a href='/blog/categories/springframework-net' style='font-size: 101.13207547169812%'>Springframework.net(1)</a> <a href='/blog/categories/springsource' style='font-size: 101.13207547169812%'>SpringSource(1)</a> <a href='/blog/categories/stocks' style='font-size: 101.13207547169812%'>Stocks(1)</a> <a href='/blog/categories/stream' style='font-size: 102.26415094339623%'>Stream(2)</a> <a href='/blog/categories/template' style='font-size: 101.13207547169812%'>Template(1)</a> <a href='/blog/categories/testing' style='font-size: 101.13207547169812%'>Testing(1)</a> <a href='/blog/categories/ti-devkit' style='font-size: 102.26415094339623%'>TI DevKit(2)</a> <a href='/blog/categories/touchscreen' style='font-size: 102.26415094339623%'>TouchScreen(2)</a> <a href='/blog/categories/unittest' style='font-size: 103.39622641509433%'>unittest(3)</a> <a href='/blog/categories/urlshortener' style='font-size: 101.13207547169812%'>UrlShortener(1)</a> <a href='/blog/categories/vcap' style='font-size: 101.13207547169812%'>vcap(1)</a> <a href='/blog/categories/vmware' style='font-size: 102.26415094339623%'>vmware(2)</a> <a href='/blog/categories/web-ui' style='font-size: 101.13207547169812%'>web-ui(1)</a> <a href='/blog/categories/webcomponents' style='font-size: 101.13207547169812%'>WebComponents(1)</a> <a href='/blog/categories/webgl' style='font-size: 101.13207547169812%'>WebGL(1)</a> </span>
 </section>
 <section>
   <h1>Recent Posts</h1>

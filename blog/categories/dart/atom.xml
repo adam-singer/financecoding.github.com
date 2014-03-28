@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Dart | Random posts about coding]]></title>
   <link href="http://financeCoding.github.com/blog/categories/dart/atom.xml" rel="self"/>
   <link href="http://financeCoding.github.com/"/>
-  <updated>2014-03-28T14:43:20-07:00</updated>
+  <updated>2014-03-28T14:46:55-07:00</updated>
   <id>http://financeCoding.github.com/</id>
   <author>
     <name><![CDATA[Adam Singer]]></name>
@@ -31,7 +31,7 @@
 </ul>
 
 
-<p>In order to make API calls to the Datastore, pubspec.yaml file needs the following</p>
+<p>In order to make API calls to the Datastore, <code>pubspec.yaml</code> file needs the following</p>
 
 <p><code>yaml
 dependencies:
@@ -41,7 +41,7 @@ dependencies:
 
 <p>Then, get the <a href="https://github.com/financeCoding/dart_datastore_example"><code>dart_datastore_example</code></a> sample:</p>
 
-<p><code>shell
+<p><code>bash
 git clone https://github.com/financeCoding/dart_datastore_example.git
 cd dart_datastore_example
 pub install
@@ -50,7 +50,7 @@ pub install
 <p>If you are not connected to a Compute Engine instance, make sure to run
 the following commands (in a bash-like shell):</p>
 
-<p>```shell</p>
+<p>```bash</p>
 
 <h1>convert the .p12 private key file to a .pem file</h1>
 
@@ -68,7 +68,7 @@ export CLOUD_PROJECT_NUMBER=<project-number>
 
 <p>Alternatively the sample allows for passing parameters via commandline:</p>
 
-<p>```shell
+<p>```bash
 cd dart_datastore_example
 pub install
 cd bin</p>
