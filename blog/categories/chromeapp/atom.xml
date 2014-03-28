@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ChromeApp | Random posts about coding]]></title>
   <link href="http://financeCoding.github.com/blog/categories/chromeapp/atom.xml" rel="self"/>
   <link href="http://financeCoding.github.com/"/>
-  <updated>2014-03-28T14:38:33-07:00</updated>
+  <updated>2014-03-28T14:43:20-07:00</updated>
   <id>http://financeCoding.github.com/</id>
   <author>
     <name><![CDATA[Adam Singer]]></name>
@@ -95,29 +95,26 @@ chromeHidden.handleResponse
 
 <p>Luckily the way <code>dart2js</code> is laid out in the dart-sdk a patch could be applied without side effects. Great design by the <code>dart2js</code> team, reducing the ability of needing to build from bleeding_edge.</p>
 
-<p><div>
-  <pre><code class='bash'>22:37:10-adam@Adams-MacBook-Air:/Applications/dart/dart-sdk
+<p>{% highlight bash %}
+22:37:10-adam@Adams-MacBook-Air:/Applications/dart/dart-sdk
 $ curl https://codereview.chromium.org/download/issue11491005_1.diff | patch -p2
-patching file lib/&lt;em&gt;internal/compiler/implementation/js_backend/emitter.dart
-patching file lib/&lt;/em&gt;internal/compiler/implementation/js_backend/emitter_no_eval.dart</code></pre>
-</div>
-</p>
+patching file lib/<em>internal/compiler/implementation/js_backend/emitter.dart
+patching file lib/</em>internal/compiler/implementation/js_backend/emitter_no_eval.dart
+{% endhighlight %}</p>
 
 <p><em>Note you must remove the snapshot build of <code>dart2js</code>.</em> The snapshot build of dart2js providers faster load times by the VM.</p>
 
-<p><div>
-  <pre><code class='bash'>23:14:57-adam@Adams-MacBook-Air:~/dart/solar3d/web
-$ rm -rf /Applications/dart/dart-sdk/lib/_internal/compiler/implementation/dart2js.dart.snapshot</code></pre>
-</div>
-</p>
+<p>{% highlight bash %}
+23:14:57-adam@Adams-MacBook-Air:~/dart/solar3d/web
+$ rm -rf /Applications/dart/dart-sdk/lib/_internal/compiler/implementation/dart2js.dart.snapshot
+{% endhighlight %}</p>
 
 <p>Rebuilt and reloaded the application and solar3d worked as a Chrome App!</p>
 
-<p><div>
-  <pre><code class='bash'>00:47:16-adam@Adams-MacBook-Air:~/dart/solar3d/web
-$ dart2js --disallow-unsafe-eval -osolar.dart.js solar.dart</code></pre>
-</div>
-</p>
+<p>{% highlight bash %}
+00:47:16-adam@Adams-MacBook-Air:~/dart/solar3d/web
+$ dart2js --disallow-unsafe-eval -osolar.dart.js solar.dart
+{% endhighlight %}</p>
 
 <p><a href="/images/2012-12-09-turning-solar3d-into-a-chrome-app.image.1.png"><img src="/images/2012-12-09-turning-solar3d-into-a-chrome-app.image.1.png" alt="unsafeevals" /></a></p>
 

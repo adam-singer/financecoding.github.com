@@ -4,7 +4,7 @@
   <title><![CDATA[Category: phonegap-from-scratch | Random posts about coding]]></title>
   <link href="http://financeCoding.github.com/blog/categories/phonegap-from-scratch/atom.xml" rel="self"/>
   <link href="http://financeCoding.github.com/"/>
-  <updated>2014-03-28T14:38:33-07:00</updated>
+  <updated>2014-03-28T14:43:20-07:00</updated>
   <id>http://financeCoding.github.com/</id>
   <author>
     <name><![CDATA[Adam Singer]]></name>
@@ -300,28 +300,23 @@ test('Device Event offline', () {
 
 <p>First step is to add unit testing to the pub spec file.</p>
 
-<p><div>
-  <pre><code class='yaml'>name:  dartdova
+<p>{% highlight yaml %}
+name:  dartdova
 description:  A sample dart cordova integration
 dependencies:
   js: any
-  unittest: 0.2.9+7</code></pre>
-</div>
-</p>
+  unittest: 0.2.9+7
+{% endhighlight %}</p>
 
 <p>Going with <code>useHtmlEnhancedConfiguration()</code> from <code>unittest/html_enhanced_config.dart</code> did not work. Cordova or iPhone simulator seems to swallow up any exceptions or failures in rending, so resorting to the more stripped down version <code>useHtmlIndividualConfiguration()</code> from <code>package:unittest/html_individual_config.dart</code>.</p>
 
 <p>Using <a href="https://github.com/rikulo/gap">gap</a> as a reference it was easy enough to create a working <a href="http://stackoverflow.com/questions/12649573/how-do-you-build-a-singleton-in-dart">singleton</a> Device class.</p>
 
-<p><div><script src='https://gist.github.com/4381449.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/4381449&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
-</p>
+<p>{% gist 4381449 %}</p>
 
 <p>Now building the js code with <code>build.sh</code> and launching iPhone simulator in <code>Xcode.app</code>, the passing unit test should be displayed in the simplified version of the <a href="http://www.dartlang.org/articles/dart-unit-tests/">unittest</a> output.</p>
 
-<p><div><script src='https://gist.github.com/4381488.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/4381488&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
-</p>
+<p>{% gist 4381488 %}</p>
 
 <p><a href="/images/2012-12-25-unit-testing-with-dart-and-cordova-on-ios/unittestpass.png"><img src="/images/2012-12-25-unit-testing-with-dart-and-cordova-on-ios/unittestpass.png" alt="unittest_pass" /></a></p>
 
@@ -342,29 +337,26 @@ dependencies:
 
 <p>Download the phonegap <a href="http://phonegap.com/download">build</a> and unpack into a folder.</p>
 
-<p><div>
-  <pre><code class='bash'>$ mkdir ~/dart/phonegap_from_scratch/
+<p>{% highlight bash %}
+$ mkdir ~/dart/phonegap_from_scratch/
 $ cd ~/dart/phonegap_from_scratch/
 $ unzip ~/Downloads/phonegap-phonegap-2.2.0-0-g8a3aa47.zip
-$ mv phonegap-phonegap-8a3aa47 phonegap</code></pre>
-</div>
-</p>
+$ mv phonegap-phonegap-8a3aa47 phonegap
+{% endhighlight %}</p>
 
 <p>This is mostly done on <a href="http://docs.phonegap.com/en/2.2.0/guide_getting-started_ios_index.md.html#Getting%20Started%20with%20iOS">MacOSX</a></p>
 
 <p>Setup and create a phonegap project</p>
 
-<p><div>
-  <pre><code class='bash'>$ ./create ~/dart/phonegap_from_scratch/phonegap_from_scratch com.phonegap.from.scratch phonegap_from_scratch</code></pre>
-</div>
-</p>
+<p>{% highlight bash %}
+$ ./create ~/dart/phonegap_from_scratch/phonegap_from_scratch com.phonegap.from.scratch phonegap_from_scratch
+{% endhighlight %}</p>
 
 <p>Open up <code>Xcode</code> and do a sanity check with the default generated project from the <code>create</code> script.</p>
 
-<p><div>
-  <pre><code class='bash'>$ open /Applications/Xcode.app</code></pre>
-</div>
-</p>
+<p>{% highlight bash %}
+$ open /Applications/Xcode.app
+{% endhighlight %}</p>
 
 <p><a href="/images/2012-12-23-phonegap-from-scratch-images/open_project_dialog.png"><img src="/images/2012-12-23-phonegap-from-scratch-images/open_project_dialog.png" alt="open_project_dialog" /></a></p>
 
@@ -372,12 +364,11 @@ $ mv phonegap-phonegap-8a3aa47 phonegap</code></pre>
 
 <p>Remove all the files in <code>www</code>, rename <code>cordova-2.2.0.js</code>.</p>
 
-<p><div>
-  <pre><code class='bash'>$ cd ~/dart/phonegap_from_scratch/phonegap_from_scratch/www/
+<p>{% highlight bash %}
+$ cd ~/dart/phonegap_from_scratch/phonegap_from_scratch/www/
 $ rm -rf css img index.html js spec res spec.html
-$ mv cordova-2.2.0.js cordova.js</code></pre>
-</div>
-</p>
+$ mv cordova-2.2.0.js cordova.js
+{% endhighlight %}</p>
 
 <p>Create a dart project in the <code>www</code> directory. This is not a typical dart package layout but works well for building and debugging. A real project might need some type of build scripts that call <code>dart2js</code> and copy files over to the <code>www</code> directory in the cordova generated project.</p>
 
@@ -401,16 +392,15 @@ $ mv cordova-2.2.0.js cordova.js</code></pre>
 
 <p>Install the <code>pub</code> dependencies. The <code>dart.js</code> and <code>dart_interop.js</code> need to be stored locally within the cordova project.</p>
 
-<p><div>
-  <pre><code class='bash'>~/dart/phonegap_from_scratch/phonegap_from_scratch/www
+<p>{% highlight bash %}
+~/dart/phonegap_from_scratch/phonegap_from_scratch/www
 $ pub install
 Resolving dependencies...
-Dependencies installed!&lt;/p&gt;
+Dependencies installed!</p>
 
-&lt;p&gt;$ cp packages/js/dart_interop.js .
-$ wget https://dart.googlecode.com/svn/branches/bleeding_edge/dart/client/dart.js</code></pre>
-</div>
-</p>
+<p>$ cp packages/js/dart_interop.js .
+$ wget https://dart.googlecode.com/svn/branches/bleeding_edge/dart/client/dart.js
+{% endhighlight %}</p>
 
 <p><a href="/images/2012-12-23-phonegap-from-scratch-images/opening_dart_editor.png"><img src="/images/2012-12-23-phonegap-from-scratch-images/opening_dart_editor.png" alt="opening_dart_editor" /></a></p>
 

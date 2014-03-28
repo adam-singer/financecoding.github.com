@@ -4,7 +4,7 @@
   <title><![CDATA[Category: API | Random posts about coding]]></title>
   <link href="http://financeCoding.github.com/blog/categories/api/atom.xml" rel="self"/>
   <link href="http://financeCoding.github.com/"/>
-  <updated>2014-03-28T14:38:33-07:00</updated>
+  <updated>2014-03-28T14:43:20-07:00</updated>
   <id>http://financeCoding.github.com/</id>
   <author>
     <name><![CDATA[Adam Singer]]></name>
@@ -12,6 +12,334 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Getting started with Google Cloud Datastore and Dart]]></title>
+    <link href="http://financeCoding.github.com/blog/2014/03/28/getting-started-with-google-cloud-datastore-and-dart/"/>
+    <updated>2014-03-28T14:38:00-07:00</updated>
+    <id>http://financeCoding.github.com/blog/2014/03/28/getting-started-with-google-cloud-datastore-and-dart</id>
+    <content type="html"><![CDATA[<p><strong>NOTE: Experimental and future developments with Dart+GCE+Datastore may change</strong></p>
+
+<p>Before running through the steps below, make sure that:</p>
+
+<ul>
+<li>You have <a href="https://developers.google.com/datastore/docs/activate">enabled</a> Google Cloud Datastore API.</li>
+<li>You have your <code>&lt;project-id&gt;</code> (same identifier as your Google Cloud <a href="https://developers.google.com/datastore/docs/activate#project_id">Project ID</a>).</li>
+<li>You are <a href="https://developers.google.com/compute/docs/instances#sshing">connected</a> to a Compute Engine instance with both the <code>datastore</code> and
+<code>userinfo.email</code> <a href="https://developers.google.com/compute/docs/authentication#using">scopes</a> or have a <a href="https://developers.google.com/datastore/docs/activate#service_account"><service-account></a> and the <a href="https://developers.google.com/datastore/docs/activate#private_key"><path-to-private-key-file></a>.</li>
+<li>You have a working local <a href="https://www.dartlang.org/tools/download.html">dart environment</a> or working <a href="#example-deployment-and-startup-scripts-for-gce-with-dart">Compute Engine instance</a></li>
+</ul>
+
+
+<p>In order to make API calls to the Datastore, pubspec.yaml file needs the following</p>
+
+<p><code>yaml
+dependencies:
+  google_oauth2_client: '&gt;=0.3.6 &lt;0.3.7'
+  google_datastore_v1beta2_api: "&gt;=0.4.0 &lt;0.5.0"
+</code></p>
+
+<p>Then, get the <a href="https://github.com/financeCoding/dart_datastore_example"><code>dart_datastore_example</code></a> sample:</p>
+
+<p><code>shell
+git clone https://github.com/financeCoding/dart_datastore_example.git
+cd dart_datastore_example
+pub install
+</code></p>
+
+<p>If you are not connected to a Compute Engine instance, make sure to run
+the following commands (in a bash-like shell):</p>
+
+<p>```shell</p>
+
+<h1>convert the .p12 private key file to a .pem file</h1>
+
+<h1>if asked to enter import password, use "notasecret"</h1>
+
+<p>openssl pkcs12 -in <privatekey>.p12 -nocerts -passin pass:notasecret -nodes -out <rsa_private_key>.pem</p>
+
+<h1>configure your credentials</h1>
+
+<p>export DATASTORE_SERVICE_ACCOUNT=<service-account>
+export DATASTORE_PRIVATE_KEY_FILE=<path-to-pem-file>
+export CLOUD_PROJECT_ID=<project-id>
+export CLOUD_PROJECT_NUMBER=<project-number>
+```</p>
+
+<p>Alternatively the sample allows for passing parameters via commandline:</p>
+
+<p>```shell
+cd dart_datastore_example
+pub install
+cd bin</p>
+
+<h1>dart dart_datastore_example.dart <project-id> <project-number> <path-to-pem-file> <service-account></h1>
+
+<p>dart dart_datastore_example.dart dartcloud 657648630269 privatekey.pem 657648630269-ge2he8e46y4u42bd89nmgtj52j3ilzvv@developer.gserviceaccount.com
+```</p>
+
+<p>Example output on first run:</p>
+
+<p>```
+dartcloud
+657648630269
+privatekey.pem
+657648630269-ge2he8e46y4u42bd89nmgtj52j3ilzvv@developer.gserviceaccount.com
+did not found entity</p>
+
+<blockquote><p>entity = {question: {"stringValue":"Meaning of life?"}, answer: {"integerValue":42}}
+```</p></blockquote>
+
+<p>Example output on second run:</p>
+
+<p>```
+dartcloud
+657648630269
+privatekey.pem
+657648630269-ge2he8e46y4u42bd89nmgtj52j3ilzvv@developer.gserviceaccount.com
+found entity = {"key":{"partitionId":{"datasetId":"s~dartcloud"},"path":[{"kind":"Trivia","name":"hgtg"}]},"properties":{"question":{"stringValue":"Meaning of life?"},"answer":{"integerValue":42}}}</p>
+
+<blockquote><p>entity = {question: {"stringValue":"Meaning of life?"}, answer: {"integerValue":42}}
+```</p></blockquote>
+
+<p>The comments in the sample's source explain its behavior in detail:</p>
+
+<p>```dart
+import "dart:io";</p>
+
+<p>import "package:google_oauth2_client/google_oauth2_console.dart";
+import "package:google_datastore_v1beta2_api/datastore_v1beta2_api_client.dart"</p>
+
+<pre><code>as client;
+</code></pre>
+
+<p>import "package:google_datastore_v1beta2_api/datastore_v1beta2_api_console.dart"</p>
+
+<pre><code>as console;
+</code></pre>
+
+<p>void main(List<String> args) {
+  Map&lt;String, String> envVars = Platform.environment;
+  String projectId = envVars['CLOUD_PROJECT_ID'] == null ?</p>
+
+<pre><code>  args[0] : envVars['CLOUD_PROJECT_ID'];
+</code></pre>
+
+<p>  String projectNumber = envVars['CLOUD_PROJECT_NUMBER'] == null ?</p>
+
+<pre><code>  args[1] : envVars['CLOUD_PROJECT_NUMBER'];
+</code></pre>
+
+<p>  String pemFilename = envVars['DATASTORE_PRIVATE_KEY_FILE'] == null ?</p>
+
+<pre><code>  args[2] : envVars['DATASTORE_PRIVATE_KEY_FILE'];
+</code></pre>
+
+<p>  String serviceAccountEmail = envVars['DATASTORE_SERVICE_ACCOUNT'] == null ?</p>
+
+<pre><code>  args[3] : envVars['DATASTORE_SERVICE_ACCOUNT'];
+</code></pre>
+
+<p>  print(projectId);
+  print(projectNumber);
+  print(pemFilename);
+  print(serviceAccountEmail);</p>
+
+<p>  String iss = serviceAccountEmail;
+  String scopes = 'https://www.googleapis.com/auth/userinfo.email '</p>
+
+<pre><code>  'https://www.googleapis.com/auth/datastore';
+</code></pre>
+
+<p>  String rsa_private_key_file = new File(pemFilename).readAsStringSync();</p>
+
+<p>  ComputeOAuth2Console computeEngineClient = new ComputeOAuth2Console(</p>
+
+<pre><code>  projectNumber, privateKey: rsa_private_key_file, iss: iss, scopes: scopes);
+</code></pre>
+
+<p>  console.Datastore datastore = new console.Datastore(computeEngineClient)
+  ..makeAuthRequests = true;</p>
+
+<p>  // Create a RPC request to begin a new transaction
+  var beginTransactionRequest = new client.BeginTransactionRequest.fromJson({});
+  String transaction;
+  client.Key key;
+  client.Entity entity;</p>
+
+<p>  // Execute the RPC asynchronously
+  datastore.datasets.beginTransaction(beginTransactionRequest, projectId).then(</p>
+
+<pre><code>  (client.BeginTransactionResponse beginTransactionResponse) {
+// Get the transaction handle from the response.
+transaction = beginTransactionResponse.transaction;
+
+// Create a RPC request to get entities by key.
+var lookupRequest = new client.LookupRequest.fromJson({});
+
+// Create a new entities by key
+key = new client.Key.fromJson({});
+
+// Set the entity key with only one `path_element`: no parent.
+var path = new client.KeyPathElement.fromJson({
+  'kind': 'Trivia',
+  'name': 'hgtg'
+});
+key.path = new List&lt;client.KeyPathElement&gt;();
+key.path.add(path);
+lookupRequest.keys = new List&lt;client.Key&gt;();
+
+// Add one key to the lookup request.
+lookupRequest.keys.add(key);
+
+// Set the transaction, so we get a consistent snapshot of the
+// entity at the time the transaction started.
+lookupRequest.readOptions = new client.ReadOptions.fromJson({
+  'transaction': transaction
+});
+
+// Execute the RPC and get the response.
+return datastore.datasets.lookup(lookupRequest, projectId);
+</code></pre>
+
+<p>  }).then((client.LookupResponse lookupResponse) {</p>
+
+<pre><code>// Create a RPC request to commit the transaction.
+var req = new client.CommitRequest.fromJson({});
+
+// Set the transaction to commit.
+req.transaction = transaction;
+
+if (lookupResponse.found.isNotEmpty) {
+  // Get the entity from the response if found
+  entity = lookupResponse.found.first.entity;
+  print("found entity = ${entity.toString()}");
+} else {
+  print("did not found entity");
+  // If no entity was found, insert a new one in the commit request mutation.
+  entity = new client.Entity.fromJson({});
+  req.mutation = new client.Mutation.fromJson({});
+  req.mutation.insert = new List&lt;client.Entity&gt;();
+  req.mutation.insert.add(entity);
+
+  // Copy the entity key.
+  entity.key = new client.Key.fromJson(key.toJson());
+
+  // Add two entity properties:
+
+  // - a utf-8 string: `question`
+  client.Property property = new client.Property.fromJson({});
+  property.stringValue = "Meaning of life?";
+  entity.properties = new Map&lt;String, client.Property&gt;();
+  entity.properties['question'] = property;
+
+  // - a 64bit integer: `answer`
+  property = new client.Property.fromJson({});
+  property.integerValue = 42;
+  entity.properties['answer'] = property;
+
+  // Execute the Commit RPC synchronously and ignore the response:
+  // Apply the insert mutation if the entity was not found and close
+  // the transaction.
+  return datastore.datasets.commit(req, projectId);
+}
+</code></pre>
+
+<p>  }).then((client.CommitResponse commitResponse) =></p>
+
+<pre><code>  print("&gt; entity = ${entity.properties}"));
+</code></pre>
+
+<p>}
+```</p>
+
+<p>With this example, you learned how to use the:</p>
+
+<ul>
+<li><a href="http://pub.dartlang.org/packages/google_datastore_v1beta1_api">google_datastore_v1beta1_api</a> dart package to connect to the Datastore API.</li>
+<li><a href="">beginTransaction</a> method to start a transaction.</li>
+<li><a href="https://developers.google.com/datastore/docs/apis/v1beta2/datasets/lookup">lookup</a> method to retrieve entities by key from your dataset.</li>
+<li><a href="https://developers.google.com/datastore/docs/apis/v1beta2/datasets/commit">commit</a> method to send mutations to entities in your dataset and commit the transaction.</li>
+</ul>
+
+
+<p>Now, you are ready to learn more about the <a href="https://developers.google.com/datastore/docs/concepts/">Key Datastore Concepts</a> and look at the <a href="https://developers.google.com/datastore/docs/apis/v1beta2/">JSON API reference</a>.</p>
+
+<hr />
+
+<h2>Example deployment and startup scripts for GCE with Dart</h2>
+
+<p><code>setup-instance.sh</code> script creates the node with the right correct scopes and image.</p>
+
+<p>```</p>
+
+<h1>!/usr/bin/env bash</h1>
+
+<p>set +o xtrace</p>
+
+<p>USER=$USER
+PROJECT=dart-compute-project
+INSTANCE_NAME=dart-compute
+TAGS=dart
+MACHINE_TYPE=f1-micro
+NETWORK=default
+IP=ephemeral
+IMAGE=https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/backports-debian-7-wheezy-v20140318
+SCOPES=https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/compute,https://www.googleapis.com/auth/devstorage.full_control,https://www.googleapis.com/auth/datastore
+PERSISTENT_BOOT_DISK=true
+AUTO_DELETE_BOOT_DISK=true
+ZONE=us-central1-b
+STARTUP_SCRIPT=startup-script.sh
+GCUTIL="gcutil --service_version=v1 --project=$PROJECT"</p>
+
+<p>$GCUTIL addinstance $INSTANCE_NAME --tags=$TAGS --zone=$ZONE --machine_type=$MACHINE_TYPE --network=$NETWORK --external_ip_address=$IP --service_account_scopes=$SCOPES --image=$IMAGE --persistent_boot_disk=$PERSISTENT_BOOT_DISK --auto_delete_boot_disk=$AUTO_DELETE_BOOT_DISK --metadata_from_file=startup-script:$STARTUP_SCRIPT</p>
+
+<p>rc=$?
+if [[ $rc != 0 ]] ; then
+  echo "Not able to add instance"</p>
+
+<pre><code>exit $rc
+</code></pre>
+
+<p>fi
+```</p>
+
+<p><code>startup-script.sh</code> script that provisions the node with dart.</p>
+
+<p>```</p>
+
+<h1>!/usr/bin/env bash</h1>
+
+<h1>Add an addtional source for the latest glibc</h1>
+
+<p>sudo sed -i '1i deb http://ftp.us.debian.org/debian/ jessie main' /etc/apt/sources.list</p>
+
+<h1>Update sources</h1>
+
+<p>sudo apt-get update</p>
+
+<h1>Download latest glibc</h1>
+
+<p>sudo DEBIAN_FRONTEND=noninteractive apt-get -t jessie install -y libc6 libc6-dev libc6-dbg git screen unzip vim</p>
+
+<h1>Download the latest dart sdk</h1>
+
+<p>wget http://storage.googleapis.com/dart-archive/channels/dev/release/latest/sdk/dartsdk-linux-x64-release.zip -O dartsdk-linux-x64-release.zip</p>
+
+<h1>Unpack the dart sdk</h1>
+
+<p>unzip -d / dartsdk-linux-x64-release.zip</p>
+
+<h1>Make the sdk readable</h1>
+
+<p>chmod -R go+rx /dart-sdk</p>
+
+<h1>Add dart bin to global path</h1>
+
+<p>echo "export PATH=\$PATH:/dart-sdk/bin" >> /etc/profile
+```</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[gplus quickstart with dart]]></title>

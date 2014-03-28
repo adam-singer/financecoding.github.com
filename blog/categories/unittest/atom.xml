@@ -4,7 +4,7 @@
   <title><![CDATA[Category: unittest | Random posts about coding]]></title>
   <link href="http://financeCoding.github.com/blog/categories/unittest/atom.xml" rel="self"/>
   <link href="http://financeCoding.github.com/"/>
-  <updated>2014-03-28T14:38:33-07:00</updated>
+  <updated>2014-03-28T14:43:20-07:00</updated>
   <id>http://financeCoding.github.com/</id>
   <author>
     <name><![CDATA[Adam Singer]]></name>
@@ -300,28 +300,23 @@ test('Device Event offline', () {
 
 <p>First step is to add unit testing to the pub spec file.</p>
 
-<p><div>
-  <pre><code class='yaml'>name:  dartdova
+<p>{% highlight yaml %}
+name:  dartdova
 description:  A sample dart cordova integration
 dependencies:
   js: any
-  unittest: 0.2.9+7</code></pre>
-</div>
-</p>
+  unittest: 0.2.9+7
+{% endhighlight %}</p>
 
 <p>Going with <code>useHtmlEnhancedConfiguration()</code> from <code>unittest/html_enhanced_config.dart</code> did not work. Cordova or iPhone simulator seems to swallow up any exceptions or failures in rending, so resorting to the more stripped down version <code>useHtmlIndividualConfiguration()</code> from <code>package:unittest/html_individual_config.dart</code>.</p>
 
 <p>Using <a href="https://github.com/rikulo/gap">gap</a> as a reference it was easy enough to create a working <a href="http://stackoverflow.com/questions/12649573/how-do-you-build-a-singleton-in-dart">singleton</a> Device class.</p>
 
-<p><div><script src='https://gist.github.com/4381449.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/4381449&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
-</p>
+<p>{% gist 4381449 %}</p>
 
 <p>Now building the js code with <code>build.sh</code> and launching iPhone simulator in <code>Xcode.app</code>, the passing unit test should be displayed in the simplified version of the <a href="http://www.dartlang.org/articles/dart-unit-tests/">unittest</a> output.</p>
 
-<p><div><script src='https://gist.github.com/4381488.js'></script>
-<noscript><pre><code>&lt;html&gt;&lt;body&gt;You are being &lt;a href=&quot;https://github.com/gist/4381488&quot;&gt;redirected&lt;/a&gt;.&lt;/body&gt;&lt;/html&gt;</code></pre></noscript></div>
-</p>
+<p>{% gist 4381488 %}</p>
 
 <p><a href="/images/2012-12-25-unit-testing-with-dart-and-cordova-on-ios/unittestpass.png"><img src="/images/2012-12-25-unit-testing-with-dart-and-cordova-on-ios/unittestpass.png" alt="unittest_pass" /></a></p>
 
